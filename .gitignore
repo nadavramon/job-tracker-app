@@ -1,0 +1,15 @@
+# Backend (Spring Boot)
+backend/target/
+backend/.idea/
+backend/*.iml
+
+# Frontend (Next.js)
+frontend/node_modules/
+frontend/.next/
+frontend/.env*.local
+
+# General
+.DS_Store
+*.log
+.env
+.idea/
