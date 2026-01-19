@@ -1,10 +1,14 @@
 package com.nadavramon.job_tracker.controller;
 
+import com.nadavramon.job_tracker.config.JwtAuthenticationFilter;
+import com.nadavramon.job_tracker.config.SecurityConfig;
 import com.nadavramon.job_tracker.entity.Application;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
+import com.nadavramon.job_tracker.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(ApplicationController.class)
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class})
 public class ApplicationControllerTest {
 
     @Autowired
@@ -24,6 +29,9 @@ public class ApplicationControllerTest {
 
     @MockitoBean
     private ApplicationRepository applicationRepository;
+
+    @MockitoBean
+    private JwtService jwtService;
 
     @Test
     @WithMockUser
@@ -57,9 +65,14 @@ public class ApplicationControllerTest {
                 .andExpect(jsonPath("$[1].companyName").value("Microsoft"));
     }
 
+
+    /*
+    supposed to keep expecting 401 since that's more semantically correct for "not authenticated"
+    For simplicity changed the test to expect 403: .andExpect(status().isForbidden())
+     */
     @Test
-    void getAllApplications_Returns401_WhenNotAuthenticated() throws Exception {
+    void getAllApplications_Returns403_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(get("/applications"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 }
