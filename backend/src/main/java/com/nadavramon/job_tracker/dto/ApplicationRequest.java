@@ -1,5 +1,7 @@
 package com.nadavramon.job_tracker.dto;
 
+import com.nadavramon.job_tracker.enums.JobType;
+import com.nadavramon.job_tracker.enums.Status;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
 
@@ -16,11 +18,11 @@ public class ApplicationRequest {
     @NotBlank
     private String location;
 
-    @NotBlank
-    private String status;
+    @NotNull
+    private Status status;
 
-    @NotBlank
-    private String jobType;
+    @NotNull
+    private JobType jobType;
 
     @NotNull
     private LocalDate appliedDate;
@@ -55,19 +57,19 @@ public class ApplicationRequest {
         this.location = location;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    public String getJobType() {
+    public JobType getJobType() {
         return jobType;
     }
 
-    public void setJobType(String jobType) {
+    public void setJobType(JobType jobType) {
         this.jobType = jobType;
     }
 

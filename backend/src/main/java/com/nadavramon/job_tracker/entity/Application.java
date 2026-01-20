@@ -1,5 +1,7 @@
 package com.nadavramon.job_tracker.entity;
 
+import com.nadavramon.job_tracker.enums.JobType;
+import com.nadavramon.job_tracker.enums.Status;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -18,11 +20,18 @@ public class Application {
     private User user;
 
     private String companyName;
-    private String jobType;
+
+
+    @Enumerated(EnumType.STRING)
+    private JobType jobType;
+
     private String location;
     private String jobRole;
     private LocalDate appliedDate;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     private LocalDate statusChangedDate;
     private String websiteLink;
     private String username;
@@ -52,11 +61,11 @@ public class Application {
         this.companyName = companyName;
     }
 
-    public String getJobType() {
+    public JobType getJobType() {
         return jobType;
     }
 
-    public void setJobType(String jobType) {
+    public void setJobType(JobType jobType) {
         this.jobType = jobType;
     }
 
@@ -76,11 +85,11 @@ public class Application {
         this.jobRole = jobRole;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
