@@ -1,7 +1,10 @@
 package com.nadavramon.job_tracker.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nadavramon.job_tracker.config.JwtAuthenticationFilter;
 import com.nadavramon.job_tracker.config.SecurityConfig;
+import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.entity.Application;
 import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
@@ -12,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,7 +26,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -32,6 +36,8 @@ public class ApplicationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @MockitoBean
     private ApplicationRepository applicationRepository;
@@ -97,5 +103,48 @@ public class ApplicationControllerTest {
     void getAllApplications_Returns403_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(get("/applications"))
                 .andExpect(status().isForbidden());
+    }
+    @Test
+    @WithMockUser
+    void createApplication_ReturnsBadRequest_WhenFieldsAreInvalid() throws Exception {
+        ApplicationRequest invalidRequest = new ApplicationRequest();
+        invalidRequest.setCompanyName("");
+        invalidRequest.setJobRole("Developer");
+
+        mockMvc.perform(post("/applications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    @WithMockUser
+    void getApplicationById_ReturnsNotFound_WhenIdDoesNotExist() throws Exception {
+        UUID randomId = UUID.randomUUID();
+        when(applicationRepository.findById(randomId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/applications/" + randomId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Application not found"));
+    }
+
+    @Test
+    @WithMockUser
+    void getApplicationById_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
+        UUID appId = UUID.randomUUID();
+
+        User otherUser = new User();
+        otherUser.setId(UUID.randomUUID());
+
+        Application otherUsersApp = new Application();
+        otherUsersApp.setId(appId);
+        otherUsersApp.setUser(otherUser);
+
+        when(applicationRepository.findById(appId)).thenReturn(Optional.of(otherUsersApp));
+
+        mockMvc.perform(get("/applications/" + appId))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Access denied"));
     }
 }

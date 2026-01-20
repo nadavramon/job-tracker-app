@@ -3,6 +3,8 @@ package com.nadavramon.job_tracker.controller;
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.entity.Application;
 import com.nadavramon.job_tracker.entity.User;
+import com.nadavramon.job_tracker.exception.AccessDeniedException;
+import com.nadavramon.job_tracker.exception.ResourceNotFoundException;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
 import com.nadavramon.job_tracker.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -32,10 +34,10 @@ public class ApplicationController {
     @GetMapping("/{id}")
     public Application getApplicationById(@PathVariable UUID id) {
         Application application = applicationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         if (!application.getUser().getId().equals(getCurrentUser().getId()))
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         return application;
     }
 
@@ -58,44 +60,40 @@ public class ApplicationController {
     }
 
     @PatchMapping("/{id}")
-    public Application updateApplication(@PathVariable UUID id, @RequestBody Application applicationDetails) {
+    public Application updateApplication(@PathVariable UUID id, @Valid @RequestBody ApplicationRequest request) {
         Application application = applicationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         if (!application.getUser().getId().equals(getCurrentUser().getId())) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
 
-        if (applicationDetails.getCompanyName() != null) {
-            application.setCompanyName(applicationDetails.getCompanyName());
-        }
-        if (applicationDetails.getLocation() != null) {
-            application.setLocation(applicationDetails.getLocation());
-        }
-        if (applicationDetails.getJobType() != null) {
-            application.setJobType(applicationDetails.getJobType());
-        }
-        if (applicationDetails.getJobRole() != null) {
-            application.setJobRole(applicationDetails.getJobRole());
-        }
-        if (applicationDetails.getStatus() != null) {
-            application.setStatus(applicationDetails.getStatus());
-        }
-        if (applicationDetails.getAppliedDate() != null) {
-            application.setAppliedDate(applicationDetails.getAppliedDate());
-        }
-        if (applicationDetails.getStatusChangedDate() != null) {
-            application.setStatusChangedDate(applicationDetails.getStatusChangedDate());
-        }
-        if (applicationDetails.getWebsiteLink() != null) {
-            application.setWebsiteLink(applicationDetails.getWebsiteLink());
-        }
-        if (applicationDetails.getUsername() != null) {
-            application.setUsername(applicationDetails.getUsername());
-        }
-        if (applicationDetails.getPassword() != null) {
-            application.setPassword(applicationDetails.getPassword());
-        }
+        if (request.getCompanyName() != null)
+            application.setCompanyName(request.getCompanyName());
+
+        if (request.getLocation() != null)
+            application.setLocation(request.getLocation());
+
+        if (request.getJobType() != null)
+            application.setJobType(request.getJobType());
+
+        if (request.getJobRole() != null)
+            application.setJobRole(request.getJobRole());
+
+        if (request.getStatus() != null)
+            application.setStatus(request.getStatus());
+
+        if (request.getAppliedDate() != null)
+            application.setAppliedDate(request.getAppliedDate());
+
+        if (request.getWebsiteLink() != null)
+            application.setWebsiteLink(request.getWebsiteLink());
+
+        if (request.getUsername() != null)
+            application.setUsername(request.getUsername());
+
+        if (request.getPassword() != null)
+            application.setPassword(request.getPassword());
 
         return applicationRepository.save(application);
     }
@@ -103,10 +101,10 @@ public class ApplicationController {
     @DeleteMapping("/{id}")
     public void deleteApplication(@PathVariable UUID id) {
         Application application = applicationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         if (!application.getUser().getId().equals(getCurrentUser().getId())) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
 
         applicationRepository.deleteById(id);
@@ -115,6 +113,6 @@ public class ApplicationController {
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }
