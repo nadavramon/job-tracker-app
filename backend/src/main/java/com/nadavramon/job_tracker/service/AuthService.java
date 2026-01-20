@@ -4,6 +4,8 @@ import com.nadavramon.job_tracker.dto.AuthResponse;
 import com.nadavramon.job_tracker.dto.LoginRequest;
 import com.nadavramon.job_tracker.dto.RegisterRequest;
 import com.nadavramon.job_tracker.entity.User;
+import com.nadavramon.job_tracker.exception.DuplicateResourceException;
+import com.nadavramon.job_tracker.exception.InvalidCredentialsException;
 import com.nadavramon.job_tracker.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class AuthService {
         User user = new User();
         if (userRepository.existsByEmail(request.getEmail()) ||
                 userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("email/password are already taken");
+            throw new DuplicateResourceException("Email or username already taken");
         }
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
@@ -37,10 +39,10 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("error message: Invalid email"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException("Invalid credentials");
 
         return new AuthResponse(jwtService.generateToken(user.getUsername()), user.getUsername());
     }
