@@ -1,7 +1,10 @@
 package com.nadavramon.job_tracker.controller;
 
 import com.nadavramon.job_tracker.entity.Application;
+import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
+import com.nadavramon.job_tracker.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,24 +15,31 @@ import java.util.UUID;
 public class ApplicationController {
 
     private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
 
-    public ApplicationController(ApplicationRepository applicationRepository) {
+    public ApplicationController(ApplicationRepository applicationRepository, UserRepository userRepository) {
         this.applicationRepository = applicationRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
     public List<Application> getAllApplications() {
-        return applicationRepository.findAll();
+        return applicationRepository.findByUser(getCurrentUser());
     }
 
     @GetMapping("/{id}")
     public Application getApplicationById(@PathVariable UUID id) {
-        return applicationRepository.findById(id)
+        Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        if (!application.getUser().getId().equals(getCurrentUser().getId()))
+            throw new RuntimeException("Access denied");
+        return application;
     }
 
     @PostMapping
     public Application createApplication(@RequestBody Application application) {
+        application.setUser(getCurrentUser());
         return applicationRepository.save(application);
     }
 
@@ -37,6 +47,10 @@ public class ApplicationController {
     public Application updateApplication(@PathVariable UUID id, @RequestBody Application applicationDetails) {
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        if (!application.getUser().getId().equals(getCurrentUser().getId())) {
+            throw new RuntimeException("Access denied");
+        }
 
         if (applicationDetails.getCompanyName() != null) {
             application.setCompanyName(applicationDetails.getCompanyName());
@@ -74,6 +88,19 @@ public class ApplicationController {
 
     @DeleteMapping("/{id}")
     public void deleteApplication(@PathVariable UUID id) {
+        Application application = applicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        if (!application.getUser().getId().equals(getCurrentUser().getId())) {
+            throw new RuntimeException("Access denied");
+        }
+
         applicationRepository.deleteById(id);
+    }
+
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
