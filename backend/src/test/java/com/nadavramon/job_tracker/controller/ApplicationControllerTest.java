@@ -7,6 +7,8 @@ import com.nadavramon.job_tracker.config.SecurityConfig;
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.entity.Application;
 import com.nadavramon.job_tracker.entity.User;
+import com.nadavramon.job_tracker.enums.JobType;
+import com.nadavramon.job_tracker.enums.Status;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
 import com.nadavramon.job_tracker.repository.UserRepository;
 import com.nadavramon.job_tracker.service.JwtService;
@@ -155,8 +157,8 @@ public class ApplicationControllerTest {
         request.setCompanyName("Google");
         request.setJobRole("Developer");
         request.setLocation("Tel Aviv");
-        request.setStatus("APPLIED");
-        request.setJobType("FULL_TIME");
+        request.setStatus(Status.APPLIED);
+        request.setJobType(JobType.FULL_TIME);
         request.setAppliedDate(java.time.LocalDate.now());
         request.setWebsiteLink("https://google.com");
 
