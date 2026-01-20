@@ -147,4 +147,75 @@ public class ApplicationControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value("Access denied"));
     }
+
+    @Test
+    @WithMockUser
+    void createApplication_ReturnsSuccess_WhenValidRequest() throws Exception {
+        ApplicationRequest request = new ApplicationRequest();
+        request.setCompanyName("Google");
+        request.setJobRole("Developer");
+        request.setLocation("Tel Aviv");
+        request.setStatus("APPLIED");
+        request.setJobType("FULL_TIME");
+        request.setAppliedDate(java.time.LocalDate.now());
+        request.setWebsiteLink("https://google.com");
+
+        Application savedApp = new Application();
+        savedApp.setId(UUID.randomUUID());
+        savedApp.setCompanyName("Google");
+        savedApp.setUser(mockUser);
+
+        when(applicationRepository.save(any(Application.class))).thenReturn(savedApp);
+
+        mockMvc.perform(post("/applications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.companyName").value("Google"));
+    }
+
+    @Test
+    @WithMockUser
+    void deleteApplication_ReturnsSuccess_WhenUserOwnsApplication() throws Exception {
+        UUID appId = UUID.randomUUID();
+
+        Application app = new Application();
+        app.setId(appId);
+        app.setUser(mockUser);
+
+        when(applicationRepository.findById(appId)).thenReturn(Optional.of(app));
+
+        mockMvc.perform(delete("/applications/" + appId))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteApplication_ReturnsNotFound_WhenIdDoesNotExist() throws Exception {
+        UUID randomId = UUID.randomUUID();
+        when(applicationRepository.findById(randomId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(delete("/applications/" + randomId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Application not found"));
+    }
+
+    @Test
+    @WithMockUser
+    void deleteApplication_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
+        UUID appId = UUID.randomUUID();
+
+        User otherUser = new User();
+        otherUser.setId(UUID.randomUUID());
+
+        Application otherUsersApp = new Application();
+        otherUsersApp.setId(appId);
+        otherUsersApp.setUser(otherUser);
+
+        when(applicationRepository.findById(appId)).thenReturn(Optional.of(otherUsersApp));
+
+        mockMvc.perform(delete("/applications/" + appId))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Access denied"));
+    }
 }

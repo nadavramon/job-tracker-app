@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nadavramon.job_tracker.config.JwtAuthenticationFilter;
 import com.nadavramon.job_tracker.config.SecurityConfig;
+import com.nadavramon.job_tracker.dto.AuthResponse;
 import com.nadavramon.job_tracker.dto.LoginRequest;
+import com.nadavramon.job_tracker.dto.RegisterRequest;
+import com.nadavramon.job_tracker.exception.DuplicateResourceException;
 import com.nadavramon.job_tracker.exception.InvalidCredentialsException;
 import com.nadavramon.job_tracker.service.AuthService;
 import com.nadavramon.job_tracker.service.JwtService;
@@ -66,6 +69,55 @@ public class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest()) // Expect 400
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void register_ReturnsSuccess_WhenValidRequest() throws Exception {
+        RegisterRequest request = new RegisterRequest();
+        request.setEmail("new@test.com");
+        request.setUsername("newuser");
+        request.setPassword("password123");
+
+        AuthResponse response = new AuthResponse("mock-token", "newuser");
+        when(authService.register(any(RegisterRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("mock-token"))
+                .andExpect(jsonPath("$.username").value("newuser"));
+    }
+
+    @Test
+    void register_ReturnsConflict_WhenEmailExists() throws Exception {
+        RegisterRequest request = new RegisterRequest();
+        request.setEmail("existing@test.com");
+        request.setUsername("newuser");
+        request.setPassword("password123");
+
+        when(authService.register(any(RegisterRequest.class)))
+                .thenThrow(new DuplicateResourceException("Email or username already taken"));
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Email or username already taken"));
+    }
+
+    @Test
+    void register_ReturnsBadRequest_WhenEmailMissing() throws Exception {
+        RegisterRequest request = new RegisterRequest();
+        request.setUsername("newuser");
+        request.setPassword("password123");
+        // email is missing
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").exists());
     }
 }
