@@ -1,9 +1,11 @@
 package com.nadavramon.job_tracker.controller;
 
+import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.entity.Application;
 import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
 import com.nadavramon.job_tracker.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +40,19 @@ public class ApplicationController {
     }
 
     @PostMapping
-    public Application createApplication(@RequestBody Application application) {
+    public Application createApplication(@Valid @RequestBody ApplicationRequest request) {
+        Application application = new Application();
+
+        application.setCompanyName(request.getCompanyName());
+        application.setJobRole(request.getJobRole());
+        application.setLocation(request.getLocation());
+        application.setStatus(request.getStatus());
+        application.setJobType(request.getJobType());
+        application.setAppliedDate(request.getAppliedDate());
+        application.setWebsiteLink(request.getWebsiteLink());
+        application.setUsername(request.getUsername());
+        application.setPassword(request.getPassword());
+
         application.setUser(getCurrentUser());
         return applicationRepository.save(application);
     }

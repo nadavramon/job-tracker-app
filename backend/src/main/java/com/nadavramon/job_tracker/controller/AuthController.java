@@ -4,6 +4,7 @@ import com.nadavramon.job_tracker.dto.AuthResponse;
 import com.nadavramon.job_tracker.dto.LoginRequest;
 import com.nadavramon.job_tracker.dto.RegisterRequest;
 import com.nadavramon.job_tracker.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +20,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public AuthResponse createUser(@RequestBody RegisterRequest registerRequest) {
+    public AuthResponse createUser(@Valid @RequestBody RegisterRequest registerRequest) {
         return authService.register(registerRequest);
     }
 
     @PostMapping("/login")
-    public AuthResponse userLogin(@RequestBody LoginRequest loginRequest) {
+    public AuthResponse userLogin(@Valid @RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);
     }
 }
