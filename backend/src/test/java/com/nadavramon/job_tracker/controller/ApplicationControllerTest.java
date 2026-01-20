@@ -3,8 +3,11 @@ package com.nadavramon.job_tracker.controller;
 import com.nadavramon.job_tracker.config.JwtAuthenticationFilter;
 import com.nadavramon.job_tracker.config.SecurityConfig;
 import com.nadavramon.job_tracker.entity.Application;
+import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
+import com.nadavramon.job_tracker.repository.UserRepository;
 import com.nadavramon.job_tracker.service.JwtService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -14,7 +17,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,12 +37,27 @@ public class ApplicationControllerTest {
     private ApplicationRepository applicationRepository;
 
     @MockitoBean
+    private UserRepository userRepository;
+
+    @MockitoBean
     private JwtService jwtService;
+
+    private User mockUser;
+
+    @BeforeEach
+    void setUp() {
+        mockUser = new User();
+        mockUser.setId(UUID.randomUUID());
+        mockUser.setUsername("user");
+        mockUser.setEmail("test@test.com");
+
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(mockUser));
+    }
 
     @Test
     @WithMockUser
     void getAllApplications_ReturnsEmptyList_WhenNoApplicationsExist() throws Exception {
-        when(applicationRepository.findAll()).thenReturn(List.of());
+        when(applicationRepository.findByUser(any(User.class))).thenReturn(List.of());
 
         mockMvc.perform(get("/applications"))
                 .andExpect(status().isOk())
@@ -50,12 +71,14 @@ public class ApplicationControllerTest {
         Application app1 = new Application();
         app1.setCompanyName("Google");
         app1.setLocation("Tel Aviv");
+        app1.setUser(mockUser);
 
         Application app2 = new Application();
         app2.setCompanyName("Microsoft");
         app2.setLocation("Herzliya");
+        app2.setUser(mockUser);
 
-        when(applicationRepository.findAll()).thenReturn(List.of(app1, app2));
+        when(applicationRepository.findByUser(any(User.class))).thenReturn(List.of(app1, app2));
 
         mockMvc.perform(get("/applications"))
                 .andExpect(status().isOk())
