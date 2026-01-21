@@ -43,11 +43,9 @@ public class AuthControllerTest {
     @Test
     void login_ReturnsUnauthorized_WhenCredentialsAreWrong() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("testUser");
-        loginRequest.setEmail("test@test.com");
+        loginRequest.setIdentifier("test@test.com");
         loginRequest.setPassword("wrongPassword");
 
-        // Mock the service to throw our custom exception
         when(authService.login(any(LoginRequest.class)))
                 .thenThrow(new InvalidCredentialsException("Invalid credentials"));
 
@@ -59,10 +57,9 @@ public class AuthControllerTest {
     }
 
     @Test
-    void login_ReturnsBadRequest_WhenEmailIsInvalid() throws Exception {
+    void login_ReturnsBadRequest_WhenIdentifierIsMissing() throws Exception {
         LoginRequest invalidRequest = new LoginRequest();
-        invalidRequest.setUsername("user");
-        invalidRequest.setEmail("not-an-email"); // Invalid format
+        // identifier is missing
         invalidRequest.setPassword("password123");
 
         mockMvc.perform(post("/auth/login")
