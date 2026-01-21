@@ -5,14 +5,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nadavramon.job_tracker.config.JwtAuthenticationFilter;
 import com.nadavramon.job_tracker.config.SecurityConfig;
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
-import com.nadavramon.job_tracker.entity.Application;
-import com.nadavramon.job_tracker.entity.User;
+import com.nadavramon.job_tracker.dto.ApplicationResponse;
 import com.nadavramon.job_tracker.enums.JobType;
 import com.nadavramon.job_tracker.enums.Status;
-import com.nadavramon.job_tracker.repository.ApplicationRepository;
-import com.nadavramon.job_tracker.repository.UserRepository;
+import com.nadavramon.job_tracker.exception.AccessDeniedException;
+import com.nadavramon.job_tracker.exception.ResourceNotFoundException;
+import com.nadavramon.job_tracker.service.ApplicationService;
 import com.nadavramon.job_tracker.service.JwtService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -22,11 +21,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,30 +44,15 @@ public class ApplicationControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @MockitoBean
-    private ApplicationRepository applicationRepository;
-
-    @MockitoBean
-    private UserRepository userRepository;
+    private ApplicationService applicationService;
 
     @MockitoBean
     private JwtService jwtService;
 
-    private User mockUser;
-
-    @BeforeEach
-    void setUp() {
-        mockUser = new User();
-        mockUser.setId(UUID.randomUUID());
-        mockUser.setUsername("user");
-        mockUser.setEmail("test@test.com");
-
-        when(userRepository.findByUsername("user")).thenReturn(Optional.of(mockUser));
-    }
-
     @Test
     @WithMockUser
     void getAllApplications_ReturnsEmptyList_WhenNoApplicationsExist() throws Exception {
-        when(applicationRepository.findByUser(any(User.class))).thenReturn(List.of());
+        when(applicationService.getAllApplicationsByUser()).thenReturn(List.of());
 
         mockMvc.perform(get("/applications"))
                 .andExpect(status().isOk())
@@ -76,17 +63,16 @@ public class ApplicationControllerTest {
     @Test
     @WithMockUser
     void getAllApplications_ReturnsList_WhenApplicationsExist() throws Exception {
-        Application app1 = new Application();
-        app1.setCompanyName("Google");
-        app1.setLocation("Tel Aviv");
-        app1.setUser(mockUser);
+        ApplicationResponse app1 = new ApplicationResponse(
+                UUID.randomUUID(), "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
+                LocalDate.now(), Status.APPLIED, null, "https://google.com", null, null
+        );
+        ApplicationResponse app2 = new ApplicationResponse(
+                UUID.randomUUID(), "Microsoft", JobType.FULL_TIME, "Herzliya", "Engineer",
+                LocalDate.now(), Status.APPLIED, null, "https://microsoft.com", null, null
+        );
 
-        Application app2 = new Application();
-        app2.setCompanyName("Microsoft");
-        app2.setLocation("Herzliya");
-        app2.setUser(mockUser);
-
-        when(applicationRepository.findByUser(any(User.class))).thenReturn(List.of(app1, app2));
+        when(applicationService.getAllApplicationsByUser()).thenReturn(List.of(app1, app2));
 
         mockMvc.perform(get("/applications"))
                 .andExpect(status().isOk())
@@ -96,16 +82,12 @@ public class ApplicationControllerTest {
                 .andExpect(jsonPath("$[1].companyName").value("Microsoft"));
     }
 
-
-    /*
-    supposed to keep expecting 401 since that's more semantically correct for "not authenticated"
-    For simplicity changed the test to expect 403: .andExpect(status().isForbidden())
-     */
     @Test
     void getAllApplications_Returns403_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(get("/applications"))
                 .andExpect(status().isForbidden());
     }
+
     @Test
     @WithMockUser
     void createApplication_ReturnsBadRequest_WhenFieldsAreInvalid() throws Exception {
@@ -124,7 +106,8 @@ public class ApplicationControllerTest {
     @WithMockUser
     void getApplicationById_ReturnsNotFound_WhenIdDoesNotExist() throws Exception {
         UUID randomId = UUID.randomUUID();
-        when(applicationRepository.findById(randomId)).thenReturn(Optional.empty());
+        when(applicationService.getApplicationByUser(randomId))
+                .thenThrow(new ResourceNotFoundException("Application not found"));
 
         mockMvc.perform(get("/applications/" + randomId))
                 .andExpect(status().isNotFound())
@@ -135,15 +118,8 @@ public class ApplicationControllerTest {
     @WithMockUser
     void getApplicationById_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
         UUID appId = UUID.randomUUID();
-
-        User otherUser = new User();
-        otherUser.setId(UUID.randomUUID());
-
-        Application otherUsersApp = new Application();
-        otherUsersApp.setId(appId);
-        otherUsersApp.setUser(otherUser);
-
-        when(applicationRepository.findById(appId)).thenReturn(Optional.of(otherUsersApp));
+        when(applicationService.getApplicationByUser(appId))
+                .thenThrow(new AccessDeniedException("Access denied"));
 
         mockMvc.perform(get("/applications/" + appId))
                 .andExpect(status().isForbidden())
@@ -159,15 +135,15 @@ public class ApplicationControllerTest {
         request.setLocation("Tel Aviv");
         request.setStatus(Status.APPLIED);
         request.setJobType(JobType.FULL_TIME);
-        request.setAppliedDate(java.time.LocalDate.now());
+        request.setAppliedDate(LocalDate.now());
         request.setWebsiteLink("https://google.com");
 
-        Application savedApp = new Application();
-        savedApp.setId(UUID.randomUUID());
-        savedApp.setCompanyName("Google");
-        savedApp.setUser(mockUser);
+        ApplicationResponse response = new ApplicationResponse(
+                UUID.randomUUID(), "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
+                LocalDate.now(), Status.APPLIED, null, "https://google.com", null, null
+        );
 
-        when(applicationRepository.save(any(Application.class))).thenReturn(savedApp);
+        when(applicationService.createApplicationByUser(any(ApplicationRequest.class))).thenReturn(response);
 
         mockMvc.perform(post("/applications")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -180,12 +156,7 @@ public class ApplicationControllerTest {
     @WithMockUser
     void deleteApplication_ReturnsSuccess_WhenUserOwnsApplication() throws Exception {
         UUID appId = UUID.randomUUID();
-
-        Application app = new Application();
-        app.setId(appId);
-        app.setUser(mockUser);
-
-        when(applicationRepository.findById(appId)).thenReturn(Optional.of(app));
+        doNothing().when(applicationService).deleteApplicationByUser(appId);
 
         mockMvc.perform(delete("/applications/" + appId))
                 .andExpect(status().isOk());
@@ -195,7 +166,8 @@ public class ApplicationControllerTest {
     @WithMockUser
     void deleteApplication_ReturnsNotFound_WhenIdDoesNotExist() throws Exception {
         UUID randomId = UUID.randomUUID();
-        when(applicationRepository.findById(randomId)).thenReturn(Optional.empty());
+        doThrow(new ResourceNotFoundException("Application not found"))
+                .when(applicationService).deleteApplicationByUser(randomId);
 
         mockMvc.perform(delete("/applications/" + randomId))
                 .andExpect(status().isNotFound())
@@ -206,15 +178,8 @@ public class ApplicationControllerTest {
     @WithMockUser
     void deleteApplication_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
         UUID appId = UUID.randomUUID();
-
-        User otherUser = new User();
-        otherUser.setId(UUID.randomUUID());
-
-        Application otherUsersApp = new Application();
-        otherUsersApp.setId(appId);
-        otherUsersApp.setUser(otherUser);
-
-        when(applicationRepository.findById(appId)).thenReturn(Optional.of(otherUsersApp));
+        doThrow(new AccessDeniedException("Access denied"))
+                .when(applicationService).deleteApplicationByUser(appId);
 
         mockMvc.perform(delete("/applications/" + appId))
                 .andExpect(status().isForbidden())
