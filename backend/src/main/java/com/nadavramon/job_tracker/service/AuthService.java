@@ -7,6 +7,7 @@ import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.exception.DuplicateResourceException;
 import com.nadavramon.job_tracker.exception.InvalidCredentialsException;
 import com.nadavramon.job_tracker.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponse register(@Valid RegisterRequest request) {
         User user = new User();
         if (userRepository.existsByEmail(request.getEmail()) ||
                 userRepository.existsByUsername(request.getUsername())) {
