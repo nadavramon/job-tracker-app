@@ -3,12 +3,15 @@ package com.nadavramon.job_tracker.entity;
 import com.nadavramon.job_tracker.enums.JobType;
 import com.nadavramon.job_tracker.enums.Status;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "applications")
+@SQLRestriction("deleted_at IS NULL")
 public class Application {
 
     @Id
@@ -36,6 +39,7 @@ public class Application {
     private String websiteLink;
     private String username;
     private String password;
+    private LocalDateTime deletedAt;
 
     public UUID getId() {
         return id;
@@ -131,5 +135,13 @@ public class Application {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }

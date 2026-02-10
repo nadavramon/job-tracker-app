@@ -11,6 +11,7 @@ import com.nadavramon.job_tracker.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -107,8 +108,8 @@ public class ApplicationService {
         if (!application.getUser().getId().equals(getCurrentUser().getId())) {
             throw new AccessDeniedException("Access denied");
         }
-
-        applicationRepository.deleteById(id);
+        application.setDeletedAt(LocalDateTime.now());
+        applicationRepository.save(application);
     }
 
     private User getCurrentUser() {
