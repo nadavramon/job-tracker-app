@@ -2,6 +2,7 @@ package com.nadavramon.job_tracker.controller;
 
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
+import com.nadavramon.job_tracker.dto.ApplicationStatsResponse;
 import com.nadavramon.job_tracker.enums.Status;
 import com.nadavramon.job_tracker.service.ApplicationService;
 import jakarta.validation.Valid;
@@ -29,6 +30,11 @@ public class ApplicationController {
             @RequestParam(required = false) Status status,
             @PageableDefault(size = 20, sort = "appliedDate", direction = Sort.Direction.DESC) Pageable pageable) {
         return applicationService.getAllApplicationsByUser(search, status, pageable);
+    }
+
+    @GetMapping("/stats")
+    public ApplicationStatsResponse getStats() {
+        return applicationService.getApplicationStats();
     }
 
     @GetMapping("/{id}")

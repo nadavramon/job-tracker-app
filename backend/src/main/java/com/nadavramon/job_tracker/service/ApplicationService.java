@@ -2,6 +2,8 @@ package com.nadavramon.job_tracker.service;
 
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
+import com.nadavramon.job_tracker.dto.ApplicationStatsResponse;
+import com.nadavramon.job_tracker.dto.MonthlyCount;
 import com.nadavramon.job_tracker.entity.Application;
 import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.enums.Status;
@@ -14,7 +16,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -96,6 +104,49 @@ public class ApplicationService {
             application.setPassword(request.getPassword());
 
         return toResponse(applicationRepository.save(application));
+    }
+
+    public ApplicationStatsResponse getApplicationStats() {
+        List<Application> applications = applicationRepository.findByUser(getCurrentUser());
+
+        int total = applications.size();
+
+        // Status breakdown — initialize all statuses to 0
+        Map<Status, Long> statusBreakdown = new EnumMap<>(Status.class);
+        for (Status s : Status.values()) {
+            statusBreakdown.put(s, 0L);
+        }
+        for (Application app : applications) {
+            statusBreakdown.merge(app.getStatus(), 1L, Long::sum);
+        }
+
+        // Response rate: applications that received any response (not APPLIED, not WITHDRAWN)
+        long responded = applications.stream()
+                .filter(a -> a.getStatus() == Status.SCREENING
+                        || a.getStatus() == Status.INTERVIEWING
+                        || a.getStatus() == Status.OFFER
+                        || a.getStatus() == Status.REJECTED)
+                .count();
+        double responseRate = total == 0 ? 0.0
+                : Math.round(responded * 1000.0 / total) / 10.0;
+
+        // Monthly applications — last 6 months (inclusive of current month)
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        List<MonthlyCount> monthly = new ArrayList<>();
+        for (int i = 5; i >= 0; i--) {
+            LocalDate month = now.minusMonths(i);
+            int year = month.getYear();
+            int mo = month.getMonthValue();
+            long count = applications.stream()
+                    .filter(a -> a.getAppliedDate() != null
+                            && a.getAppliedDate().getYear() == year
+                            && a.getAppliedDate().getMonthValue() == mo)
+                    .count();
+            monthly.add(new MonthlyCount(month.format(formatter), count));
+        }
+
+        return new ApplicationStatsResponse(total, statusBreakdown, monthly, responseRate);
     }
 
     public void deleteApplicationByUser(UUID id) {
