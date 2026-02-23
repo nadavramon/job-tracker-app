@@ -1,6 +1,7 @@
 package com.nadavramon.job_tracker.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nadavramon.job_tracker.enums.ThemePreference;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -22,6 +23,10 @@ public class User {
     @Column(nullable = false)
     @JsonIgnore
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ThemePreference themePreference = ThemePreference.SYSTEM;
 
     public UUID getId() {
         return id;
@@ -53,5 +58,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public ThemePreference getThemePreference() {
+        return themePreference;
+    }
+
+    public void setThemePreference(ThemePreference themePreference) {
+        this.themePreference = themePreference;
     }
 }
