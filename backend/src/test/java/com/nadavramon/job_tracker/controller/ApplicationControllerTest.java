@@ -6,6 +6,8 @@ import com.nadavramon.job_tracker.config.JwtAuthenticationFilter;
 import com.nadavramon.job_tracker.config.SecurityConfig;
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
+import com.nadavramon.job_tracker.dto.ApplicationStatsResponse;
+import com.nadavramon.job_tracker.dto.MonthlyCount;
 import com.nadavramon.job_tracker.enums.JobType;
 import com.nadavramon.job_tracker.enums.Status;
 import com.nadavramon.job_tracker.exception.AccessDeniedException;
@@ -26,7 +28,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -190,5 +194,53 @@ public class ApplicationControllerTest {
         mockMvc.perform(delete("/applications/" + appId))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value("Access denied"));
+    }
+
+    @Test
+    @WithMockUser
+    void getStats_ReturnsStats_WhenAuthenticated() throws Exception {
+        Map<Status, Long> breakdown = new EnumMap<>(Status.class);
+        for (Status s : Status.values()) breakdown.put(s, 0L);
+        breakdown.put(Status.APPLIED, 3L);
+        breakdown.put(Status.REJECTED, 1L);
+
+        List<MonthlyCount> monthly = List.of(new MonthlyCount("2026-02", 4L));
+        ApplicationStatsResponse stats = new ApplicationStatsResponse(4, breakdown, monthly, 25.0);
+
+        when(applicationService.getApplicationStats()).thenReturn(stats);
+
+        mockMvc.perform(get("/applications/stats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalApplications").value(4))
+                .andExpect(jsonPath("$.responseRate").value(25.0))
+                .andExpect(jsonPath("$.statusBreakdown.APPLIED").value(3))
+                .andExpect(jsonPath("$.statusBreakdown.REJECTED").value(1))
+                .andExpect(jsonPath("$.monthlyApplications").isArray())
+                .andExpect(jsonPath("$.monthlyApplications[0].month").value("2026-02"))
+                .andExpect(jsonPath("$.monthlyApplications[0].count").value(4));
+    }
+
+    @Test
+    @WithMockUser
+    void getStats_ReturnsZeroStats_WhenNoApplications() throws Exception {
+        Map<Status, Long> breakdown = new EnumMap<>(Status.class);
+        for (Status s : Status.values()) breakdown.put(s, 0L);
+
+        ApplicationStatsResponse stats = new ApplicationStatsResponse(0, breakdown, List.of(), 0.0);
+
+        when(applicationService.getApplicationStats()).thenReturn(stats);
+
+        mockMvc.perform(get("/applications/stats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalApplications").value(0))
+                .andExpect(jsonPath("$.responseRate").value(0.0))
+                .andExpect(jsonPath("$.monthlyApplications").isArray())
+                .andExpect(jsonPath("$.monthlyApplications").isEmpty());
+    }
+
+    @Test
+    void getStats_Returns403_WhenNotAuthenticated() throws Exception {
+        mockMvc.perform(get("/applications/stats"))
+                .andExpect(status().isForbidden());
     }
 }
