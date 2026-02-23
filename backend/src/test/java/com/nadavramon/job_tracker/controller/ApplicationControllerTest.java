@@ -21,6 +21,10 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -51,18 +55,19 @@ public class ApplicationControllerTest {
 
     @Test
     @WithMockUser
-    void getAllApplications_ReturnsEmptyList_WhenNoApplicationsExist() throws Exception {
-        when(applicationService.getAllApplicationsByUser()).thenReturn(List.of());
+    void getAllApplications_ReturnsEmptyPage_WhenNoApplicationsExist() throws Exception {
+        when(applicationService.getAllApplicationsByUser(any(), any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
 
         mockMvc.perform(get("/applications"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$").isEmpty());
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content").isEmpty());
     }
 
     @Test
     @WithMockUser
-    void getAllApplications_ReturnsList_WhenApplicationsExist() throws Exception {
+    void getAllApplications_ReturnsPage_WhenApplicationsExist() throws Exception {
         ApplicationResponse app1 = new ApplicationResponse(
                 UUID.randomUUID(), "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
                 LocalDate.now(), Status.APPLIED, null, "https://google.com", null, null
@@ -72,14 +77,15 @@ public class ApplicationControllerTest {
                 LocalDate.now(), Status.APPLIED, null, "https://microsoft.com", null, null
         );
 
-        when(applicationService.getAllApplicationsByUser()).thenReturn(List.of(app1, app2));
+        when(applicationService.getAllApplicationsByUser(any(), any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(app1, app2)));
 
         mockMvc.perform(get("/applications"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].companyName").value("Google"))
-                .andExpect(jsonPath("$[1].companyName").value("Microsoft"));
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.content[0].companyName").value("Google"))
+                .andExpect(jsonPath("$.content[1].companyName").value("Microsoft"));
     }
 
     @Test

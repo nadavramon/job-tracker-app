@@ -4,16 +4,17 @@ import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
 import com.nadavramon.job_tracker.entity.Application;
 import com.nadavramon.job_tracker.entity.User;
+import com.nadavramon.job_tracker.enums.Status;
 import com.nadavramon.job_tracker.exception.AccessDeniedException;
 import com.nadavramon.job_tracker.exception.ResourceNotFoundException;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
 import com.nadavramon.job_tracker.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,14 +28,10 @@ public class ApplicationService {
         this.userRepository = userRepository;
     }
 
-    public List<ApplicationResponse> getAllApplicationsByUser() {
-        List<Application> applications = applicationRepository.findByUser(getCurrentUser());
-        List<ApplicationResponse> responses = new ArrayList<>();
-
-        for (Application application : applications) {
-            responses.add(toResponse(application));
-        }
-        return responses;
+    public Page<ApplicationResponse> getAllApplicationsByUser(String search, Status status, Pageable pageable) {
+        return applicationRepository
+                .findByUserWithFilters(getCurrentUser(), search, status, pageable)
+                .map(this::toResponse);
     }
 
     public ApplicationResponse getApplicationByUser(UUID id) {

@@ -2,11 +2,15 @@ package com.nadavramon.job_tracker.controller;
 
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
+import com.nadavramon.job_tracker.enums.Status;
 import com.nadavramon.job_tracker.service.ApplicationService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,8 +24,11 @@ public class ApplicationController {
     }
 
     @GetMapping
-    public List<ApplicationResponse> getAllApplications() {
-        return applicationService.getAllApplicationsByUser();
+    public Page<ApplicationResponse> getAllApplications(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Status status,
+            @PageableDefault(size = 20, sort = "appliedDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return applicationService.getAllApplicationsByUser(search, status, pageable);
     }
 
     @GetMapping("/{id}")
