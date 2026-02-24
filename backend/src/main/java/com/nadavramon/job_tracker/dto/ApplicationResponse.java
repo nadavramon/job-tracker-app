@@ -18,11 +18,10 @@ public class ApplicationResponse {
     private LocalDate statusChangedDate;
     private String websiteLink;
     private String username;
-    private String password;
 
     public ApplicationResponse(UUID id, String companyName, JobType jobType, String location, String jobRole
-            , LocalDate appliedDate, Status status, LocalDate statusChangedDate, String websiteLink, String username
-            , String password) {
+            , LocalDate appliedDate, Status status, LocalDate statusChangedDate, String websiteLink
+            , String username) {
         this.id = id;
         this.companyName = companyName;
         this.jobType = jobType;
@@ -33,7 +32,6 @@ public class ApplicationResponse {
         this.statusChangedDate = statusChangedDate;
         this.websiteLink = websiteLink;
         this.username = username;
-        this.password = password;
     }
 
     public UUID getId() {
@@ -116,11 +114,4 @@ public class ApplicationResponse {
         this.websiteLink = websiteLink;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
