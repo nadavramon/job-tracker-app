@@ -75,11 +75,11 @@ public class ApplicationControllerTest {
     void getAllApplications_ReturnsPage_WhenApplicationsExist() throws Exception {
         ApplicationResponse app1 = new ApplicationResponse(
                 UUID.randomUUID(), "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
-                LocalDate.now(), Status.APPLIED, null, "https://google.com", null, null
+                LocalDate.now(), Status.APPLIED, null, "https://google.com", null
         );
         ApplicationResponse app2 = new ApplicationResponse(
                 UUID.randomUUID(), "Microsoft", JobType.FULL_TIME, "Herzliya", "Engineer",
-                LocalDate.now(), Status.APPLIED, null, "https://microsoft.com", null, null
+                LocalDate.now(), Status.APPLIED, null, "https://microsoft.com", null
         );
 
         when(applicationService.getAllApplicationsByUser(any(), any(), any(Pageable.class)))
@@ -151,7 +151,7 @@ public class ApplicationControllerTest {
 
         ApplicationResponse response = new ApplicationResponse(
                 UUID.randomUUID(), "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
-                LocalDate.now(), Status.APPLIED, null, "https://google.com", null, null
+                LocalDate.now(), Status.APPLIED, null, "https://google.com", null
         );
 
         when(applicationService.createApplicationByUser(any(ApplicationRequest.class))).thenReturn(response);
@@ -265,7 +265,7 @@ public class ApplicationControllerTest {
         UUID appId = UUID.randomUUID();
         ApplicationResponse updated = new ApplicationResponse(
                 appId, "Google Updated", JobType.FULL_TIME, "Tel Aviv", "Senior Developer",
-                LocalDate.now(), Status.INTERVIEWING, null, "https://google.com", null, null
+                LocalDate.now(), Status.INTERVIEWING, null, "https://google.com", null
         );
         when(applicationService.updateApplicationByUser(eq(appId), any(ApplicationRequest.class)))
                 .thenReturn(updated);
@@ -313,7 +313,7 @@ public class ApplicationControllerTest {
     void getAllApplications_FiltersResults_WhenSearchParamProvided() throws Exception {
         ApplicationResponse app = new ApplicationResponse(
                 UUID.randomUUID(), "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
-                LocalDate.now(), Status.APPLIED, null, "https://google.com", null, null
+                LocalDate.now(), Status.APPLIED, null, "https://google.com", null
         );
         when(applicationService.getAllApplicationsByUser(eq("Google"), isNull(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(app)));
@@ -329,7 +329,7 @@ public class ApplicationControllerTest {
     void getAllApplications_FiltersResults_WhenStatusParamProvided() throws Exception {
         ApplicationResponse app = new ApplicationResponse(
                 UUID.randomUUID(), "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
-                LocalDate.now(), Status.APPLIED, null, "https://google.com", null, null
+                LocalDate.now(), Status.APPLIED, null, "https://google.com", null
         );
         when(applicationService.getAllApplicationsByUser(isNull(), eq(Status.APPLIED), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(app)));

@@ -2,6 +2,7 @@
 backend/target/
 backend/.idea/
 backend/*.iml
+backend/src/main/resources/application-local.properties
 
 # Frontend (Next.js)
 frontend/node_modules/

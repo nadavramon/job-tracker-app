@@ -30,10 +30,13 @@ public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
+    private final EncryptionService encryptionService;
 
-    public ApplicationService(ApplicationRepository applicationRepository, UserRepository userRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository, UserRepository userRepository,
+                              EncryptionService encryptionService) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
+        this.encryptionService = encryptionService;
     }
 
     public Page<ApplicationResponse> getAllApplicationsByUser(String search, Status status, Pageable pageable) {
@@ -62,7 +65,7 @@ public class ApplicationService {
         application.setAppliedDate(request.getAppliedDate());
         application.setWebsiteLink(request.getWebsiteLink());
         application.setUsername(request.getUsername());
-        application.setPassword(request.getPassword());
+        application.setPassword(encryptionService.encrypt(request.getPassword()));
 
         application.setUser(getCurrentUser());
         return toResponse(applicationRepository.save(application));
@@ -101,7 +104,7 @@ public class ApplicationService {
             application.setUsername(request.getUsername());
 
         if (request.getPassword() != null)
-            application.setPassword(request.getPassword());
+            application.setPassword(encryptionService.encrypt(request.getPassword()));
 
         return toResponse(applicationRepository.save(application));
     }
@@ -177,8 +180,7 @@ public class ApplicationService {
                 application.getStatus(),
                 application.getStatusChangedDate(),
                 application.getWebsiteLink(),
-                application.getUsername(),
-                application.getPassword()
+                application.getUsername()
         );
     }
 }
