@@ -3,6 +3,7 @@ package com.nadavramon.job_tracker.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,14 @@ public class JwtService {
 
     @Value("${jwt.expiration}")
     private long jwtExpiration;
+
+    @PostConstruct
+    public void validateSecretKey() {
+        if (secretKey == null || secretKey.length() < 32) {
+            throw new IllegalStateException(
+                    "JWT secret must be at least 32 characters long. Set the jwt.secret property.");
+        }
+    }
 
     public String generateToken(String username) {
         return Jwts.builder()

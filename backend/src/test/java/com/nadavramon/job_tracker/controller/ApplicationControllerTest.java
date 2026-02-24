@@ -3,10 +3,12 @@ package com.nadavramon.job_tracker.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nadavramon.job_tracker.config.JwtAuthenticationFilter;
+import com.nadavramon.job_tracker.config.RateLimitFilter;
 import com.nadavramon.job_tracker.config.SecurityConfig;
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
 import com.nadavramon.job_tracker.dto.ApplicationStatsResponse;
+import com.nadavramon.job_tracker.dto.CredentialsResponse;
 import com.nadavramon.job_tracker.dto.MonthlyCount;
 import com.nadavramon.job_tracker.enums.JobType;
 import com.nadavramon.job_tracker.enums.Status;
@@ -44,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(ApplicationController.class)
-@Import({SecurityConfig.class, JwtAuthenticationFilter.class})
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class, RateLimitFilter.class})
 public class ApplicationControllerTest {
 
     @Autowired
@@ -306,7 +308,90 @@ public class ApplicationControllerTest {
                 .andExpect(jsonPath("$.message").value("Access denied"));
     }
 
+    // ── GET /applications/{id}/credentials ───────────────────────────────────
+
+    @Test
+    @WithMockUser
+    void getApplicationCredentials_ReturnsCredentials_WhenUserOwnsApplication() throws Exception {
+        UUID appId = UUID.randomUUID();
+        CredentialsResponse credentials = new CredentialsResponse("portal_user", "secret123");
+        when(applicationService.getApplicationCredentials(appId)).thenReturn(credentials);
+
+        mockMvc.perform(get("/applications/" + appId + "/credentials"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("portal_user"))
+                .andExpect(jsonPath("$.password").value("secret123"));
+    }
+
+    @Test
+    @WithMockUser
+    void getApplicationCredentials_ReturnsNotFound_WhenIdDoesNotExist() throws Exception {
+        UUID randomId = UUID.randomUUID();
+        when(applicationService.getApplicationCredentials(randomId))
+                .thenThrow(new ResourceNotFoundException("Application not found"));
+
+        mockMvc.perform(get("/applications/" + randomId + "/credentials"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Application not found"));
+    }
+
+    @Test
+    @WithMockUser
+    void getApplicationCredentials_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
+        UUID appId = UUID.randomUUID();
+        when(applicationService.getApplicationCredentials(appId))
+                .thenThrow(new AccessDeniedException("Access denied"));
+
+        mockMvc.perform(get("/applications/" + appId + "/credentials"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Access denied"));
+    }
+
+    @Test
+    void getApplicationCredentials_Returns403_WhenNotAuthenticated() throws Exception {
+        mockMvc.perform(get("/applications/" + UUID.randomUUID() + "/credentials"))
+                .andExpect(status().isForbidden());
+    }
+
     // ── GET /applications with query params ──────────────────────────────────
+
+    @Test
+    @WithMockUser
+    void createApplication_ReturnsBadRequest_WhenWebsiteLinkIsInvalidUrl() throws Exception {
+        ApplicationRequest request = new ApplicationRequest();
+        request.setCompanyName("Google");
+        request.setJobRole("Developer");
+        request.setLocation("Tel Aviv");
+        request.setStatus(Status.APPLIED);
+        request.setJobType(JobType.FULL_TIME);
+        request.setAppliedDate(LocalDate.now());
+        request.setWebsiteLink("not-a-valid-url");
+
+        mockMvc.perform(post("/applications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    @WithMockUser
+    void createApplication_ReturnsBadRequest_WhenCompanyNameExceedsMaxLength() throws Exception {
+        ApplicationRequest request = new ApplicationRequest();
+        request.setCompanyName("A".repeat(256));
+        request.setJobRole("Developer");
+        request.setLocation("Tel Aviv");
+        request.setStatus(Status.APPLIED);
+        request.setJobType(JobType.FULL_TIME);
+        request.setAppliedDate(LocalDate.now());
+        request.setWebsiteLink("https://google.com");
+
+        mockMvc.perform(post("/applications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
+    }
 
     @Test
     @WithMockUser
