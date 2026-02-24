@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -242,5 +243,100 @@ public class ApplicationControllerTest {
     void getStats_Returns403_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(get("/applications/stats"))
                 .andExpect(status().isForbidden());
+    }
+
+    // ── PATCH /applications/{id} ─────────────────────────────────────────────
+
+    private ApplicationRequest validUpdateRequest() {
+        ApplicationRequest request = new ApplicationRequest();
+        request.setCompanyName("Google Updated");
+        request.setJobRole("Senior Developer");
+        request.setLocation("Tel Aviv");
+        request.setStatus(Status.INTERVIEWING);
+        request.setJobType(JobType.FULL_TIME);
+        request.setAppliedDate(LocalDate.now());
+        request.setWebsiteLink("https://google.com");
+        return request;
+    }
+
+    @Test
+    @WithMockUser
+    void updateApplication_ReturnsSuccess_WhenValidRequest() throws Exception {
+        UUID appId = UUID.randomUUID();
+        ApplicationResponse updated = new ApplicationResponse(
+                appId, "Google Updated", JobType.FULL_TIME, "Tel Aviv", "Senior Developer",
+                LocalDate.now(), Status.INTERVIEWING, null, "https://google.com", null, null
+        );
+        when(applicationService.updateApplicationByUser(eq(appId), any(ApplicationRequest.class)))
+                .thenReturn(updated);
+
+        mockMvc.perform(patch("/applications/" + appId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validUpdateRequest())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.companyName").value("Google Updated"))
+                .andExpect(jsonPath("$.status").value("INTERVIEWING"));
+    }
+
+    @Test
+    @WithMockUser
+    void updateApplication_ReturnsNotFound_WhenIdDoesNotExist() throws Exception {
+        UUID randomId = UUID.randomUUID();
+        when(applicationService.updateApplicationByUser(eq(randomId), any(ApplicationRequest.class)))
+                .thenThrow(new ResourceNotFoundException("Application not found"));
+
+        mockMvc.perform(patch("/applications/" + randomId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validUpdateRequest())))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Application not found"));
+    }
+
+    @Test
+    @WithMockUser
+    void updateApplication_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
+        UUID appId = UUID.randomUUID();
+        when(applicationService.updateApplicationByUser(eq(appId), any(ApplicationRequest.class)))
+                .thenThrow(new AccessDeniedException("Access denied"));
+
+        mockMvc.perform(patch("/applications/" + appId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validUpdateRequest())))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Access denied"));
+    }
+
+    // ── GET /applications with query params ──────────────────────────────────
+
+    @Test
+    @WithMockUser
+    void getAllApplications_FiltersResults_WhenSearchParamProvided() throws Exception {
+        ApplicationResponse app = new ApplicationResponse(
+                UUID.randomUUID(), "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
+                LocalDate.now(), Status.APPLIED, null, "https://google.com", null, null
+        );
+        when(applicationService.getAllApplicationsByUser(eq("Google"), isNull(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(app)));
+
+        mockMvc.perform(get("/applications").param("search", "Google"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].companyName").value("Google"));
+    }
+
+    @Test
+    @WithMockUser
+    void getAllApplications_FiltersResults_WhenStatusParamProvided() throws Exception {
+        ApplicationResponse app = new ApplicationResponse(
+                UUID.randomUUID(), "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
+                LocalDate.now(), Status.APPLIED, null, "https://google.com", null, null
+        );
+        when(applicationService.getAllApplicationsByUser(isNull(), eq(Status.APPLIED), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(app)));
+
+        mockMvc.perform(get("/applications").param("status", "APPLIED"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].status").value("APPLIED"));
     }
 }
