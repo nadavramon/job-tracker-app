@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import RegisterPage from '@/app/register/page';
 import { register } from '@/lib/authService';
 import { setToken } from '@/lib/auth';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 // Mock the modules
 jest.mock('next/navigation', () => ({
@@ -17,6 +18,15 @@ jest.mock('@/lib/auth', () => ({
   setToken: jest.fn(),
 }));
 
+Object.defineProperty(window, 'matchMedia', {
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+  })),
+});
+
 describe('RegisterPage', () => {
   const mockPush = jest.fn();
 
@@ -28,7 +38,11 @@ describe('RegisterPage', () => {
   });
 
   it('renders register form', () => {
-    render(<RegisterPage />);
+    render(
+      <ThemeProvider>
+        <RegisterPage />
+      </ThemeProvider>
+    );
 
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
@@ -38,9 +52,13 @@ describe('RegisterPage', () => {
   });
 
   it('shows loading state when submitting', async () => {
-    (register as jest.Mock).mockImplementation(() => new Promise(() => {}));
+    (register as jest.Mock).mockImplementation(() => new Promise(() => { }));
 
-    render(<RegisterPage />);
+    render(
+      <ThemeProvider>
+        <RegisterPage />
+      </ThemeProvider>
+    );
 
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'test@test.com' },
@@ -62,7 +80,11 @@ describe('RegisterPage', () => {
       username: 'testuser',
     });
 
-    render(<RegisterPage />);
+    render(
+      <ThemeProvider>
+        <RegisterPage />
+      </ThemeProvider>
+    );
 
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'test@test.com' },
@@ -89,7 +111,11 @@ describe('RegisterPage', () => {
   it('shows error message on failed registration', async () => {
     (register as jest.Mock).mockRejectedValue(new Error('Registration failed'));
 
-    render(<RegisterPage />);
+    render(
+      <ThemeProvider>
+        <RegisterPage />
+      </ThemeProvider>
+    );
 
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'test@test.com' },
@@ -106,7 +132,11 @@ describe('RegisterPage', () => {
   });
 
   it('has link to login page', () => {
-    render(<RegisterPage />);
+    render(
+      <ThemeProvider>
+        <RegisterPage />
+      </ThemeProvider>
+    );
 
     const loginLink = screen.getByRole('link', { name: /login/i });
     expect(loginLink).toHaveAttribute('href', '/login');
