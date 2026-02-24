@@ -137,4 +137,33 @@ public class UserControllerTest {
         mockMvc.perform(delete("/me"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @WithMockUser
+    void updateProfile_ReturnsConflict_WhenUsernameAlreadyTaken() throws Exception {
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setUsername("takenuser");
+
+        when(userService.updateUserProfile(any(UpdateProfileRequest.class)))
+                .thenThrow(new DuplicateResourceException("Username already taken"));
+
+        mockMvc.perform(patch("/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Username already taken"));
+    }
+
+    @Test
+    @WithMockUser
+    void updateProfile_ReturnsBadRequest_WhenUsernameTooShort() throws Exception {
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setUsername("ab");
+
+        mockMvc.perform(patch("/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
+    }
 }
