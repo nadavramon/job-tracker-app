@@ -4,18 +4,23 @@ import com.nadavramon.job_tracker.enums.JobType;
 import com.nadavramon.job_tracker.enums.Status;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
 public class ApplicationRequest {
 
     @NotBlank
+    @Size(max = 255)
     private String companyName;
 
     @NotBlank
+    @Size(max = 255)
     private String jobRole;
 
     @NotBlank
+    @Size(max = 255)
     private String location;
 
     @NotNull
@@ -28,9 +33,14 @@ public class ApplicationRequest {
     private LocalDate appliedDate;
 
     @NotBlank
+    @Pattern(regexp = "^https?://.*", message = "must be a valid http or https URL")
+    @Size(max = 2048)
     private String websiteLink;
 
+    @Size(max = 255)
     private String username;
+
+    @Size(max = 255)
     private String password;
 
     public String getCompanyName() {

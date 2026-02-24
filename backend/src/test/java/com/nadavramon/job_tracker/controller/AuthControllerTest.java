@@ -3,6 +3,7 @@ package com.nadavramon.job_tracker.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nadavramon.job_tracker.config.JwtAuthenticationFilter;
+import com.nadavramon.job_tracker.config.RateLimitFilter;
 import com.nadavramon.job_tracker.config.SecurityConfig;
 import com.nadavramon.job_tracker.dto.AuthResponse;
 import com.nadavramon.job_tracker.dto.LoginRequest;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, JwtAuthenticationFilter.class})
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class, RateLimitFilter.class})
 public class AuthControllerTest {
 
     @Autowired
@@ -95,13 +96,13 @@ public class AuthControllerTest {
         request.setPassword("password123");
 
         when(authService.register(any(RegisterRequest.class)))
-                .thenThrow(new DuplicateResourceException("Email or username already taken"));
+                .thenThrow(new DuplicateResourceException("Registration failed"));
 
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("Email or username already taken"));
+                .andExpect(jsonPath("$.message").value("Registration failed"));
     }
 
     @Test

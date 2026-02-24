@@ -3,6 +3,7 @@ package com.nadavramon.job_tracker.service;
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
 import com.nadavramon.job_tracker.dto.ApplicationStatsResponse;
+import com.nadavramon.job_tracker.dto.CredentialsResponse;
 import com.nadavramon.job_tracker.dto.MonthlyCount;
 import com.nadavramon.job_tracker.entity.Application;
 import com.nadavramon.job_tracker.entity.User;
@@ -150,6 +151,19 @@ public class ApplicationService {
         }
 
         return new ApplicationStatsResponse(total, statusBreakdown, monthly, responseRate);
+    }
+
+    public CredentialsResponse getApplicationCredentials(UUID id) {
+        Application application = applicationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+        if (!application.getUser().getId().equals(getCurrentUser().getId()))
+            throw new AccessDeniedException("Access denied");
+
+        return new CredentialsResponse(
+                application.getUsername(),
+                encryptionService.decrypt(application.getPassword())
+        );
     }
 
     public void deleteApplicationByUser(UUID id) {

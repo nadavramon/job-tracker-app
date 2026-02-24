@@ -3,6 +3,7 @@ package com.nadavramon.job_tracker.controller;
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
 import com.nadavramon.job_tracker.dto.ApplicationStatsResponse;
+import com.nadavramon.job_tracker.dto.CredentialsResponse;
 import com.nadavramon.job_tracker.enums.Status;
 import com.nadavramon.job_tracker.service.ApplicationService;
 import jakarta.validation.Valid;
@@ -40,6 +41,11 @@ public class ApplicationController {
     @GetMapping("/{id}")
     public ApplicationResponse getApplication(@PathVariable UUID id) {
         return applicationService.getApplicationByUser(id);
+    }
+
+    @GetMapping("/{id}/credentials")
+    public CredentialsResponse getApplicationCredentials(@PathVariable UUID id) {
+        return applicationService.getApplicationCredentials(id);
     }
 
     @PostMapping

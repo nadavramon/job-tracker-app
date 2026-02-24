@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidFormat(HttpMessageNotReadableException ex) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
-                "Invalid request format: " + ex.getMostSpecificCause().getMessage()
+                "Invalid request body"
         );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }

@@ -9,10 +9,10 @@ public class UpdateProfileRequest {
     @Email
     private String email;
 
-    @Size(min = 3, max = 50)
+    @Size(min = 3, max = 14)
     private String username;
 
-    @Size(min = 8)
+    @Size(min = 8, max = 14)
     private String password;
 
     private ThemePreference themePreference;
