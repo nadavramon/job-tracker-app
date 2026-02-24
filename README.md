@@ -1,43 +1,76 @@
 # Job Tracker App
 
-## Description
 A full-stack web application that helps job seekers track their job applications, manage application statuses, and never miss a follow-up opportunity.
 
 ## Tech Stack
+
 ### Frontend
-- **Framework:** Next.js (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript (strict mode)
+- **Styling:** Tailwind CSS v4
 - **HTTP Client:** Axios
+- **Charts:** Recharts
+- **Testing:** Jest 30 + React Testing Library
 
 ### Backend
-- **Framework:** Spring Boot 3 (Java 21)
+- **Framework:** Spring Boot 4 (Java 21)
 - **Database:** PostgreSQL 17
 - **Security:** Spring Security & JWT (Stateless Authentication)
 - **Testing:** JUnit 5, Mockito, JaCoCo (Code Coverage)
-- **Validation:** Hibernate Validator (JSR 380)
+- **Validation:** Jakarta Bean Validation (JSR 380)
 
 ### DevOps
 - **CI/CD:** GitHub Actions (Automated Testing & Coverage Reports)
 - **Containerization:** Docker (planned)
 
 ## Features
-- [x] **User Authentication:** Secure Registration & Login with JWT support.
-- [x] **Application Management:** CRUD API to track company details, roles, and statuses.
-- [x] **Data Security:** User data isolation (users can only access their own applications).
-- [x] **Robust Validation:** Strict input validation with standardized error handling.
-- [ ] Dashboard with summarized progress overview (Frontend in progress).
-- [ ] Automatic status transitions (Submitted → Waiting → Ghosted).
-- [ ] Secure storage for company portal credentials.
-- [ ] Reapply notifications after 6 months.
 
-## Project Status
-**Current Phase:** Phase 5 — Frontend Integration & Dashboard Implementation
+### ✅ Completed
+- **User Authentication** — Secure registration & login with JWT (supports email or username)
+- **Application Management** — Full CRUD API to track companies, roles, statuses, and dates
+- **Data Security** — User data isolation (users can only access their own applications)
+- **Robust Validation** — Strict input validation with standardized error handling
+- **Soft Delete** — Applications are soft-deleted (recoverable), filtered automatically via Hibernate
+- **CI/CD Pipelines** — Automated testing for both backend and frontend on every push/PR
 
-The Backend API is fully functional, secured, and tested.
-- ✅ **Core API:** `/auth` and `/applications` endpoints are production-ready.
-- ✅ **Quality Assurance:** 100% pass rate on unit tests with automated CI pipelines.
-- 🚧 **Frontend:** Currently building the authentication flows and main dashboard.
+### 🚧 In Progress
+- **Dashboard** — Summary stats, charts (monthly applications, status breakdown), and paginated applications table
+- **Theme System** — Light, Dark, and System-default modes with cross-device persistence
+- **Inline Editing** — Quick status updates directly from the table
+- **Responsive Design** — Mobile card layout with collapsible sidebar navigation
+- **Settings Page** — Theme preferences, profile management, account deletion
+- **Toast Notifications** — Custom notification system for all CRUD operations
+- **Network Resilience** — Offline detection banner, retry on failed requests
+
+### 📋 Planned
+- Automatic status transitions (Applied → Waiting → Ghosted)
+- Reapply notifications after 6 months
+- Docker containerization
+
+## Project Structure
+
+```
+job-tracker-app/
+├── backend/                    # Spring Boot REST API
+│   ├── src/main/java/com/nadavramon/job_tracker/
+│   │   ├── config/             # Security, JWT filter, CORS
+│   │   ├── controller/         # Auth & Application endpoints
+│   │   ├── service/            # Business logic
+│   │   ├── repository/         # JPA repositories
+│   │   ├── entity/             # User, Application (JPA entities)
+│   │   ├── dto/                # Request/Response objects
+│   │   ├── enums/              # Status, JobType
+│   │   └── exception/          # Custom exceptions & global handler
+│   └── src/test/               # Unit tests (WebMvcTest + Mockito)
+├── frontend/                   # Next.js SPA
+│   ├── app/                    # App Router pages
+│   ├── components/             # Custom UI components
+│   ├── context/                # React contexts (Theme, Toast, Auth)
+│   ├── lib/                    # API client, services, utilities
+│   ├── types/                  # TypeScript interfaces
+│   └── __tests__/              # Jest + React Testing Library
+└── .github/workflows/          # CI pipelines
+```
 
 ## Getting Started
 
@@ -59,29 +92,59 @@ cd backend
 ./mvnw spring-boot:run
 ```
 Server will start on http://localhost:8080
+
 ### 3. Run Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
 Client will start on http://localhost:3000
 
-### API Endpoints (Quick Reference)
+### Environment Variables
+
+#### Backend
+| Variable | Description | Default |
+|:---|:---|:---|
+| `DB_URL` | PostgreSQL JDBC URL | `jdbc:postgresql://localhost:5432/job_tracker` |
+| `DB_USERNAME` | Database username | — |
+| `DB_PASSWORD` | Database password | — |
+| `JWT_SECRET` | JWT signing key (min 32 chars) | — |
+| `JWT_EXPIRATION` | Token TTL in milliseconds | `86400000` (24h) |
+
+Local dev overrides: `backend/src/main/resources/application-local.properties` (gitignored)
+
+#### Frontend
+| Variable | Description | Default |
+|:---|:---|:---|
+| `NEXT_PUBLIC_API_URL` | Backend API base URL | — |
+
+Set in `frontend/.env.local` (gitignored)
+
+## API Endpoints
+
+### Auth (Public)
 | Method | Endpoint | Description |
-| :--- | :--- | :--- |
+|:---|:---|:---|
 | `POST` | `/auth/register` | Register a new user |
-| `POST` | `/auth/login` | Login and receive JWT |
-| `GET` | `/applications` | Get all applications for logged-in user |
+| `POST` | `/auth/login` | Login (email or username) and receive JWT |
+
+### Applications (Authenticated)
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/applications` | Get paginated applications for logged-in user |
+| `GET` | `/applications/{id}` | Get a single application |
 | `POST` | `/applications` | Create a new application |
-| `PATCH` | `/applications/{id}` | Update specific fields |
+| `PATCH` | `/applications/{id}` | Update specific fields (partial update) |
+| `DELETE` | `/applications/{id}` | Soft-delete an application |
+| `GET` | `/applications/stats` | Get aggregated statistics |
 
-### Author
+### User Profile (Authenticated)
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/me` | Get current user profile & preferences |
+| `PATCH` | `/me` | Update profile (username, email, password, theme) |
+| `DELETE` | `/me` | Delete user account |
+
+## Author
 Nadav Ramon
-
-### **Summary of Changes**
-1.  **Tech Stack:** Added **Axios**, **Spring Security**, **JUnit 5**, **Mockito**, **JaCoCo**, and **GitHub Actions** to reflect your professional tooling.
-2.  **Features:** Marked Authentication, App Management, and Validation as **Completed (`[x]`)**.
-3.  **Project Status:** Updated to "Phase 5" (Frontend Integration) and added a note about the stable backend API.
-4.  **Quick Reference:** Added a small table of the core API endpoints you just built, which is very helpful for developers (and you) to reference quickly.
