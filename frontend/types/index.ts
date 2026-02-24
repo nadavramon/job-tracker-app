@@ -43,3 +43,22 @@ export interface RegisterRequest {
     username: string;
     password: string;
 }
+
+// A union type matching the backend enum 
+export type ThemePreference = 'LIGHT' | 'DARK' | 'SYSTEM';
+
+// Mirrors the backend DTO from GET /me
+export interface UserProfileResponse {
+    id: string;
+    email: string;
+    username: string;
+    themePreference: ThemePreference;
+}
+
+// For PATCH /me (all fields optional since it's a partial update)
+export interface UpdateProfileRequest {
+    email?: string;
+    username?: string;
+    password?: string;
+    themePreference?: ThemePreference;
+}
