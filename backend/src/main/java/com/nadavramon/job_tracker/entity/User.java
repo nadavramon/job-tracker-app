@@ -3,11 +3,14 @@ package com.nadavramon.job_tracker.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nadavramon.job_tracker.enums.ThemePreference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
+@SQLRestriction("deleted_at IS NULL")
 public class User {
 
     @Id
@@ -60,11 +63,21 @@ public class User {
         this.password = password;
     }
 
+    private LocalDateTime deletedAt;
+
     public ThemePreference getThemePreference() {
         return themePreference;
     }
 
     public void setThemePreference(ThemePreference themePreference) {
         this.themePreference = themePreference;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }

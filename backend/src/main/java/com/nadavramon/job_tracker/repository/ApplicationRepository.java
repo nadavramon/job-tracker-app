@@ -9,6 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.Modifying;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,4 +28,9 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             @Param("status") Status status,
             Pageable pageable
     );
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Application a SET a.deletedAt = :now WHERE a.user = :user AND a.deletedAt IS NULL")
+    void softDeleteAllByUser(@Param("user") User user, @Param("now") LocalDateTime now);
 }
