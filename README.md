@@ -1,127 +1,116 @@
-# Job Tracker App
+<div align="center">
 
-A full-stack web application that helps job seekers track their job applications, manage application statuses, and never miss a follow-up opportunity.
+  <h1>💼 Job Tracker App</h1>
+
+  <p>
+    <strong>A full-stack, enterprise-grade web application to help job seekers track applications, manage statuses, and optimize their job hunt.</strong>
+  </p>
+
+  <p>
+    <a href="https://github.com/nadavramon/job-tracker-app/actions"><img src="https://img.shields.io/github/actions/workflow/status/nadavramon/job-tracker-app/build.yml?branch=main" alt="Build Status"></a>
+    <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen.svg?logo=springboot" alt="Spring Boot"></a>
+    <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-14-black?logo=next.js" alt="Next.js"></a>
+    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
+  </p>
+</div>
+
+---
+
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#key-features">Key Features</a></li>
+    <li><a href="#tech-stack">Tech Stack</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#api-reference">API Reference</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+  </ol>
+</details>
+
+## About The Project
+
+The Job Tracker App is designed to solve the chaos of modern job hunting. It provides a secure, fast, and intuitive dashboard for users to log applications, track their progress through different hiring stages, and maintain a clear history of interactions with companies. 
+
+Built with scalability and clean architecture in mind, the backend strictly adheres to RESTful principles while the frontend leverages modern React server-side rendering patterns.
+
+## Key Features
+
+* 🔐 **Secure Authentication** — JWT-based stateless authentication supporting both email and username logins.
+* 📊 **Interactive Dashboard** — Summary statistics, dynamic charts (monthly applications, status breakdowns), and a paginated table.
+* 🛡️ **Robust Data Security** — Strict user data isolation; users cannot access or modify applications belonging to others.
+* 🌗 **Modern UI/UX** — Fully responsive design with a persistent Light/Dark/System theme system and custom toast notifications.
+* 🛑 **Data Integrity** — Strict input validation (JSR 380) and soft-deletion mechanisms for easy data recovery.
 
 ## Tech Stack
 
 ### Frontend
-- **Framework:** Next.js 16 (App Router)
-- **Language:** TypeScript (strict mode)
-- **Styling:** Tailwind CSS v4
-- **HTTP Client:** Axios
-- **Charts:** Recharts
-- **Testing:** Jest 30 + React Testing Library
+* **Core:** Next.js 16 (App Router), React, TypeScript (Strict Mode)
+* **Styling & UI:** Tailwind CSS v4, Recharts
+* **State & Fetching:** Axios, React Context API
+* **Testing:** Jest 30, React Testing Library
 
 ### Backend
-- **Framework:** Spring Boot 4 (Java 21)
-- **Database:** PostgreSQL 17
-- **Security:** Spring Security & JWT (Stateless Authentication)
-- **Testing:** JUnit 5, Mockito, JaCoCo (Code Coverage)
-- **Validation:** Jakarta Bean Validation (JSR 380)
+* **Core:** Java 21, Spring Boot 4
+* **Database:** PostgreSQL 17, Hibernate/JPA
+* **Security:** Spring Security, JWT
+* **Testing:** JUnit 5, Mockito, JaCoCo
 
 ### DevOps
-- **CI/CD:** GitHub Actions (Automated Testing & Coverage Reports)
-- **Containerization:** Docker (planned)
-
-## Features
-
-### ✅ Completed
-- **User Authentication** — Secure registration & login with JWT (supports email or username)
-- **Application Management** — Full CRUD API to track companies, roles, statuses, and dates
-- **Data Security** — User data isolation (users can only access their own applications)
-- **Robust Validation** — Strict input validation with standardized error handling
-- **Soft Delete** — Applications are soft-deleted (recoverable), filtered automatically via Hibernate
-- **CI/CD Pipelines** — Automated testing for both backend and frontend on every push/PR
-
-### 🚧 In Progress
-- **Dashboard** — Summary stats, charts (monthly applications, status breakdown), and paginated applications table
-- **Theme System** — Light, Dark, and System-default modes with cross-device persistence
-- **Inline Editing** — Quick status updates directly from the table
-- **Responsive Design** — Mobile card layout with collapsible sidebar navigation
-- **Settings Page** — Theme preferences, profile management, account deletion
-- **Toast Notifications** — Custom notification system for all CRUD operations
-- **Network Resilience** — Offline detection banner, retry on failed requests
-
-### 📋 Planned
-- Automatic status transitions (Applied → Waiting → Ghosted)
-- Reapply notifications after 6 months
-- Docker containerization
-
-## Project Structure
-
-```
-job-tracker-app/
-├── backend/                    # Spring Boot REST API
-│   ├── src/main/java/com/nadavramon/job_tracker/
-│   │   ├── config/             # Security, JWT filter, CORS
-│   │   ├── controller/         # Auth & Application endpoints
-│   │   ├── service/            # Business logic
-│   │   ├── repository/         # JPA repositories
-│   │   ├── entity/             # User, Application (JPA entities)
-│   │   ├── dto/                # Request/Response objects
-│   │   ├── enums/              # Status, JobType
-│   │   └── exception/          # Custom exceptions & global handler
-│   └── src/test/               # Unit tests (WebMvcTest + Mockito)
-├── frontend/                   # Next.js SPA
-│   ├── app/                    # App Router pages
-│   ├── components/             # Custom UI components
-│   ├── context/                # React contexts (Theme, Toast, Auth)
-│   ├── lib/                    # API client, services, utilities
-│   ├── types/                  # TypeScript interfaces
-│   └── __tests__/              # Jest + React Testing Library
-└── .github/workflows/          # CI pipelines
-```
+* **CI/CD:** GitHub Actions (Automated build, test, and coverage reporting)
+* **Containerization:** Docker & Docker Compose *(Coming Soon)*
 
 ## Getting Started
 
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing.
+
 ### Prerequisites
-- Java 21
-- Node.js 20+
-- PostgreSQL 17
-- Maven (or use included `./mvnw`)
 
-### 1. Setup Database
-Ensure PostgreSQL is running and create a database named `job_tracker`.
+Ensure you have the following installed:
+* Java 21
+* Node.js 20+
+* PostgreSQL 17
 
-### 2. Run Backend
-```bash
-cd backend
-# Run tests to verify environment
-./mvnw clean verify
-# Start the server
-./mvnw spring-boot:run
-```
-Server will start on http://localhost:8080
+### Installation 
 
-### 3. Run Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-Client will start on http://localhost:3000
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/nadavramon/job-tracker-app.git
+   cd job-tracker-app
+   ```
 
-### Environment Variables
+2. **Set up the Database**
+   Ensure your local PostgreSQL instance is running and create a database:
+   ```sql
+   CREATE DATABASE job_tracker;
+   ```
 
-#### Backend
-| Variable | Description | Default |
-|:---|:---|:---|
-| `DB_URL` | PostgreSQL JDBC URL | `jdbc:postgresql://localhost:5432/job_tracker` |
-| `DB_USERNAME` | Database username | — |
-| `DB_PASSWORD` | Database password | — |
-| `JWT_SECRET` | JWT signing key (min 32 chars) | — |
-| `JWT_EXPIRATION` | Token TTL in milliseconds | `86400000` (24h) |
+3. **Configure Environment Variables**
+   * **Backend:** Create `backend/src/main/resources/application-local.properties` overriding defaults (e.g., `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`).
+   * **Frontend:** Create `frontend/.env.local` and set `NEXT_PUBLIC_API_URL=http://localhost:8080`.
 
-Local dev overrides: `backend/src/main/resources/application-local.properties` (gitignored)
+4. **Run the Backend**
+   ```bash
+   cd backend
+   ./mvnw clean verify # Run tests to ensure standard
+   ./mvnw spring-boot:run
+   ```
+   *The API will start on `http://localhost:8080`*
 
-#### Frontend
-| Variable | Description | Default |
-|:---|:---|:---|
-| `NEXT_PUBLIC_API_URL` | Backend API base URL | — |
+5. **Run the Frontend**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   *The client will start on `http://localhost:3000`*
 
-Set in `frontend/.env.local` (gitignored)
+## API Reference
 
-## API Endpoints
+<details>
+<summary>Click to expand API Endpoints</summary>
 
 ### Auth (Public)
 | Method | Endpoint | Description |
@@ -132,10 +121,10 @@ Set in `frontend/.env.local` (gitignored)
 ### Applications (Authenticated)
 | Method | Endpoint | Description |
 |:---|:---|:---|
-| `GET` | `/applications` | Get paginated applications for logged-in user |
+| `GET` | `/applications` | Get paginated applications |
 | `GET` | `/applications/{id}` | Get a single application |
 | `POST` | `/applications` | Create a new application |
-| `PATCH` | `/applications/{id}` | Update specific fields (partial update) |
+| `PATCH` | `/applications/{id}` | Update specific fields |
 | `DELETE` | `/applications/{id}` | Soft-delete an application |
 | `GET` | `/applications/stats` | Get aggregated statistics |
 
@@ -146,5 +135,32 @@ Set in `frontend/.env.local` (gitignored)
 | `PATCH` | `/me` | Update profile (username, email, password, theme) |
 | `DELETE` | `/me` | Delete user account |
 
+</details>
+
+## Roadmap
+
+- [x] Phase 1: Core REST API & Spring Security implementations
+- [x] Phase 2: Frontend Foundation, Theme System, and UI Primitives
+- [ ] Phase 3: Interactive Dashboard and Recharts integration
+- [ ] Phase 4: Automated status transitions & reminder cron jobs
+- [ ] Phase 5: Dockerization and Cloud Deployment
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
 ## Author
+
 Nadav Ramon
+
+Project Link: [https://github.com/nadavramon/job-tracker-app](https://github.com/nadavramon/job-tracker-app)
