@@ -27,6 +27,14 @@ public class SecurityConfig {
         this.rateLimitFilter = rateLimitFilter;
     }
 
+    // Provide an explicit (empty) UserDetailsService so Spring Boot does NOT
+    // auto-configure an inMemoryUserDetailsManager with generated password.
+    // Auth is handled entirely via JWT, so this service is never actually called.
+    @Bean
+    public org.springframework.security.core.userdetails.UserDetailsService userDetailsService() {
+        return new org.springframework.security.provisioning.InMemoryUserDetailsManager();
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -34,6 +42,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)

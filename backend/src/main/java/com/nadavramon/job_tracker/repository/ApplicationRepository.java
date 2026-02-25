@@ -20,14 +20,13 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     List<Application> findByUser(User user);
 
     @Query("SELECT a FROM Application a WHERE a.user = :user " +
-           "AND (:search IS NULL OR LOWER(a.companyName) LIKE LOWER(CONCAT('%', :search, '%'))) " +
-           "AND (:status IS NULL OR a.status = :status)")
+            "AND (:search IS NULL OR LOWER(a.companyName) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%'))) " +
+            "AND (:status IS NULL OR a.status = :status)")
     Page<Application> findByUserWithFilters(
             @Param("user") User user,
             @Param("search") String search,
             @Param("status") Status status,
-            Pageable pageable
-    );
+            Pageable pageable);
 
     @Modifying
     @Transactional
