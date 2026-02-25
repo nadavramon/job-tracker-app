@@ -1,6 +1,6 @@
 'use client';
 
-import { SelectHTMLAttributes } from 'react';
+import { SelectHTMLAttributes, useId } from 'react';
 
 export interface SelectOption {
     value: string;
@@ -23,7 +23,8 @@ export default function Select({
     className = '',
     ...props
 }: SelectProps) {
-    const selectId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
+    const generatedId = useId();
+    const selectId = id ?? (label ? label.toLowerCase().replace(/\s+/g, '-') : generatedId);
 
     return (
         <div className="flex flex-col gap-1">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useSyncExternalStore } from 'react';
 
@@ -24,6 +24,8 @@ function useIsMounted() {
 export default function Modal({ open, onClose, title, children, maxWidth = 'max-w-md' }: ModalProps) {
     const mounted = useIsMounted();
     const panelRef = useRef<HTMLDivElement>(null);
+    // useId() generates a stable, unique id per instance — safe when multiple modals exist.
+    const titleId = useId();
 
     // Close on Escape
     useEffect(() => {
@@ -33,7 +35,7 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
         return () => document.removeEventListener('keydown', handler);
     }, [open, onClose]);
 
-    // Focus trap: move focus into panel when it opens
+    // Focus trap: move focus into panel when it opens, restore on close
     useEffect(() => {
         if (!open) return;
         const prev = document.activeElement as HTMLElement | null;
@@ -55,7 +57,7 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
         <div
             role="dialog"
             aria-modal="true"
-            aria-labelledby={title ? 'modal-title' : undefined}
+            aria-labelledby={title ? titleId : undefined}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
         >
             {/* Backdrop */}
@@ -79,7 +81,7 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
                 {/* Header */}
                 {title && (
                     <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
-                        <h2 id="modal-title" className="text-base font-semibold">
+                        <h2 id={titleId} className="text-base font-semibold">
                             {title}
                         </h2>
                         <button

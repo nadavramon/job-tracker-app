@@ -31,7 +31,6 @@ function applyTheme(theme: Theme) {
 }
 
 
-// Theme provider logic -
 function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     // State
@@ -48,7 +47,7 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
     // setTheme function (exposed via context)
     const setTheme = useCallback((newTheme: Theme) => {
         setThemeState(newTheme);
-        localStorage.setItem('theme', newTheme);
+        if (typeof window !== 'undefined') localStorage.setItem('theme', newTheme);
         const resolved = applyTheme(newTheme);
         setResolvedTheme(resolved);
 
@@ -77,14 +76,14 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     // Backend preference fallback (runs once on mount)
     useEffect(() => {
-        const stored = localStorage.getItem('theme');
+        const stored = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
         // Only fetch from backend if no localStorage value AND user is logged in
         if (!stored && getToken()) {
             getProfile()
                 .then((profile) => {
                     const backendTheme = profile.themePreference.toLowerCase() as Theme;
                     setThemeState(backendTheme);
-                    localStorage.setItem('theme', backendTheme);
+                    if (typeof window !== 'undefined') localStorage.setItem('theme', backendTheme);
                     const resolved = applyTheme(backendTheme);
                     setResolvedTheme(resolved);
                 })

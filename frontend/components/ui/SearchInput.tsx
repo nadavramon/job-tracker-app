@@ -23,6 +23,11 @@ export default function SearchInput({
     // Keep local in sync if parent resets the value (e.g. on filter clear)
     useEffect(() => { setLocal(value); }, [value]);
 
+    // Clean up pending debounce timer on unmount to prevent setState after unmount.
+    useEffect(() => {
+        return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    }, []);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const next = e.target.value;
         setLocal(next);
