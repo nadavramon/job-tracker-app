@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getToken } from '@/lib/auth';
-import { updateProfile } from '@/lib/userService';
+import { updateProfile, getProfile } from '@/lib/userService';
 
 // Internal lowercase type (maps to backend's 'LIGHT' | 'DARK' | 'SYSTEM')
 type Theme = 'light' | 'dark' | 'system';
@@ -74,6 +74,25 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
         mediaQuery.addEventListener('change', handler);
         return () => mediaQuery.removeEventListener('change', handler);
     }, [theme]);
+
+    // Backend preference fallback (runs once on mount)
+    useEffect(() => {
+        const stored = localStorage.getItem('theme');
+        // Only fetch from backend if no localStorage value AND user is logged in
+        if (!stored && getToken()) {
+            getProfile()
+                .then((profile) => {
+                    const backendTheme = profile.themePreference.toLowerCase() as Theme;
+                    setThemeState(backendTheme);
+                    localStorage.setItem('theme', backendTheme);
+                    const resolved = applyTheme(backendTheme);
+                    setResolvedTheme(resolved);
+                })
+                .catch(() => {
+                    // Backend unavailable — stay with 'system' default
+                });
+        }
+    }, []);
 
     // Return the provider
     return (
