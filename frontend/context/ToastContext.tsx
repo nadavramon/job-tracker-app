@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import ReactDOM from 'react-dom';
 import Toast, { ToastItem, ToastType } from '@/components/ui/Toast';
 
@@ -26,10 +26,16 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
     const [toasts, setToasts] = useState<ToastItem[]>([]);
-    const [mounted, setMounted] = useState(false);
     const counterRef = useRef(0);
 
-    useEffect(() => { setMounted(true); }, []);
+    // useSyncExternalStore is the React 18+ idiomatic way to detect client-side mount
+    // without calling setState inside an effect (avoids react-hooks/set-state-in-effect).
+    // Returns false on server, true on client.
+    const mounted = useSyncExternalStore(
+        () => () => {},
+        () => true,
+        () => false,
+    );
 
     const dismiss = useCallback((id: string) => {
         setToasts(prev => prev.filter(t => t.id !== id));
