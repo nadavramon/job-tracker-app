@@ -2,8 +2,8 @@ import api from './api';
 import { Application } from '@/types';
 
 export const getApplications = async (): Promise<Application[]> => {
-  const response = await api.get<Application[]>('/applications');
-  return response.data;
+  const response = await api.get<{ content: Application[] }>('/applications');
+  return response.data.content;
 };
 
 export const getApplication = async (id: string): Promise<Application> => {

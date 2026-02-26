@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import ReactDOM from 'react-dom';
 import Toast, { ToastItem, ToastType } from '@/components/ui/Toast';
 
@@ -27,6 +27,7 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 export function ToastProvider({ children }: { children: React.ReactNode }) {
     const [toasts, setToasts] = useState<ToastItem[]>([]);
     const counterRef = useRef(0);
+    const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
     // useSyncExternalStore is the React 18+ idiomatic way to detect client-side mount
     // without calling setState inside an effect (avoids react-hooks/set-state-in-effect).
@@ -37,7 +38,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         () => false,
     );
 
+    // Clear all pending timers on unmount to prevent setState after unmount.
+    useEffect(() => {
+        const timers = timersRef.current;
+        return () => { timers.forEach(clearTimeout); };
+    }, []);
+
     const dismiss = useCallback((id: string) => {
+        timersRef.current.delete(id);
         setToasts(prev => prev.filter(t => t.id !== id));
     }, []);
 
@@ -47,7 +55,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             const next = [{ id, type, message }, ...prev];
             return next.slice(0, MAX_TOASTS);
         });
-        setTimeout(() => dismiss(id), DISMISS_MS[type]);
+        const timer = setTimeout(() => dismiss(id), DISMISS_MS[type]);
+        timersRef.current.set(id, timer);
     }, [dismiss]);
 
     const toast = useMemo(() => ({
@@ -58,7 +67,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     }), [addToast]);
 
     const toastStack = (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 flex flex-col gap-2 z-50 pointer-events-none w-full max-w-sm px-4">
+        <div
+            aria-live="polite"
+            aria-atomic="false"
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 flex flex-col gap-2 z-50 pointer-events-none w-full max-w-sm px-4"
+        >
             {toasts.map(t => (
                 <Toast key={t.id} toast={t} onDismiss={() => dismiss(t.id)} />
             ))}

@@ -1,6 +1,6 @@
 'use client';
 
-import { InputHTMLAttributes, useState } from 'react';
+import { InputHTMLAttributes, useId, useState } from 'react';
 
 type InputType = 'text' | 'email' | 'password' | 'url';
 
@@ -31,7 +31,8 @@ export default function Input({
     ...props
 }: InputProps) {
     const [showPassword, setShowPassword] = useState(false);
-    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
+    const generatedId = useId();
+    const inputId = id ?? (label ? label.toLowerCase().replace(/\s+/g, '-') : generatedId);
     const resolvedType = type === 'password' ? (showPassword ? 'text' : 'password') : type;
 
     return (

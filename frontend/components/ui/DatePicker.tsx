@@ -1,6 +1,6 @@
 'use client';
 
-import { InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, useId } from 'react';
 
 interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
     label?: string;
@@ -14,7 +14,8 @@ export default function DatePicker({
     className = '',
     ...props
 }: DatePickerProps) {
-    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
+    const generatedId = useId();
+    const inputId = id ?? (label ? label.toLowerCase().replace(/\s+/g, '-') : generatedId);
 
     return (
         <div className="flex flex-col gap-1">
