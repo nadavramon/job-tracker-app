@@ -21,10 +21,10 @@ export default function SidebarItem({ href, label, icon, collapsed }: SidebarIte
             aria-label={collapsed ? label : undefined}
             className={[
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)',
                 isActive
-                    ? 'bg-[var(--primary)] text-[var(--primary-foreground)]'
-                    : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
+                    ? 'bg-(--primary) text-(--primary-foreground)'
+                    : 'text-(--muted-foreground) hover:bg-(--muted) hover:text-foreground',
                 collapsed ? 'justify-center px-2' : '',
             ].join(' ')}
             aria-current={isActive ? 'page' : undefined}
