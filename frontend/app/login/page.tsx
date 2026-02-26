@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { login } from '@/lib/authService';
-import { setToken } from '@/lib/auth';
+import { setToken, setUsername } from '@/lib/auth';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function LoginPage() {
@@ -22,6 +22,7 @@ export default function LoginPage() {
     try {
       const response = await login({ identifier, password });
       setToken(response.token);
+      setUsername(response.username);
       router.push('/dashboard');
     } catch {
       setError('Login failed. Please check your credentials.');

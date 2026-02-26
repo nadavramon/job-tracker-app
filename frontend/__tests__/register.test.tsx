@@ -16,6 +16,7 @@ jest.mock('@/lib/authService', () => ({
 
 jest.mock('@/lib/auth', () => ({
   setToken: jest.fn(),
+  setUsername: jest.fn(),
   getToken: jest.fn().mockReturnValue(null),
 }));
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getApplications } from '@/lib/applicationService';
-import { isAuthenticated, removeToken } from '@/lib/auth';
+import { isAuthenticated, removeToken, removeUsername } from '@/lib/auth';
 import { Application } from '@/types';
 
 export default function DashboardPage() {
@@ -34,6 +34,7 @@ export default function DashboardPage() {
 
   const handleLogout = () => {
     removeToken();
+    removeUsername();
     router.push('/login');
   };
 
