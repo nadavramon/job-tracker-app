@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { register } from '@/lib/authService';
-import { setToken } from '@/lib/auth';
+import { setToken, setUsername as persistUsername } from '@/lib/auth';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function RegisterPage() {
@@ -23,6 +23,7 @@ export default function RegisterPage() {
     try {
       const response = await register({ email, username, password });
       setToken(response.token);
+      persistUsername(response.username);
       router.push('/dashboard');
     } catch {
       setError('Registration failed. Email or username may already be taken.');

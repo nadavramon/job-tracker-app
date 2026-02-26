@@ -46,10 +46,10 @@ const IconChevronRight = () => (
 
 // --- Nav items config ---
 
-const NAV_ITEMS = [
-    { href: '/dashboard', label: 'Dashboard', icon: <IconDashboard /> },
-    { href: '/applications/new', label: 'New Application', icon: <IconPlus /> },
-    { href: '/settings', label: 'Settings', icon: <IconSettings /> },
+const NAV_ITEMS: { href: string; label: string; icon: React.ComponentType }[] = [
+    { href: '/dashboard', label: 'Dashboard', icon: IconDashboard },
+    { href: '/applications/new', label: 'New Application', icon: IconPlus },
+    { href: '/settings', label: 'Settings', icon: IconSettings },
 ];
 
 // --- Sidebar ---
@@ -103,12 +103,12 @@ export default function Sidebar() {
 
             {/* Nav items */}
             <nav className="flex-1 overflow-y-auto px-2 py-3 flex flex-col gap-1">
-                {NAV_ITEMS.map(item => (
+                {NAV_ITEMS.map(({ href, label, icon: Icon }) => (
                     <SidebarItem
-                        key={item.href}
-                        href={item.href}
-                        label={item.label}
-                        icon={item.icon}
+                        key={href}
+                        href={href}
+                        label={label}
+                        icon={<Icon />}
                         collapsed={collapsed}
                     />
                 ))}

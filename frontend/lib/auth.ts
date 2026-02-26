@@ -26,6 +26,7 @@ export const isAuthenticated = (): boolean => {
 
 //Saves username to localStorage after login/register
 export const setUsername = (username: string): void => {
+    if (typeof window === 'undefined') return;
     localStorage.setItem('username', username);
 };
 
@@ -37,5 +38,6 @@ export const getUsername = (): string | null => {
 
 //Clears username on logout
 export const removeUsername = (): void => {
+    if (typeof window === 'undefined') return;
     localStorage.removeItem('username');
 };
