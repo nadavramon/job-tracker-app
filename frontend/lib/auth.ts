@@ -23,3 +23,19 @@ export const removeToken = (): void => {
 export const isAuthenticated = (): boolean => {
     return getToken() !== null;
 };
+
+//Saves username to localStorage after login/register
+export const setUsername = (username: string): void => {
+    localStorage.setItem('username', username);
+};
+
+//Retrieves the stored username (SSR-safe)
+export const getUsername = (): string | null => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('username');
+};
+
+//Clears username on logout
+export const removeUsername = (): void => {
+    localStorage.removeItem('username');
+};
