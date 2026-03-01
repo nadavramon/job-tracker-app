@@ -8,15 +8,17 @@ interface SidebarItemProps {
     label: string;
     icon: React.ReactNode;
     collapsed: boolean;
+    onClick?: () => void;
 }
 
-export default function SidebarItem({ href, label, icon, collapsed }: SidebarItemProps) {
+export default function SidebarItem({ href, label, icon, collapsed, onClick }: SidebarItemProps) {
     const pathname = usePathname();
     const isActive = pathname === href || (href !== '/' && pathname.startsWith(href + '/'));
 
     return (
         <Link
             href={href}
+            onClick={onClick}
             title={collapsed ? label : undefined}
             aria-label={collapsed ? label : undefined}
             className={[

@@ -1,12 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import MobileDrawer from '@/components/layout/MobileDrawer';
 
+const ROUTE_TITLES: Record<string, string> = {
+    '/dashboard': 'Dashboard',
+    '/applications/new': 'New Application',
+    '/settings': 'Settings',
+};
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const menuTriggerRef = useRef<Element | null>(null);
+    const pathname = usePathname();
+    const title = ROUTE_TITLES[pathname] ?? 'Job Tracker';
+
+    const openMenu = useCallback(() => {
+        menuTriggerRef.current = document.activeElement;
+        setIsMobileMenuOpen(true);
+    }, []);
+
+    const closeMenu = useCallback(() => {
+        setIsMobileMenuOpen(false);
+        (menuTriggerRef.current as HTMLElement)?.focus();
+    }, []);
 
     return (
         <div className="flex h-screen overflow-hidden bg-background">
@@ -16,15 +36,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             {/* Mobile Drawer */}
             <MobileDrawer
                 isOpen={isMobileMenuOpen}
-                onClose={() => setIsMobileMenuOpen(false)}
+                onClose={closeMenu}
             />
 
             {/* Main Content Area */}
             <div className="flex flex-1 flex-col overflow-hidden">
                 {/* Mobile Header */}
                 <Header
-                    onMenuClick={() => setIsMobileMenuOpen(true)}
-                    title="Job Tracker"
+                    onMenuClick={openMenu}
+                    title={title}
                 />
 
                 {/* Page Content */}
