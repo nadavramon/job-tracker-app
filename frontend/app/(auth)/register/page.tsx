@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { register } from '@/lib/authService';
 import { setToken, setUsername as persistUsername } from '@/lib/auth';
 import ThemeToggle from '@/components/ui/ThemeToggle';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -13,11 +15,25 @@ export default function RegisterPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
+
+  const validate = (): boolean => {
+    const next = { username: '', password: '' };
+    if (username.length < 3 || username.length > 14) {
+      next.username = 'Username must be 3–14 characters.';
+    }
+    if (password.length < 8 || password.length > 14) {
+      next.password = 'Password must be 8–14 characters.';
+    }
+    setFieldErrors(next);
+    return !next.username && !next.password;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!validate()) return;
     setLoading(true);
 
     try {
@@ -33,75 +49,57 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 relative">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--background)] relative">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
 
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6 dark:text-white">Register</h1>
+      <div className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 shadow-md">
+        <h1 className="mb-6 text-center text-2xl font-bold text-[var(--card-foreground)]">
+          Register
+        </h1>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 dark:bg-red-900/30 dark:border-red-600 dark:text-red-400 px-4 py-3 rounded mb-4">
+          <div className="mb-4 rounded-md border border-[var(--destructive)]/30 bg-[var(--destructive)]/10 px-4 py-3 text-sm text-[var(--destructive)]">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="username" className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed"
-          >
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <Input
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+          />
+          <Input
+            label="Username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
+            error={fieldErrors.username}
+            required
+          />
+          <Input
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+            error={fieldErrors.password}
+            required
+          />
+          <Button type="submit" loading={loading} size="lg" className="mt-2 w-full">
             {loading ? 'Creating account...' : 'Register'}
-          </button>
+          </Button>
         </form>
 
-        <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
+        <p className="mt-4 text-center text-sm text-[var(--muted-foreground)]">
           Already have an account?{' '}
-          <Link href="/login" className="text-blue-500 dark:text-blue-400 hover:underline">
+          <Link href="/login" className="font-medium text-[var(--primary)] hover:underline">
             Login
           </Link>
         </p>
