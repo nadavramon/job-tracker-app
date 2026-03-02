@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getApplications } from '@/lib/applicationService';
+import { getApplications, getStats } from '@/lib/applicationService';
 import { isAuthenticated, removeToken, removeUsername } from '@/lib/auth';
-import { Application } from '@/types';
+import { Application, StatsResponse } from '@/types';
+import StatsBar from '@/components/dashboard/StatsBar';
 
 export default function DashboardPage() {
   const router = useRouter();
   const [applications, setApplications] = useState<Application[]>([]);
+  const [stats, setStats] = useState<StatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -18,10 +20,11 @@ export default function DashboardPage() {
       return;
     }
 
-    const fetchApplications = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getApplications();
+        const [data, statsData] = await Promise.all([getApplications(), getStats()]);
         setApplications(data);
+        setStats(statsData);
       } catch {
         setError('Failed to load applications');
       } finally {
@@ -29,7 +32,7 @@ export default function DashboardPage() {
       }
     };
 
-    fetchApplications();
+    fetchData();
   }, [router]);
 
   const handleLogout = () => {
@@ -72,12 +75,14 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
             {error}
           </div>
         )}
+
+        {stats && <StatsBar stats={stats} />}
 
         {applications.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
