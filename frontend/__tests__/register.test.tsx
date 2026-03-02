@@ -48,7 +48,7 @@ describe('RegisterPage', () => {
 
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i, { selector: 'input' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /register/i })).toBeInTheDocument();
     expect(screen.getByText(/already have an account/i)).toBeInTheDocument();
   });
@@ -68,7 +68,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByLabelText(/username/i), {
       target: { value: 'testuser' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
     fireEvent.click(screen.getByRole('button', { name: /register/i }));
@@ -94,7 +94,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByLabelText(/username/i), {
       target: { value: 'testuser' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
     fireEvent.click(screen.getByRole('button', { name: /register/i }));
@@ -125,7 +125,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByLabelText(/username/i), {
       target: { value: 'testuser' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
     fireEvent.click(screen.getByRole('button', { name: /register/i }));

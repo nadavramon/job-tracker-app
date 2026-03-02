@@ -8,6 +8,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 // Mock the modules
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
 }));
 
 jest.mock('@/lib/authService', () => ({
@@ -47,7 +48,7 @@ describe('LoginPage', () => {
     );
 
     expect(screen.getByLabelText(/email or username/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i, { selector: 'input' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
     expect(screen.getByText(/don't have an account/i)).toBeInTheDocument();
   });
@@ -64,7 +65,7 @@ describe('LoginPage', () => {
     fireEvent.change(screen.getByLabelText(/email or username/i), {
       target: { value: 'testuser' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
@@ -87,7 +88,7 @@ describe('LoginPage', () => {
     fireEvent.change(screen.getByLabelText(/email or username/i), {
       target: { value: 'testuser' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
@@ -114,7 +115,7 @@ describe('LoginPage', () => {
     fireEvent.change(screen.getByLabelText(/email or username/i), {
       target: { value: 'wronguser' },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'wrongpassword' },
     });
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
