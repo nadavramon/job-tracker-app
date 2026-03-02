@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { login } from '@/lib/authService';
 import { setToken, setUsername } from '@/lib/auth';
+import { getErrorMessage } from '@/lib/errorMessages';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -30,8 +31,8 @@ function LoginContent() {
       setToken(response.token);
       setUsername(response.username);
       router.push('/dashboard');
-    } catch {
-      setError('Login failed. Please check your credentials.');
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

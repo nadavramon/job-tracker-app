@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { register } from '@/lib/authService';
 import { setToken, setUsername as persistUsername } from '@/lib/auth';
+import { getErrorMessage } from '@/lib/errorMessages';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -41,8 +42,8 @@ export default function RegisterPage() {
       setToken(response.token);
       persistUsername(response.username);
       router.push('/dashboard');
-    } catch {
-      setError('Registration failed. Email or username may already be taken.');
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
