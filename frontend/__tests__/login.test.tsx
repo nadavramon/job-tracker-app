@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import LoginPage from '@/app/login/page';
+import LoginPage from '@/app/(auth)/login/page';
 import { login } from '@/lib/authService';
 import { setToken } from '@/lib/auth';
 import { ThemeProvider } from '@/context/ThemeContext';

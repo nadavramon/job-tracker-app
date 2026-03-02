@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import DashboardPage from '@/app/dashboard/page';
+import DashboardPage from '@/app/(app)/dashboard/page';
 import { getApplications } from '@/lib/applicationService';
 import { isAuthenticated } from '@/lib/auth';
 import { Application } from '@/types';
