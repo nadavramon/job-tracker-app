@@ -103,8 +103,10 @@ describe('LoginPage', () => {
     });
   });
 
-  it('shows error message on failed login', async () => {
-    (login as jest.Mock).mockRejectedValue(new Error('Invalid credentials'));
+  it('shows mapped error message on failed login', async () => {
+    (login as jest.Mock).mockRejectedValue({
+      response: { data: { message: 'Invalid credentials' } },
+    });
 
     render(
       <ThemeProvider>
@@ -120,7 +122,27 @@ describe('LoginPage', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
 
-    expect(await screen.findByText(/login failed/i)).toBeInTheDocument();
+    expect(await screen.findByText(/invalid email\/username or password/i)).toBeInTheDocument();
+  });
+
+  it('shows fallback error message for unexpected failures', async () => {
+    (login as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+    render(
+      <ThemeProvider>
+        <LoginPage />
+      </ThemeProvider>
+    );
+
+    fireEvent.change(screen.getByLabelText(/email or username/i), {
+      target: { value: 'testuser' },
+    });
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
+      target: { value: 'password123' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+
+    expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
   });
 
   it('has link to register page', () => {

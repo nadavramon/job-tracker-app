@@ -110,8 +110,10 @@ describe('RegisterPage', () => {
     });
   });
 
-  it('shows error message on failed registration', async () => {
-    (register as jest.Mock).mockRejectedValue(new Error('Registration failed'));
+  it('shows mapped error message on failed registration', async () => {
+    (register as jest.Mock).mockRejectedValue({
+      response: { data: { message: 'Email or username already taken' } },
+    });
 
     render(
       <ThemeProvider>
@@ -130,7 +132,30 @@ describe('RegisterPage', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /register/i }));
 
-    expect(await screen.findByText(/registration failed/i)).toBeInTheDocument();
+    expect(await screen.findByText(/already registered/i)).toBeInTheDocument();
+  });
+
+  it('shows fallback error message for unexpected failures', async () => {
+    (register as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+    render(
+      <ThemeProvider>
+        <RegisterPage />
+      </ThemeProvider>
+    );
+
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'test@test.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/username/i), {
+      target: { value: 'testuser' },
+    });
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
+      target: { value: 'password123' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /register/i }));
+
+    expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
   });
 
   it('has link to login page', () => {
