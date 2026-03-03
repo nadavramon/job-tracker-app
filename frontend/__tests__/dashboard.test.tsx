@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import DashboardPage from '@/app/(app)/dashboard/page';
-import { getApplications } from '@/lib/applicationService';
+import { getApplications, getStats } from '@/lib/applicationService';
 import { isAuthenticated } from '@/lib/auth';
-import { Application } from '@/types';
+import { Application, StatsResponse } from '@/types';
 
 // Mock the modules
 jest.mock('next/navigation', () => ({
@@ -12,6 +12,7 @@ jest.mock('next/navigation', () => ({
 
 jest.mock('@/lib/applicationService', () => ({
   getApplications: jest.fn(),
+  getStats: jest.fn(),
 }));
 
 jest.mock('@/lib/auth', () => ({
@@ -48,6 +49,13 @@ const mockApplications: Application[] = [
   },
 ];
 
+const mockStats: StatsResponse = {
+  totalApplications: 2,
+  statusBreakdown: { APPLIED: 1, INTERVIEWING: 1 },
+  monthlyApplications: [],
+  responseRate: 0.5,
+};
+
 describe('DashboardPage', () => {
   const mockPush = jest.fn();
 
@@ -56,6 +64,7 @@ describe('DashboardPage', () => {
     (useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
     });
+    (getStats as jest.Mock).mockResolvedValue(mockStats);
   });
 
   it('redirects to login if not authenticated', async () => {

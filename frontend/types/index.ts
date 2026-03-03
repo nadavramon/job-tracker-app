@@ -62,3 +62,17 @@ export interface UpdateProfileRequest {
     password?: string;
     themePreference?: ThemePreference;
 }
+
+// Mirrors MonthlyCount DTO from GET /applications/stats
+export interface MonthlyCount {
+    month: string;
+    count: number;
+}
+
+// Mirrors ApplicationStatsResponse DTO from GET /applications/stats
+export interface StatsResponse {
+    totalApplications: number;
+    statusBreakdown: Partial<Record<Status, number>>;
+    monthlyApplications: MonthlyCount[];
+    responseRate: number;
+}
