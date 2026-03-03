@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import ApplicationsTable from '@/components/applications/ApplicationsTable';
 import { getApplications } from '@/lib/applicationService';
 import { Application, PagedResponse } from '@/types';
@@ -41,6 +41,8 @@ const makePage = (
 describe('ApplicationsTable', () => {
     beforeEach(() => jest.clearAllMocks());
 
+    // --- Loading / Error / Empty states ---
+
     it('shows loading spinner initially', () => {
         mockGetApplications.mockReturnValue(new Promise(() => {}));
         render(<ApplicationsTable />);
@@ -65,7 +67,7 @@ describe('ApplicationsTable', () => {
     it('renders application row data', async () => {
         const apps = [
             makeApp({ id: '1', companyName: 'Acme Corp', jobRole: 'Engineer', appliedDate: '2026-01-15', location: 'Remote' }),
-            makeApp({ id: '2', companyName: 'Beta Inc', jobRole: 'Designer', status: 'OFFER', appliedDate: '2026-02-01', location: 'London' }),
+            makeApp({ id: '2', companyName: 'Beta Inc',  jobRole: 'Designer', status: 'OFFER', appliedDate: '2026-02-01', location: 'London' }),
         ];
         mockGetApplications.mockResolvedValue(makePage(apps, { totalElements: 2 }));
         render(<ApplicationsTable />);
@@ -161,10 +163,139 @@ describe('ApplicationsTable', () => {
         expect(screen.getByRole('button', { name: /previous page/i })).toBeInTheDocument();
     });
 
-    it('calls getApplications with page=0, size=20, sort on mount', async () => {
+    it('calls getApplications with defaults on mount', async () => {
         mockGetApplications.mockResolvedValue(makePage([makeApp()]));
         render(<ApplicationsTable />);
         await waitFor(() => screen.getByText('Acme Corp'));
-        expect(mockGetApplications).toHaveBeenCalledWith(0, 20, 'appliedDate,desc');
+        expect(mockGetApplications).toHaveBeenCalledWith(0, 20, 'appliedDate,desc', undefined, undefined);
+    });
+
+    // --- Controls bar ---
+
+    it('renders search input, status filter, and sort toggle', async () => {
+        mockGetApplications.mockResolvedValue(makePage([makeApp()]));
+        render(<ApplicationsTable />);
+        // Controls render immediately (before load completes)
+        expect(screen.getByRole('searchbox')).toBeInTheDocument();
+        expect(screen.getByRole('combobox', { name: /filter by status/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /sort by applied date/i })).toBeInTheDocument();
+    });
+
+    it('renders rows-per-page selector in the table footer', async () => {
+        mockGetApplications.mockResolvedValue(makePage([makeApp()]));
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByText('Acme Corp'));
+        expect(screen.getByRole('combobox', { name: /rows per page/i })).toBeInTheDocument();
+    });
+
+    it('re-fetches with status param when status filter changes', async () => {
+        mockGetApplications.mockResolvedValue(makePage([makeApp()]));
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByText('Acme Corp'));
+
+        mockGetApplications.mockClear();
+        mockGetApplications.mockResolvedValue(makePage([]));
+
+        fireEvent.change(screen.getByRole('combobox', { name: /filter by status/i }), {
+            target: { value: 'OFFER' },
+        });
+
+        await waitFor(() =>
+            expect(mockGetApplications).toHaveBeenCalledWith(0, 20, 'appliedDate,desc', undefined, 'OFFER'),
+        );
+    });
+
+    it('re-fetches with asc sort after sort toggle click', async () => {
+        mockGetApplications.mockResolvedValue(makePage([makeApp()]));
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByText('Acme Corp'));
+
+        mockGetApplications.mockClear();
+        mockGetApplications.mockResolvedValue(makePage([makeApp()]));
+
+        fireEvent.click(screen.getByRole('button', { name: /sort by applied date ascending/i }));
+
+        await waitFor(() =>
+            expect(mockGetApplications).toHaveBeenCalledWith(0, 20, 'appliedDate,asc', undefined, undefined),
+        );
+    });
+
+    it('re-fetches with new page size when rows-per-page changes', async () => {
+        mockGetApplications.mockResolvedValue(makePage([makeApp()]));
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByText('Acme Corp'));
+
+        mockGetApplications.mockClear();
+        mockGetApplications.mockResolvedValue(makePage([makeApp()], { size: 10 }));
+
+        fireEvent.change(screen.getByRole('combobox', { name: /rows per page/i }), {
+            target: { value: '10' },
+        });
+
+        await waitFor(() =>
+            expect(mockGetApplications).toHaveBeenCalledWith(0, 10, 'appliedDate,desc', undefined, undefined),
+        );
+    });
+
+    it('resets to page 0 when status filter changes', async () => {
+        // Start on page 1 by simulating multi-page data
+        const apps = Array.from({ length: 20 }, (_, i) =>
+            makeApp({ id: String(i), companyName: `Company ${i}` }),
+        );
+        mockGetApplications.mockResolvedValue(
+            makePage(apps, { totalPages: 3, totalElements: 60, number: 0 }),
+        );
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByRole('button', { name: /next page/i }));
+
+        // Navigate to page 1
+        mockGetApplications.mockClear();
+        mockGetApplications.mockResolvedValue(
+            makePage(apps, { totalPages: 3, totalElements: 60, number: 1 }),
+        );
+        fireEvent.click(screen.getByRole('button', { name: /next page/i }));
+        await waitFor(() =>
+            expect(mockGetApplications).toHaveBeenCalledWith(1, 20, 'appliedDate,desc', undefined, undefined),
+        );
+
+        // Change status filter — should reset to page 0
+        mockGetApplications.mockClear();
+        mockGetApplications.mockResolvedValue(makePage([]));
+        fireEvent.change(screen.getByRole('combobox', { name: /filter by status/i }), {
+            target: { value: 'REJECTED' },
+        });
+        await waitFor(() =>
+            expect(mockGetApplications).toHaveBeenCalledWith(0, 20, 'appliedDate,desc', undefined, 'REJECTED'),
+        );
+    });
+
+    it('shows search input with correct placeholder', () => {
+        mockGetApplications.mockReturnValue(new Promise(() => {}));
+        render(<ApplicationsTable />);
+        expect(screen.getByPlaceholderText(/search companies/i)).toBeInTheDocument();
+    });
+
+    it('re-fetches with search term after debounce fires', async () => {
+        jest.useFakeTimers();
+        try {
+            mockGetApplications.mockResolvedValue(makePage([makeApp()]));
+            render(<ApplicationsTable />);
+
+            // Flush initial fetch
+            await act(async () => { jest.runAllTimers(); });
+            await act(async () => {});
+            await waitFor(() => screen.getByText('Acme Corp'));
+
+            mockGetApplications.mockClear();
+            mockGetApplications.mockResolvedValue(makePage([]));
+
+            fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Google' } });
+            act(() => { jest.advanceTimersByTime(300); });
+            await act(async () => {});
+
+            expect(mockGetApplications).toHaveBeenCalledWith(0, 20, 'appliedDate,desc', 'Google', undefined);
+        } finally {
+            jest.useRealTimers();
+        }
     });
 });
