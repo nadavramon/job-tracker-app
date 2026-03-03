@@ -5,9 +5,17 @@ export const getApplications = async (
   page = 0,
   size = 20,
   sort = 'appliedDate,desc',
+  search?: string,
+  status?: string,
 ): Promise<PagedResponse<Application>> => {
   const response = await api.get<PagedResponse<Application>>('/applications', {
-    params: { page, size, sort },
+    params: {
+      page,
+      size,
+      sort,
+      ...(search ? { search } : {}),
+      ...(status ? { status } : {}),
+    },
   });
   return response.data;
 };
