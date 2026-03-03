@@ -20,6 +20,9 @@ jest.mock('@/lib/auth', () => ({
   removeToken: jest.fn(),
 }));
 
+jest.mock('@/components/dashboard/ApplicationsChart', () => function ApplicationsChart() { return <div data-testid="applications-chart" />; });
+jest.mock('@/components/dashboard/StatusChart', () => function StatusChart() { return <div data-testid="status-chart" />; });
+
 const mockApplications: Application[] = [
   {
     id: '1',
