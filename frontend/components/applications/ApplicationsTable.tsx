@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getApplications } from '@/lib/applicationService';
 import { Application, JobType, PagedResponse, Status } from '@/types';
-import { StatusBadge } from '@/components/ui/Badge';
 import Pagination from '@/components/ui/Pagination';
 import SearchInput from '@/components/ui/SearchInput';
 import Spinner from '@/components/ui/Spinner';
+import StatusSelect from '@/components/applications/StatusSelect';
 
 type SortDir = 'asc' | 'desc';
 type PageSize = 10 | 20 | 50;
@@ -96,6 +96,18 @@ export default function ApplicationsTable() {
 
     const handlePageChange = useCallback((p: number) => {
         setPage(p);
+    }, []);
+
+    const handleRowStatusChange = useCallback((id: string, newStatus: Status) => {
+        setData(prev => {
+            if (!prev) return prev;
+            return {
+                ...prev,
+                content: prev.content.map(app =>
+                    app.id === id ? { ...app, status: newStatus } : app,
+                ),
+            };
+        });
     }, []);
 
     return (
@@ -191,7 +203,11 @@ export default function ApplicationsTable() {
                                         <td className={`${tdCls} font-medium`}>{app.companyName}</td>
                                         <td className={tdCls}>{app.jobRole}</td>
                                         <td className={tdCls}>
-                                            <StatusBadge status={app.status} />
+                                            <StatusSelect
+                                                applicationId={app.id}
+                                                status={app.status}
+                                                onStatusChange={handleRowStatusChange}
+                                            />
                                         </td>
                                         <td className={tdCls}>{app.appliedDate}</td>
                                         <td className={`${tdCls} text-[var(--muted-foreground)]`}>

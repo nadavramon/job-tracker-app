@@ -7,6 +7,16 @@ jest.mock('@/lib/applicationService', () => ({
     getApplications: jest.fn(),
 }));
 
+jest.mock('@/components/applications/StatusSelect', () => {
+    const STATUS_LABELS: Record<string, string> = {
+        APPLIED: 'Applied', SCREENING: 'Screening', INTERVIEWING: 'Interviewing',
+        OFFER: 'Offer', REJECTED: 'Rejected', WITHDRAWN: 'Withdrawn',
+    };
+    return function StatusSelect({ status }: { status: string }) {
+        return <span>{STATUS_LABELS[status] ?? status}</span>;
+    };
+});
+
 const mockGetApplications = getApplications as jest.Mock;
 
 const makeApp = (overrides: Partial<Application> = {}): Application => ({
