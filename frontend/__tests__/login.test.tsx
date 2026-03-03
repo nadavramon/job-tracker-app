@@ -49,7 +49,7 @@ describe('LoginPage', () => {
 
     expect(screen.getByLabelText(/email or username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i, { selector: 'input' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
     expect(screen.getByText(/don't have an account/i)).toBeInTheDocument();
   });
 
@@ -68,9 +68,9 @@ describe('LoginPage', () => {
     fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
-    expect(await screen.findByText(/logging in/i)).toBeInTheDocument();
+    expect(await screen.findByText(/signing in/i)).toBeInTheDocument();
   });
 
   it('redirects to dashboard on successful login', async () => {
@@ -91,7 +91,7 @@ describe('LoginPage', () => {
     fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
       expect(login).toHaveBeenCalledWith({
@@ -120,7 +120,7 @@ describe('LoginPage', () => {
     fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'wrongpassword' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     expect(await screen.findByText(/invalid email\/username or password/i)).toBeInTheDocument();
   });
@@ -140,7 +140,7 @@ describe('LoginPage', () => {
     fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
   });
@@ -152,7 +152,7 @@ describe('LoginPage', () => {
       </ThemeProvider>
     );
 
-    const registerLink = screen.getByRole('link', { name: /register/i });
+    const registerLink = screen.getByRole('link', { name: /create one/i });
     expect(registerLink).toHaveAttribute('href', '/register');
   });
 });

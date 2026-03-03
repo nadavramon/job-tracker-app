@@ -49,7 +49,7 @@ describe('RegisterPage', () => {
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i, { selector: 'input' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /register/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
     expect(screen.getByText(/already have an account/i)).toBeInTheDocument();
   });
 
@@ -71,7 +71,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /register/i }));
+    fireEvent.click(screen.getByRole('button', { name: /create account/i }));
 
     expect(await screen.findByText(/creating account/i)).toBeInTheDocument();
   });
@@ -97,7 +97,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /register/i }));
+    fireEvent.click(screen.getByRole('button', { name: /create account/i }));
 
     await waitFor(() => {
       expect(register).toHaveBeenCalledWith({
@@ -130,7 +130,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /register/i }));
+    fireEvent.click(screen.getByRole('button', { name: /create account/i }));
 
     expect(await screen.findByText(/already registered/i)).toBeInTheDocument();
   });
@@ -153,7 +153,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByLabelText(/password/i, { selector: 'input' }), {
       target: { value: 'password123' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /register/i }));
+    fireEvent.click(screen.getByRole('button', { name: /create account/i }));
 
     expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
   });
@@ -165,7 +165,7 @@ describe('RegisterPage', () => {
       </ThemeProvider>
     );
 
-    const loginLink = screen.getByRole('link', { name: /login/i });
+    const loginLink = screen.getByRole('link', { name: /sign in/i });
     expect(loginLink).toHaveAttribute('href', '/login');
   });
 });
