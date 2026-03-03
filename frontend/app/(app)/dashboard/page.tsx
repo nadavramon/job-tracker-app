@@ -6,6 +6,8 @@ import { getApplications, getStats } from '@/lib/applicationService';
 import { isAuthenticated, removeToken, removeUsername } from '@/lib/auth';
 import { Application, StatsResponse } from '@/types';
 import StatsBar from '@/components/dashboard/StatsBar';
+import ApplicationsChart from '@/components/dashboard/ApplicationsChart';
+import StatusChart from '@/components/dashboard/StatusChart';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -82,7 +84,15 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {stats && <StatsBar stats={stats} />}
+        {stats && (
+          <>
+            <StatsBar stats={stats} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ApplicationsChart data={stats.monthlyApplications} />
+              <StatusChart statusBreakdown={stats.statusBreakdown} />
+            </div>
+          </>
+        )}
 
         {applications.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
