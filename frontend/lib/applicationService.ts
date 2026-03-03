@@ -1,9 +1,15 @@
 import api from './api';
-import { Application, StatsResponse } from '@/types';
+import { Application, PagedResponse, StatsResponse } from '@/types';
 
-export const getApplications = async (): Promise<Application[]> => {
-  const response = await api.get<{ content: Application[] }>('/applications');
-  return response.data.content;
+export const getApplications = async (
+  page = 0,
+  size = 20,
+  sort = 'appliedDate,desc',
+): Promise<PagedResponse<Application>> => {
+  const response = await api.get<PagedResponse<Application>>('/applications', {
+    params: { page, size, sort },
+  });
+  return response.data;
 };
 
 export const getApplication = async (id: string): Promise<Application> => {

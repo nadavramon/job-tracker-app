@@ -63,6 +63,17 @@ export interface UpdateProfileRequest {
     themePreference?: ThemePreference;
 }
 
+// Mirrors Spring Page<T> response from paginated endpoints
+export interface PagedResponse<T> {
+    content: T[];
+    totalPages: number;
+    totalElements: number;
+    number: number;
+    size: number;
+    first: boolean;
+    last: boolean;
+}
+
 // Mirrors MonthlyCount DTO from GET /applications/stats
 export interface MonthlyCount {
     month: string;
