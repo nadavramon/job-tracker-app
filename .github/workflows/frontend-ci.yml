@@ -11,7 +11,8 @@ on:
       - 'frontend/**'
 
 jobs:
-  test:
+  frontend-test:
+    name: Frontend CI
     runs-on: ubuntu-latest
     
     defaults:

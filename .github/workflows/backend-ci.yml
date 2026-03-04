@@ -11,7 +11,8 @@ on:
       - 'backend/**'
 
 jobs:
-  test:
+  backend-test:
+    name: Backend CI
     runs-on: ubuntu-latest
 
     services:
