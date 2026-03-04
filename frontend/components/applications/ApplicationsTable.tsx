@@ -7,6 +7,7 @@ import { useToast } from '@/context/ToastContext';
 import { getErrorMessage } from '@/lib/errorMessages';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EditModal from '@/components/applications/EditModal';
+import ApplicationCard from '@/components/applications/ApplicationCard';
 import Pagination from '@/components/ui/Pagination';
 import SearchInput from '@/components/ui/SearchInput';
 import Spinner from '@/components/ui/Spinner';
@@ -229,69 +230,84 @@ export default function ApplicationsTable() {
             )}
 
             {!loading && !error && data && data.totalElements > 0 && (
-                <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-[var(--border)]">
-                            <thead className="bg-[var(--muted)]/40">
-                                <tr>
-                                    <th className={thCls}>Company</th>
-                                    <th className={thCls}>Role</th>
-                                    <th className={thCls}>Status</th>
-                                    <th className={thCls}>Applied Date</th>
-                                    <th className={thCls}>Location</th>
-                                    <th className={thCls}>Job Type</th>
-                                    <th className={thCls}>Credentials</th>
-                                    <th className={thCls}>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-[var(--border)]">
-                                {data.content.map((app) => (
-                                    <tr
-                                        key={app.id}
-                                        className="hover:bg-[var(--muted)]/30 transition-colors"
-                                    >
-                                        <td className={`${tdCls} font-medium`}>
-                                            <span className="flex items-center gap-1.5">
-                                                <StatusHint status={app.status} appliedDate={app.appliedDate} />
-                                                {app.companyName}
-                                            </span>
-                                        </td>
-                                        <td className={tdCls}>{app.jobRole}</td>
-                                        <td className={tdCls}>
-                                            <StatusSelect
-                                                applicationId={app.id}
-                                                status={app.status}
-                                                onStatusChange={handleRowStatusChange}
-                                            />
-                                        </td>
-                                        <td className={tdCls}>{app.appliedDate}</td>
-                                        <td className={`${tdCls} text-[var(--muted-foreground)]`}>
-                                            {app.location}
-                                        </td>
-                                        <td className={`${tdCls} text-[var(--muted-foreground)]`}>
-                                            {JOB_TYPE_LABELS[app.jobType]}
-                                        </td>
-                                        <td className={tdCls}>
-                                            <CredentialCell
-                                                username={app.username}
-                                                password={app.password}
-                                            />
-                                        </td>
-                                        <td className={tdCls}>
-                                            <RowActionMenu
-                                                websiteLink={app.websiteLink}
-                                                onEdit={() => setEditingApp(app)}
-                                                onDelete={() => setPendingDeleteApp(app)}
-                                            />
-                                        </td>
+                <>
+                    {/* Desktop table */}
+                    <div className="hidden md:block rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-[var(--border)]">
+                                <thead className="bg-[var(--muted)]/40">
+                                    <tr>
+                                        <th className={thCls}>Company</th>
+                                        <th className={thCls}>Role</th>
+                                        <th className={thCls}>Status</th>
+                                        <th className={thCls}>Applied Date</th>
+                                        <th className={thCls}>Location</th>
+                                        <th className={thCls}>Job Type</th>
+                                        <th className={thCls}>Credentials</th>
+                                        <th className={thCls}>Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-[var(--border)]">
+                                    {data.content.map((app) => (
+                                        <tr
+                                            key={app.id}
+                                            className="hover:bg-[var(--muted)]/30 transition-colors"
+                                        >
+                                            <td className={`${tdCls} font-medium`}>
+                                                <span className="flex items-center gap-1.5">
+                                                    <StatusHint status={app.status} appliedDate={app.appliedDate} />
+                                                    {app.companyName}
+                                                </span>
+                                            </td>
+                                            <td className={tdCls}>{app.jobRole}</td>
+                                            <td className={tdCls}>
+                                                <StatusSelect
+                                                    applicationId={app.id}
+                                                    status={app.status}
+                                                    onStatusChange={handleRowStatusChange}
+                                                />
+                                            </td>
+                                            <td className={tdCls}>{app.appliedDate}</td>
+                                            <td className={`${tdCls} text-[var(--muted-foreground)]`}>
+                                                {app.location}
+                                            </td>
+                                            <td className={`${tdCls} text-[var(--muted-foreground)]`}>
+                                                {JOB_TYPE_LABELS[app.jobType]}
+                                            </td>
+                                            <td className={tdCls}>
+                                                <CredentialCell
+                                                    username={app.username}
+                                                    password={app.password}
+                                                />
+                                            </td>
+                                            <td className={tdCls}>
+                                                <RowActionMenu
+                                                    websiteLink={app.websiteLink}
+                                                    onEdit={() => setEditingApp(app)}
+                                                    onDelete={() => setPendingDeleteApp(app)}
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    {/* Footer: page size selector + pagination */}
-                    <div className="px-4 py-3 border-t border-[var(--border)]">
+                    {/* Mobile card list */}
+                    <div className="md:hidden flex flex-col gap-3">
+                        {data.content.map((app) => (
+                            <ApplicationCard
+                                key={app.id}
+                                application={app}
+                                onEdit={() => setEditingApp(app)}
+                                onDelete={() => setPendingDeleteApp(app)}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Shared footer: page size selector + pagination */}
+                    <div className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 md:mt-0 md:rounded-none md:rounded-b-xl md:border-t-0">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
                                 <label htmlFor="page-size-select">Rows per page:</label>
@@ -323,7 +339,7 @@ export default function ApplicationsTable() {
                             )}
                         </div>
                     </div>
-                </div>
+                </>
             )}
         </div>
 
