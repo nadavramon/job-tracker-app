@@ -182,10 +182,9 @@ describe('ApplicationsTable', () => {
 
     // --- Controls bar ---
 
-    it('renders search input, status filter, and sort toggle', async () => {
-        mockGetApplications.mockResolvedValue(makePage([makeApp()]));
+    it('renders search input, status filter, and sort toggle', () => {
+        mockGetApplications.mockReturnValue(new Promise(() => {}));
         render(<ApplicationsTable />);
-        // Controls render immediately (before load completes)
         expect(screen.getByRole('searchbox')).toBeInTheDocument();
         expect(screen.getByRole('combobox', { name: /filter by status/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /sort by applied date/i })).toBeInTheDocument();
