@@ -120,4 +120,22 @@ describe('RowActionMenu', () => {
         expect(openSpy).not.toHaveBeenCalled();
         openSpy.mockRestore();
     });
+
+    it('does not call window.open for non-http URLs', () => {
+        const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+        render(<RowActionMenu {...defaultProps} websiteLink="javascript:alert(1)" />);
+        fireEvent.click(screen.getByRole('button', { name: 'Row actions' }));
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Open Website' }));
+        expect(openSpy).not.toHaveBeenCalled();
+        openSpy.mockRestore();
+    });
+
+    it('opens http:// links', () => {
+        const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+        render(<RowActionMenu {...defaultProps} websiteLink="http://example.com" />);
+        fireEvent.click(screen.getByRole('button', { name: 'Row actions' }));
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Open Website' }));
+        expect(openSpy).toHaveBeenCalledWith('http://example.com', '_blank', 'noopener,noreferrer');
+        openSpy.mockRestore();
+    });
 });

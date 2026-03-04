@@ -1,10 +1,22 @@
 import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import ApplicationsTable from '@/components/applications/ApplicationsTable';
-import { getApplications } from '@/lib/applicationService';
+import { deleteApplication, getApplications } from '@/lib/applicationService';
 import { Application, PagedResponse } from '@/types';
 
 jest.mock('@/lib/applicationService', () => ({
     getApplications: jest.fn(),
+    deleteApplication: jest.fn(),
+}));
+
+const mockToast = {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    warning: jest.fn(),
+};
+
+jest.mock('@/context/ToastContext', () => ({
+    useToast: () => ({ toast: mockToast }),
 }));
 
 jest.mock('@/components/applications/StatusSelect', () => {
@@ -18,6 +30,7 @@ jest.mock('@/components/applications/StatusSelect', () => {
 });
 
 const mockGetApplications = getApplications as jest.Mock;
+const mockDeleteApplication = deleteApplication as jest.Mock;
 
 const makeApp = (overrides: Partial<Application> = {}): Application => ({
     id: '1',
@@ -305,5 +318,77 @@ describe('ApplicationsTable', () => {
         } finally {
             jest.useRealTimers();
         }
+    });
+
+    // --- Delete confirmation ---
+
+    it('opens confirm dialog with the correct company name when Delete is clicked', async () => {
+        mockGetApplications.mockResolvedValue(makePage([makeApp({ companyName: 'Acme Corp' })]));
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByText('Acme Corp'));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Row actions' }));
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Delete' }));
+
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        expect(screen.getByText(/delete the application at Acme Corp/i)).toBeInTheDocument();
+    });
+
+    it('does not call deleteApplication when Cancel is clicked', async () => {
+        mockGetApplications.mockResolvedValue(makePage([makeApp()]));
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByText('Acme Corp'));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Row actions' }));
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Delete' }));
+        fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+
+        expect(mockDeleteApplication).not.toHaveBeenCalled();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('calls deleteApplication with the correct id on confirm', async () => {
+        mockDeleteApplication.mockResolvedValue(undefined);
+        mockGetApplications.mockResolvedValue(makePage([makeApp({ id: 'app-42' })]));
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByText('Acme Corp'));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Row actions' }));
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Delete' }));
+        fireEvent.click(screen.getByRole('button', { name: /^delete$/i }));
+
+        await waitFor(() => expect(mockDeleteApplication).toHaveBeenCalledWith('app-42'));
+    });
+
+    it('removes the row from the table after successful delete', async () => {
+        mockDeleteApplication.mockResolvedValue(undefined);
+        mockGetApplications.mockResolvedValue(makePage([
+            makeApp({ id: '1', companyName: 'Acme Corp' }),
+            makeApp({ id: '2', companyName: 'Beta Inc' }),
+        ], { totalElements: 2 }));
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByText('Acme Corp'));
+
+        fireEvent.click(screen.getAllByRole('button', { name: 'Row actions' })[0]);
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Delete' }));
+        fireEvent.click(screen.getByRole('button', { name: /^delete$/i }));
+
+        await waitFor(() => expect(screen.queryByText('Acme Corp')).not.toBeInTheDocument());
+        expect(screen.getByText('Beta Inc')).toBeInTheDocument();
+    });
+
+    it('closes the dialog and keeps the row on delete failure', async () => {
+        mockDeleteApplication.mockRejectedValue(new Error('Server error'));
+        mockGetApplications.mockResolvedValue(makePage([makeApp({ companyName: 'Acme Corp' })]));
+        render(<ApplicationsTable />);
+        await waitFor(() => screen.getByText('Acme Corp'));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Row actions' }));
+        fireEvent.click(screen.getByRole('menuitem', { name: 'Delete' }));
+        fireEvent.click(screen.getByRole('button', { name: /^delete$/i }));
+
+        await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+        expect(screen.getByText('Acme Corp')).toBeInTheDocument();
+        expect(mockToast.error).toHaveBeenCalledTimes(1);
     });
 });
