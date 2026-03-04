@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { deleteApplication, getApplications } from '@/lib/applicationService';
 import { Application, JobType, PagedResponse, Status } from '@/types';
 import { useToast } from '@/context/ToastContext';
+import { getErrorMessage } from '@/lib/errorMessages';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import Pagination from '@/components/ui/Pagination';
 import SearchInput from '@/components/ui/SearchInput';
@@ -122,8 +123,8 @@ export default function ApplicationsTable() {
             });
             toast.success('Application deleted');
             setPendingDeleteApp(null);
-        } catch {
-            toast.error('Failed to delete application');
+        } catch (error) {
+            toast.error(getErrorMessage(error));
             setPendingDeleteApp(null);
         } finally {
             setDeleting(false);

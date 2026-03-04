@@ -8,10 +8,15 @@ jest.mock('@/lib/applicationService', () => ({
     deleteApplication: jest.fn(),
 }));
 
+const mockToast = {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    warning: jest.fn(),
+};
+
 jest.mock('@/context/ToastContext', () => ({
-    useToast: () => ({
-        toast: { success: jest.fn(), error: jest.fn() },
-    }),
+    useToast: () => ({ toast: mockToast }),
 }));
 
 jest.mock('@/components/applications/StatusSelect', () => {
@@ -384,5 +389,6 @@ describe('ApplicationsTable', () => {
 
         await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
         expect(screen.getByText('Acme Corp')).toBeInTheDocument();
+        expect(mockToast.error).toHaveBeenCalledTimes(1);
     });
 });

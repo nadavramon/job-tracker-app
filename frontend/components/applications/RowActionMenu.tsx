@@ -66,6 +66,8 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
 
     const handleOpenWebsite = useCallback(() => {
         if (!websiteLink) return;
+        const isHttpUrl = websiteLink.startsWith('http://') || websiteLink.startsWith('https://');
+        if (!isHttpUrl) return;
         close();
         window.open(websiteLink, '_blank', 'noopener,noreferrer');
     }, [close, websiteLink]);
