@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { deleteApplication, getApplications } from '@/lib/applicationService';
-import { Application, JobType, PagedResponse, Status } from '@/types';
+import { JOB_TYPE_LABELS } from '@/lib/constants';
+import { Application, PagedResponse, Status } from '@/types';
 import { useToast } from '@/context/ToastContext';
 import { getErrorMessage } from '@/lib/errorMessages';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
@@ -18,13 +19,6 @@ import StatusSelect from '@/components/applications/StatusSelect';
 
 type SortDir = 'asc' | 'desc';
 type PageSize = 10 | 20 | 50;
-
-const JOB_TYPE_LABELS: Record<JobType, string> = {
-    FULL_TIME: 'Full-time',
-    PART_TIME: 'Part-time',
-    CONTRACT: 'Contract',
-    INTERNSHIP: 'Internship',
-};
 
 const STATUS_OPTIONS: { value: Status; label: string }[] = [
     { value: 'APPLIED',      label: 'Applied' },
@@ -232,7 +226,7 @@ export default function ApplicationsTable() {
             {!loading && !error && data && data.totalElements > 0 && (
                 <>
                     {/* Desktop table */}
-                    <div className="hidden md:block rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
+                    <div className="hidden md:block rounded-xl md:rounded-b-none border border-[var(--border)] bg-[var(--card)] overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-[var(--border)]">
                                 <thead className="bg-[var(--muted)]/40">

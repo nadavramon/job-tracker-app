@@ -64,13 +64,15 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
         onDelete();
     }, [close, onDelete]);
 
+    const isSafeUrl = !!websiteLink && (
+        websiteLink.startsWith('http://') || websiteLink.startsWith('https://')
+    );
+
     const handleOpenWebsite = useCallback(() => {
-        if (!websiteLink) return;
-        const isHttpUrl = websiteLink.startsWith('http://') || websiteLink.startsWith('https://');
-        if (!isHttpUrl) return;
+        if (!isSafeUrl) return;
         close();
-        window.open(websiteLink, '_blank', 'noopener,noreferrer');
-    }, [close, websiteLink]);
+        window.open(websiteLink!, '_blank', 'noopener,noreferrer');
+    }, [close, isSafeUrl, websiteLink]);
 
     return (
         <div ref={containerRef} className="relative inline-block">
@@ -103,10 +105,10 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
                     <button
                         role="menuitem"
                         onClick={handleOpenWebsite}
-                        disabled={!websiteLink}
+                        disabled={!isSafeUrl}
                         className={[
                             'w-full px-3 py-2 text-left text-sm transition-colors',
-                            websiteLink
+                            isSafeUrl
                                 ? 'text-[var(--foreground)] hover:bg-[var(--muted)]'
                                 : 'text-[var(--muted-foreground)] cursor-not-allowed',
                         ].join(' ')}

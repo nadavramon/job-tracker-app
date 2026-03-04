@@ -1,6 +1,7 @@
 'use client';
 
 import { Application } from '@/types';
+import { JOB_TYPE_LABELS } from '@/lib/constants';
 import { StatusBadge } from '@/components/ui/Badge';
 import RowActionMenu from '@/components/applications/RowActionMenu';
 import StatusHint from '@/components/applications/StatusHint';
@@ -10,13 +11,6 @@ interface Props {
     onEdit: () => void;
     onDelete: () => void;
 }
-
-const JOB_TYPE_LABELS: Record<string, string> = {
-    FULL_TIME:  'Full-time',
-    PART_TIME:  'Part-time',
-    CONTRACT:   'Contract',
-    INTERNSHIP: 'Internship',
-};
 
 export default function ApplicationCard({ application, onEdit, onDelete }: Props) {
     const { companyName, jobRole, status, appliedDate, location, jobType, websiteLink } = application;
@@ -46,7 +40,7 @@ export default function ApplicationCard({ application, onEdit, onDelete }: Props
 
             <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-[var(--muted-foreground)]">
                 {location && <span>{location}</span>}
-                {jobType && <span>{JOB_TYPE_LABELS[jobType] ?? jobType}</span>}
+                {jobType && <span>{JOB_TYPE_LABELS[jobType]}</span>}
             </div>
         </div>
     );
