@@ -120,8 +120,7 @@ describe('ApplicationsTable', () => {
         );
         render(<ApplicationsTable />);
         await waitFor(() => screen.getByText('Acme Corp'));
-        // Both credentials and actions columns show "—" when there are no credentials
-        expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(2);
+        expect(screen.getByText('—')).toBeInTheDocument();
     });
 
     it('shows empty state when no applications', async () => {

@@ -1,0 +1,126 @@
+'use client';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+interface Props {
+    websiteLink: string | null;
+    onEdit: () => void;
+    onDelete: () => void;
+}
+
+function KebabIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
+            <circle cx="12" cy="5" r="1.5" />
+            <circle cx="12" cy="12" r="1.5" />
+            <circle cx="12" cy="19" r="1.5" />
+        </svg>
+    );
+}
+
+export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) {
+    const [open, setOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const close = useCallback(() => setOpen(false), []);
+
+    const toggle = useCallback(() => setOpen(prev => !prev), []);
+
+    // Close on outside click
+    useEffect(() => {
+        if (!open) return;
+        function onMouseDown(e: MouseEvent) {
+            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+                setOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', onMouseDown);
+        return () => document.removeEventListener('mousedown', onMouseDown);
+    }, [open]);
+
+    // Close on Escape
+    useEffect(() => {
+        if (!open) return;
+        function onKeyDown(e: KeyboardEvent) {
+            if (e.key === 'Escape') setOpen(false);
+        }
+        document.addEventListener('keydown', onKeyDown);
+        return () => document.removeEventListener('keydown', onKeyDown);
+    }, [open]);
+
+    const handleEdit = useCallback(() => {
+        close();
+        onEdit();
+    }, [close, onEdit]);
+
+    const handleDelete = useCallback(() => {
+        close();
+        onDelete();
+    }, [close, onDelete]);
+
+    const handleOpenWebsite = useCallback(() => {
+        if (!websiteLink) return;
+        close();
+        window.open(websiteLink, '_blank', 'noopener,noreferrer');
+    }, [close, websiteLink]);
+
+    return (
+        <div ref={containerRef} className="relative inline-block">
+            <button
+                onClick={toggle}
+                aria-label="Row actions"
+                aria-expanded={open}
+                aria-haspopup="menu"
+                className="rounded p-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+            >
+                <KebabIcon />
+            </button>
+
+            {open && (
+                <div
+                    role="menu"
+                    className={[
+                        'absolute right-0 z-20 mt-1 w-40 rounded-md border border-[var(--border)]',
+                        'bg-[var(--card)] shadow-md',
+                    ].join(' ')}
+                >
+                    <button
+                        role="menuitem"
+                        onClick={handleEdit}
+                        className="w-full px-3 py-2 text-left text-sm text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        role="menuitem"
+                        onClick={handleOpenWebsite}
+                        disabled={!websiteLink}
+                        className={[
+                            'w-full px-3 py-2 text-left text-sm transition-colors',
+                            websiteLink
+                                ? 'text-[var(--foreground)] hover:bg-[var(--muted)]'
+                                : 'text-[var(--muted-foreground)] cursor-not-allowed',
+                        ].join(' ')}
+                    >
+                        Open Website
+                    </button>
+
+                    <button
+                        role="menuitem"
+                        onClick={handleDelete}
+                        className="w-full px-3 py-2 text-left text-sm text-red-500 hover:bg-[var(--muted)] transition-colors"
+                    >
+                        Delete
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}

@@ -7,6 +7,7 @@ import Pagination from '@/components/ui/Pagination';
 import SearchInput from '@/components/ui/SearchInput';
 import Spinner from '@/components/ui/Spinner';
 import CredentialCell from '@/components/applications/CredentialCell';
+import RowActionMenu from '@/components/applications/RowActionMenu';
 import StatusHint from '@/components/applications/StatusHint';
 import StatusSelect from '@/components/applications/StatusSelect';
 
@@ -229,7 +230,13 @@ export default function ApplicationsTable() {
                                                 password={app.password}
                                             />
                                         </td>
-                                        <td className={tdCls}>—</td>
+                                        <td className={tdCls}>
+                                            <RowActionMenu
+                                                websiteLink={app.websiteLink}
+                                                onEdit={() => {}}
+                                                onDelete={() => {}}
+                                            />
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
