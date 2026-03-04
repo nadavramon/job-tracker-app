@@ -6,6 +6,7 @@ import { Application, JobType, PagedResponse, Status } from '@/types';
 import { useToast } from '@/context/ToastContext';
 import { getErrorMessage } from '@/lib/errorMessages';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import EditModal from '@/components/applications/EditModal';
 import Pagination from '@/components/ui/Pagination';
 import SearchInput from '@/components/ui/SearchInput';
 import Spinner from '@/components/ui/Spinner';
@@ -56,6 +57,7 @@ export default function ApplicationsTable() {
     const [error, setError]             = useState('');
     const [pendingDeleteApp, setPendingDeleteApp] = useState<Application | null>(null);
     const [deleting, setDeleting]       = useState(false);
+    const [editingApp, setEditingApp]   = useState<Application | null>(null);
 
     const fetchPage = useCallback(async (
         p: number,
@@ -143,6 +145,16 @@ export default function ApplicationsTable() {
                 content: prev.content.map(app =>
                     app.id === id ? { ...app, status: newStatus } : app,
                 ),
+            };
+        });
+    }, []);
+
+    const handleEditSaved = useCallback((updated: Application) => {
+        setData(prev => {
+            if (!prev) return prev;
+            return {
+                ...prev,
+                content: prev.content.map(app => app.id === updated.id ? updated : app),
             };
         });
     }, []);
@@ -268,7 +280,7 @@ export default function ApplicationsTable() {
                                         <td className={tdCls}>
                                             <RowActionMenu
                                                 websiteLink={app.websiteLink}
-                                                onEdit={() => {}}
+                                                onEdit={() => setEditingApp(app)}
                                                 onDelete={() => setPendingDeleteApp(app)}
                                             />
                                         </td>
@@ -323,6 +335,12 @@ export default function ApplicationsTable() {
             message={`Are you sure you want to delete the application at ${pendingDeleteApp?.companyName}?`}
             confirmLabel="Delete"
             loading={deleting}
+        />
+
+        <EditModal
+            application={editingApp}
+            onClose={() => setEditingApp(null)}
+            onSaved={handleEditSaved}
         />
         </>
     );
