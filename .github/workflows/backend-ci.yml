@@ -21,7 +21,7 @@ jobs:
         env:
           POSTGRES_DB: job_tracker
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: ${{ secrets.CI_DB_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
@@ -53,8 +53,8 @@ jobs:
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/job_tracker
           SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: postgres
-          JWT_SECRET: testSecretKeyForCIThatIsAtLeast32Characters
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.CI_DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
           JWT_EXPIRATION: 86400000
 
       - name: Upload JaCoCo Coverage Report
