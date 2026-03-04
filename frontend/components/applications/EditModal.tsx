@@ -27,9 +27,9 @@ export default function EditModal({ application, onClose, onSaved }: Props) {
                 appliedDate:  values.appliedDate,
                 status:       values.status,
                 jobType:      values.jobType,
-                websiteLink:  values.websiteLink  || null,
-                username:     values.username     || null,
-                password:     values.password     || null,
+                websiteLink:  values.websiteLink === '' ? null : values.websiteLink,
+                username:     values.username    === '' ? null : values.username,
+                ...(values.password !== '' && { password: values.password }),
             });
             toast.success('Application updated');
             onSaved(updated);
@@ -48,6 +48,7 @@ export default function EditModal({ application, onClose, onSaved }: Props) {
         >
             {application && (
                 <ApplicationForm
+                    key={application.id}
                     defaultValues={application}
                     onSubmit={handleSubmit}
                     onCancel={onClose}

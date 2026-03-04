@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import EditModal from '@/components/applications/EditModal';
 import { updateApplication } from '@/lib/applicationService';
 import { Application } from '@/types';
@@ -31,7 +31,7 @@ const makeApp = (overrides: Partial<Application> = {}): Application => ({
     statusChangedDate: null,
     websiteLink: 'https://acme.com',
     username: 'myuser',
-    password: 'mypass',
+    password: 'stored-password',
     ...overrides,
 });
 
@@ -53,7 +53,7 @@ describe('EditModal', () => {
         expect(screen.getByText('Edit application')).toBeInTheDocument();
     });
 
-    it('pre-fills all fields from the application', () => {
+    it('pre-fills all fields except password from the application', () => {
         render(<EditModal application={makeApp()} onClose={noop} onSaved={noop} />);
 
         expect(screen.getByLabelText(/company name/i)).toHaveValue('Acme Corp');
@@ -64,7 +64,11 @@ describe('EditModal', () => {
         expect(screen.getByLabelText(/job type/i)).toHaveValue('FULL_TIME');
         expect(screen.getByLabelText(/website link/i)).toHaveValue('https://acme.com');
         expect(screen.getByLabelText(/portal username/i)).toHaveValue('myuser');
-        expect(screen.getByLabelText(/portal password/i, { selector: 'input' })).toHaveValue('mypass');
+    });
+
+    it('does not pre-fill the portal password field (write-only)', () => {
+        render(<EditModal application={makeApp()} onClose={noop} onSaved={noop} />);
+        expect(screen.getByLabelText(/portal password/i, { selector: 'input' })).toHaveValue('');
     });
 
     it('pre-fills empty strings for null optional fields', () => {
@@ -96,7 +100,19 @@ describe('EditModal', () => {
         expect(mockUpdateApplication).not.toHaveBeenCalled();
     });
 
-    it('calls updateApplication with correct payload on valid submit', async () => {
+    it('shows validation error for non-http website link', async () => {
+        render(<EditModal application={makeApp({ websiteLink: 'javascript:alert(1)' })} onClose={noop} onSaved={noop} />);
+
+        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+
+        await waitFor(() => {
+            expect(screen.getByText('Website link must start with http:// or https://')).toBeInTheDocument();
+        });
+
+        expect(mockUpdateApplication).not.toHaveBeenCalled();
+    });
+
+    it('calls updateApplication with correct payload on valid submit (no password change)', async () => {
         const app = makeApp();
         const updated = { ...app, jobRole: 'Senior Engineer' };
         mockUpdateApplication.mockResolvedValueOnce(updated);
@@ -104,9 +120,7 @@ describe('EditModal', () => {
         const onSaved = jest.fn();
         render(<EditModal application={app} onClose={noop} onSaved={onSaved} />);
 
-        const jobRoleInput = screen.getByLabelText(/job role/i);
-        fireEvent.change(jobRoleInput, { target: { value: 'Senior Engineer' } });
-
+        fireEvent.change(screen.getByLabelText(/job role/i), { target: { value: 'Senior Engineer' } });
         fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
         await waitFor(() => {
@@ -119,8 +133,49 @@ describe('EditModal', () => {
                 jobType: 'FULL_TIME',
                 websiteLink: 'https://acme.com',
                 username: 'myuser',
-                password: 'mypass',
             }));
+            // password not included when field is blank
+            expect(mockUpdateApplication).toHaveBeenCalledWith('app-1',
+                expect.not.objectContaining({ password: expect.anything() })
+            );
+        });
+    });
+
+    it('includes password in payload only when the user types a new one', async () => {
+        const app = makeApp();
+        mockUpdateApplication.mockResolvedValueOnce(app);
+
+        render(<EditModal application={app} onClose={noop} onSaved={noop} />);
+
+        fireEvent.change(
+            screen.getByLabelText(/portal password/i, { selector: 'input' }),
+            { target: { value: 'new-password' } }
+        );
+        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+
+        await waitFor(() => {
+            expect(mockUpdateApplication).toHaveBeenCalledWith('app-1',
+                expect.objectContaining({ password: 'new-password' })
+            );
+        });
+    });
+
+    it('converts empty optional strings to null in API payload', async () => {
+        const app = makeApp({ websiteLink: null, username: null, password: null });
+        mockUpdateApplication.mockResolvedValueOnce(app);
+
+        render(<EditModal application={app} onClose={noop} onSaved={noop} />);
+
+        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+
+        await waitFor(() => {
+            expect(mockUpdateApplication).toHaveBeenCalledWith('app-1', expect.objectContaining({
+                websiteLink: null,
+                username: null,
+            }));
+            expect(mockUpdateApplication).toHaveBeenCalledWith('app-1',
+                expect.not.objectContaining({ password: expect.anything() })
+            );
         });
     });
 
@@ -156,23 +211,6 @@ describe('EditModal', () => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
 
-    it('converts empty optional strings to null in API payload', async () => {
-        const app = makeApp({ websiteLink: null, username: null, password: null });
-        mockUpdateApplication.mockResolvedValueOnce(app);
-
-        render(<EditModal application={app} onClose={noop} onSaved={noop} />);
-
-        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
-
-        await waitFor(() => {
-            expect(mockUpdateApplication).toHaveBeenCalledWith('app-1', expect.objectContaining({
-                websiteLink: null,
-                username: null,
-                password: null,
-            }));
-        });
-    });
-
     it('calls onClose when Cancel button is clicked', () => {
         const onClose = jest.fn();
         render(<EditModal application={makeApp()} onClose={onClose} onSaved={noop} />);
@@ -180,5 +218,20 @@ describe('EditModal', () => {
         fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
 
         expect(onClose).toHaveBeenCalled();
+    });
+
+    it('re-opens with correct pre-filled data when a different application is selected', () => {
+        const appA = makeApp({ id: 'app-1', companyName: 'Acme Corp' });
+        const appB = makeApp({ id: 'app-2', companyName: 'Beta Inc', jobRole: 'Product Manager' });
+
+        const { rerender } = render(<EditModal application={appA} onClose={noop} onSaved={noop} />);
+        expect(screen.getByLabelText(/company name/i)).toHaveValue('Acme Corp');
+
+        act(() => {
+            rerender(<EditModal application={appB} onClose={noop} onSaved={noop} />);
+        });
+
+        expect(screen.getByLabelText(/company name/i)).toHaveValue('Beta Inc');
+        expect(screen.getByLabelText(/job role/i)).toHaveValue('Product Manager');
     });
 });

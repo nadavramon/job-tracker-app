@@ -52,7 +52,7 @@ function initialValues(app?: Application): ApplicationFormValues {
         jobType:      app?.jobType      ?? 'FULL_TIME',
         websiteLink:  app?.websiteLink  ?? '',
         username:     app?.username     ?? '',
-        password:     app?.password     ?? '',
+        password:     '',
     };
 }
 
@@ -64,6 +64,9 @@ function validate(values: ApplicationFormValues): Errors {
     if (!values.jobRole.trim())     errors.jobRole     = 'Job role is required';
     if (!values.location.trim())    errors.location    = 'Location is required';
     if (!values.appliedDate)        errors.appliedDate = 'Applied date is required';
+    if (values.websiteLink && !values.websiteLink.startsWith('http://') && !values.websiteLink.startsWith('https://')) {
+        errors.websiteLink = 'Website link must start with http:// or https://';
+    }
     return errors;
 }
 
@@ -139,6 +142,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                     type="url"
                     value={values.websiteLink}
                     onChange={e => set('websiteLink', e.target.value)}
+                    error={errors.websiteLink}
                     placeholder="https://..."
                 />
                 <Input
@@ -154,7 +158,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                 type="password"
                 value={values.password}
                 onChange={e => set('password', e.target.value)}
-                placeholder="Optional"
+                placeholder="Leave blank to keep existing"
             />
 
             <div className="flex justify-end gap-3 pt-2">
