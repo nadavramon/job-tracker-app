@@ -19,6 +19,12 @@ jest.mock('@/context/ToastContext', () => ({
     useToast: () => ({ toast: mockToast }),
 }));
 
+jest.mock('@/components/applications/ApplicationCard', () => {
+    return function ApplicationCard({ application }: { application: { id: string } }) {
+        return <div data-testid={`card-${application.id}`} />;
+    };
+});
+
 jest.mock('@/components/applications/StatusSelect', () => {
     const STATUS_LABELS: Record<string, string> = {
         APPLIED: 'Applied', SCREENING: 'Screening', INTERVIEWING: 'Interviewing',
