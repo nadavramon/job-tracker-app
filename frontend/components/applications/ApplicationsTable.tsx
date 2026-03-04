@@ -1,8 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { getApplications } from '@/lib/applicationService';
+import { deleteApplication, getApplications } from '@/lib/applicationService';
 import { Application, JobType, PagedResponse, Status } from '@/types';
+import { useToast } from '@/context/ToastContext';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import Pagination from '@/components/ui/Pagination';
 import SearchInput from '@/components/ui/SearchInput';
 import Spinner from '@/components/ui/Spinner';
@@ -41,6 +43,8 @@ const thCls =
 const tdCls = 'px-4 py-3 text-sm text-[var(--foreground)] whitespace-nowrap';
 
 export default function ApplicationsTable() {
+    const { toast } = useToast();
+
     const [page, setPage]               = useState(0);
     const [pageSize, setPageSize]       = useState<PageSize>(20);
     const [sortDir, setSortDir]         = useState<SortDir>('desc');
@@ -49,6 +53,8 @@ export default function ApplicationsTable() {
     const [data, setData]               = useState<PagedResponse<Application> | null>(null);
     const [loading, setLoading]         = useState(true);
     const [error, setError]             = useState('');
+    const [pendingDeleteApp, setPendingDeleteApp] = useState<Application | null>(null);
+    const [deleting, setDeleting]       = useState(false);
 
     const fetchPage = useCallback(async (
         p: number,
@@ -101,6 +107,33 @@ export default function ApplicationsTable() {
         setPage(p);
     }, []);
 
+    const handleDeleteConfirm = useCallback(async () => {
+        if (!pendingDeleteApp) return;
+        setDeleting(true);
+        try {
+            await deleteApplication(pendingDeleteApp.id);
+            setData(prev => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    content: prev.content.filter(a => a.id !== pendingDeleteApp.id),
+                    totalElements: prev.totalElements - 1,
+                };
+            });
+            toast.success('Application deleted');
+            setPendingDeleteApp(null);
+        } catch {
+            toast.error('Failed to delete application');
+            setPendingDeleteApp(null);
+        } finally {
+            setDeleting(false);
+        }
+    }, [pendingDeleteApp, toast]);
+
+    const handleDeleteCancel = useCallback(() => {
+        setPendingDeleteApp(null);
+    }, []);
+
     const handleRowStatusChange = useCallback((id: string, newStatus: Status) => {
         setData(prev => {
             if (!prev) return prev;
@@ -114,6 +147,7 @@ export default function ApplicationsTable() {
     }, []);
 
     return (
+        <>
         <div className="space-y-4">
             {/* Controls bar */}
             <div className="flex flex-wrap items-center gap-3">
@@ -234,7 +268,7 @@ export default function ApplicationsTable() {
                                             <RowActionMenu
                                                 websiteLink={app.websiteLink}
                                                 onEdit={() => {}}
-                                                onDelete={() => {}}
+                                                onDelete={() => setPendingDeleteApp(app)}
                                             />
                                         </td>
                                     </tr>
@@ -279,5 +313,16 @@ export default function ApplicationsTable() {
                 </div>
             )}
         </div>
+
+        <ConfirmDialog
+            open={pendingDeleteApp !== null}
+            onClose={handleDeleteCancel}
+            onConfirm={handleDeleteConfirm}
+            title="Delete application"
+            message={`Are you sure you want to delete the application at ${pendingDeleteApp?.companyName}?`}
+            confirmLabel="Delete"
+            loading={deleting}
+        />
+        </>
     );
 }
