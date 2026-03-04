@@ -6,6 +6,7 @@ import { Application, JobType, PagedResponse, Status } from '@/types';
 import Pagination from '@/components/ui/Pagination';
 import SearchInput from '@/components/ui/SearchInput';
 import Spinner from '@/components/ui/Spinner';
+import CredentialCell from '@/components/applications/CredentialCell';
 import StatusSelect from '@/components/applications/StatusSelect';
 
 type SortDir = 'asc' | 'desc';
@@ -216,8 +217,11 @@ export default function ApplicationsTable() {
                                         <td className={`${tdCls} text-[var(--muted-foreground)]`}>
                                             {JOB_TYPE_LABELS[app.jobType]}
                                         </td>
-                                        <td className={`${tdCls} font-mono text-[var(--muted-foreground)]`}>
-                                            {app.username || app.password ? '••••••••' : '—'}
+                                        <td className={tdCls}>
+                                            <CredentialCell
+                                                username={app.username}
+                                                password={app.password}
+                                            />
                                         </td>
                                         <td className={tdCls}>—</td>
                                     </tr>

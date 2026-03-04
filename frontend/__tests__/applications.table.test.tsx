@@ -111,7 +111,7 @@ describe('ApplicationsTable', () => {
             makePage([makeApp({ username: 'user123', password: 'secret' })]),
         );
         render(<ApplicationsTable />);
-        await waitFor(() => expect(screen.getByText('••••••••')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getAllByText('••••••••').length).toBeGreaterThanOrEqual(1));
     });
 
     it('shows dash in credentials column when no credentials', async () => {
