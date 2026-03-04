@@ -7,6 +7,7 @@ import Pagination from '@/components/ui/Pagination';
 import SearchInput from '@/components/ui/SearchInput';
 import Spinner from '@/components/ui/Spinner';
 import CredentialCell from '@/components/applications/CredentialCell';
+import StatusHint from '@/components/applications/StatusHint';
 import StatusSelect from '@/components/applications/StatusSelect';
 
 type SortDir = 'asc' | 'desc';
@@ -201,7 +202,12 @@ export default function ApplicationsTable() {
                                         key={app.id}
                                         className="hover:bg-[var(--muted)]/30 transition-colors"
                                     >
-                                        <td className={`${tdCls} font-medium`}>{app.companyName}</td>
+                                        <td className={`${tdCls} font-medium`}>
+                                            <span className="flex items-center gap-1.5">
+                                                <StatusHint status={app.status} appliedDate={app.appliedDate} />
+                                                {app.companyName}
+                                            </span>
+                                        </td>
                                         <td className={tdCls}>{app.jobRole}</td>
                                         <td className={tdCls}>
                                             <StatusSelect
