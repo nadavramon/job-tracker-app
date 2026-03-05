@@ -167,7 +167,7 @@ describe('ProfileSection', () => {
         fireEvent.change(screen.getByLabelText(/confirm new password/i, { selector: 'input' }), { target: { value: 'newpass12' } });
         fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
         await waitFor(() => {
-            expect(mockUpdateProfile).toHaveBeenCalledWith({ password: 'newpass12' });
+            expect(mockUpdateProfile).toHaveBeenCalledWith({ currentPassword: 'oldpass1', password: 'newpass12' });
             expect(mockToast.success).toHaveBeenCalledWith('Profile updated');
         });
     });
@@ -195,7 +195,7 @@ describe('ProfileSection', () => {
         });
     });
 
-    it('does not send currentPassword to the API', async () => {
+    it('sends currentPassword in the API payload when changing password', async () => {
         mockUpdateProfile.mockResolvedValueOnce(fakeProfile);
         await renderAndWait();
         fireEvent.click(screen.getByRole('button', { name: /change password/i }));
@@ -204,9 +204,10 @@ describe('ProfileSection', () => {
         fireEvent.change(screen.getByLabelText(/confirm new password/i, { selector: 'input' }), { target: { value: 'newpass12' } });
         fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
         await waitFor(() => {
-            expect(mockUpdateProfile).toHaveBeenCalledWith(
-                expect.not.objectContaining({ currentPassword: expect.anything() })
-            );
+            expect(mockUpdateProfile).toHaveBeenCalledWith(expect.objectContaining({
+                currentPassword: 'oldpass1',
+                password: 'newpass12',
+            }));
         });
     });
 });

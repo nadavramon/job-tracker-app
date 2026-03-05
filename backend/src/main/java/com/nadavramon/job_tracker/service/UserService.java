@@ -4,6 +4,7 @@ import com.nadavramon.job_tracker.dto.UpdateProfileRequest;
 import com.nadavramon.job_tracker.dto.UserProfileResponse;
 import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.exception.DuplicateResourceException;
+import com.nadavramon.job_tracker.exception.InvalidCredentialsException;
 import com.nadavramon.job_tracker.exception.ResourceNotFoundException;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
 import com.nadavramon.job_tracker.repository.UserRepository;
@@ -48,6 +49,10 @@ public class UserService {
         }
 
         if (request.getPassword() != null) {
+            if (request.getCurrentPassword() == null ||
+                    !passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                throw new InvalidCredentialsException("Current password is incorrect");
+            }
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 

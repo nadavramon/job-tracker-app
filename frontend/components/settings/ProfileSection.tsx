@@ -83,6 +83,30 @@ export default function ProfileSection() {
         setErrors({});
     }, []);
 
+    const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(e.target.value);
+        setErrors(prev => ({ ...prev, username: undefined }));
+    }, []);
+
+    const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value);
+    }, []);
+
+    const handleCurrentPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setCurrentPassword(e.target.value);
+        setErrors(prev => ({ ...prev, currentPassword: undefined }));
+    }, []);
+
+    const handleNewPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewPassword(e.target.value);
+        setErrors(prev => ({ ...prev, newPassword: undefined }));
+    }, []);
+
+    const handleConfirmPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value);
+        setErrors(prev => ({ ...prev, confirmPassword: undefined }));
+    }, []);
+
     const handleSave = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
         const errs = validate(username, showPasswordFields, currentPassword, newPassword, confirmPassword);
@@ -95,7 +119,10 @@ export default function ProfileSection() {
         const payload: UpdateProfileRequest = {};
         if (username !== profile?.username) payload.username = username;
         if (email !== profile?.email) payload.email = email;
-        if (showPasswordFields && newPassword) payload.password = newPassword;
+        if (showPasswordFields && newPassword) {
+            payload.currentPassword = currentPassword;
+            payload.password = newPassword;
+        }
 
         if (Object.keys(payload).length === 0) {
             toast.info('No changes to save');
@@ -106,6 +133,8 @@ export default function ProfileSection() {
         try {
             const updated = await updateProfile(payload);
             setProfile(updated);
+            setUsername(updated.username);
+            setEmail(updated.email);
             toast.success('Profile updated');
             if (showPasswordFields) {
                 setShowPasswordFields(false);
@@ -151,10 +180,7 @@ export default function ProfileSection() {
                 <Input
                     label="Username"
                     value={username}
-                    onChange={e => {
-                        setUsername(e.target.value);
-                        setErrors(prev => ({ ...prev, username: undefined }));
-                    }}
+                    onChange={handleUsernameChange}
                     error={errors.username}
                     placeholder="3–14 characters"
                 />
@@ -162,7 +188,7 @@ export default function ProfileSection() {
                     label="Email"
                     type="email"
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                     placeholder="you@example.com"
                 />
 
@@ -190,10 +216,7 @@ export default function ProfileSection() {
                             label="Current password"
                             type="password"
                             value={currentPassword}
-                            onChange={e => {
-                                setCurrentPassword(e.target.value);
-                                setErrors(prev => ({ ...prev, currentPassword: undefined }));
-                            }}
+                            onChange={handleCurrentPasswordChange}
                             error={errors.currentPassword}
                             placeholder="Your current password"
                         />
@@ -201,10 +224,7 @@ export default function ProfileSection() {
                             label="New password"
                             type="password"
                             value={newPassword}
-                            onChange={e => {
-                                setNewPassword(e.target.value);
-                                setErrors(prev => ({ ...prev, newPassword: undefined }));
-                            }}
+                            onChange={handleNewPasswordChange}
                             error={errors.newPassword}
                             placeholder="8–14 characters"
                         />
@@ -212,10 +232,7 @@ export default function ProfileSection() {
                             label="Confirm new password"
                             type="password"
                             value={confirmPassword}
-                            onChange={e => {
-                                setConfirmPassword(e.target.value);
-                                setErrors(prev => ({ ...prev, confirmPassword: undefined }));
-                            }}
+                            onChange={handleConfirmPasswordChange}
                             error={errors.confirmPassword}
                             placeholder="Repeat new password"
                         />

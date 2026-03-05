@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import com.nadavramon.job_tracker.exception.InvalidCredentialsException;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -152,6 +154,23 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Username already taken"));
+    }
+
+    @Test
+    @WithMockUser
+    void updateProfile_ReturnsUnauthorized_WhenCurrentPasswordIsIncorrect() throws Exception {
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setCurrentPassword("wrongpassword");
+        request.setPassword("newpass123");
+
+        when(userService.updateUserProfile(any(UpdateProfileRequest.class)))
+                .thenThrow(new InvalidCredentialsException("Current password is incorrect"));
+
+        mockMvc.perform(patch("/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("Current password is incorrect"));
     }
 
     @Test
