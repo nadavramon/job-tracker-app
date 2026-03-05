@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { isAuthenticated } from '@/lib/auth';
 import { createApplication } from '@/lib/applicationService';
 import { useToast } from '@/context/ToastContext';
+import { getErrorMessage } from '@/lib/errorMessages';
 import ApplicationForm, { ApplicationFormValues } from '@/components/applications/ApplicationForm';
 
 export default function NewApplicationPage() {
@@ -33,8 +34,8 @@ export default function NewApplicationPage() {
             });
             toast.success('Application created');
             router.push('/dashboard');
-        } catch {
-            toast.error('Failed to create application');
+        } catch (error) {
+            toast.error(getErrorMessage(error));
         }
     }, [router, toast]);
 

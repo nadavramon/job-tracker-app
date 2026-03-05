@@ -1,6 +1,7 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import NewApplicationPage from '@/app/(app)/applications/new/page';
 import { createApplication } from '@/lib/applicationService';
+import { isAuthenticated } from '@/lib/auth';
 
 jest.mock('@/lib/applicationService', () => ({
     createApplication: jest.fn(),
@@ -22,16 +23,24 @@ jest.mock('@/context/ToastContext', () => ({
 }));
 
 jest.mock('@/lib/auth', () => ({
-    isAuthenticated: () => true,
+    isAuthenticated: jest.fn(() => true),
 }));
 
+const mockIsAuthenticated = isAuthenticated as jest.Mock;
 const mockCreateApplication = createApplication as jest.Mock;
 
 beforeEach(() => {
     jest.clearAllMocks();
+    mockIsAuthenticated.mockReturnValue(true);
 });
 
 describe('NewApplicationPage', () => {
+    it('redirects to /login when not authenticated', () => {
+        mockIsAuthenticated.mockReturnValueOnce(false);
+        render(<NewApplicationPage />);
+        expect(mockPush).toHaveBeenCalledWith('/login');
+    });
+
     it('renders the page heading and main form fields', () => {
         render(<NewApplicationPage />);
 
@@ -45,9 +54,10 @@ describe('NewApplicationPage', () => {
         expect(screen.getByLabelText(/website link/i)).toBeInTheDocument();
     });
 
-    it('defaults applied date to today', () => {
+    it('defaults applied date to today (local time)', () => {
         render(<NewApplicationPage />);
-        const today = new Date().toISOString().split('T')[0];
+        const d = new Date();
+        const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         expect(screen.getByLabelText(/applied date/i)).toHaveValue(today);
     });
 
@@ -113,7 +123,6 @@ describe('NewApplicationPage', () => {
         fireEvent.change(screen.getByLabelText(/company name/i), { target: { value: 'Acme' } });
         fireEvent.change(screen.getByLabelText(/job role/i), { target: { value: 'Dev' } });
         fireEvent.change(screen.getByLabelText(/location/i), { target: { value: 'NYC' } });
-        // website link left blank
 
         fireEvent.click(screen.getByRole('button', { name: /create application/i }));
 
@@ -138,10 +147,9 @@ describe('NewApplicationPage', () => {
         fireEvent.click(screen.getByRole('button', { name: /create application/i }));
 
         await waitFor(() => {
-            expect(mockToast.error).toHaveBeenCalledWith('Failed to create application');
+            expect(mockToast.error).toHaveBeenCalled();
+            expect(mockPush).not.toHaveBeenCalled();
         });
-
-        expect(mockPush).not.toHaveBeenCalled();
     });
 
     it('shows validation errors when required fields are empty', async () => {
