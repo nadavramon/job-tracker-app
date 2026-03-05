@@ -15,6 +15,8 @@ public class UpdateProfileRequest {
     @Size(min = 8, max = 14)
     private String password;
 
+    private String currentPassword;
+
     private ThemePreference themePreference;
 
     public String getEmail() {
@@ -39,6 +41,14 @@ public class UpdateProfileRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
     }
 
     public ThemePreference getThemePreference() {

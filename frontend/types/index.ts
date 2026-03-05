@@ -59,6 +59,7 @@ export interface UserProfileResponse {
 export interface UpdateProfileRequest {
     email?: string;
     username?: string;
+    currentPassword?: string;
     password?: string;
     themePreference?: ThemePreference;
 }

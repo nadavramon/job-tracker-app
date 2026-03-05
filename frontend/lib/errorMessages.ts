@@ -2,6 +2,7 @@ import { ApiError } from '@/types';
 
 const MESSAGE_MAP: Array<[pattern: string, friendly: string]> = [
     ['invalid credentials', 'Invalid email/username or password.'],
+    ['current password is incorrect', 'Current password is incorrect.'],
     ['email or username already taken', 'This email or username is already registered.'],
     ['application not found', 'This application no longer exists.'],
     ['access denied', "You don't have permission to do this."],
