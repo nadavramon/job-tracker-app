@@ -10,3 +10,7 @@ export async function updateProfile(data: UpdateProfileRequest) : Promise<UserPr
     const response = await api.patch<UserProfileResponse>('/me', data);
     return response.data;
 }
+
+export async function deleteAccount(): Promise<void> {
+    await api.delete('/me');
+}
