@@ -24,6 +24,7 @@ interface Props {
     onSubmit: (values: ApplicationFormValues) => Promise<void>;
     onCancel: () => void;
     submitLabel?: string;
+    collapsibleCredentials?: boolean;
 }
 
 const STATUS_OPTIONS = [
@@ -42,12 +43,16 @@ const JOB_TYPE_OPTIONS = [
     { value: 'INTERNSHIP',  label: 'Internship' },
 ];
 
+function todayIso(): string {
+    return new Date().toISOString().split('T')[0];
+}
+
 function initialValues(app?: Application): ApplicationFormValues {
     return {
         companyName:  app?.companyName  ?? '',
         jobRole:      app?.jobRole      ?? '',
         location:     app?.location     ?? '',
-        appliedDate:  app?.appliedDate  ?? '',
+        appliedDate:  app?.appliedDate  ?? todayIso(),
         status:       app?.status       ?? 'APPLIED',
         jobType:      app?.jobType      ?? 'FULL_TIME',
         websiteLink:  app?.websiteLink  ?? '',
@@ -70,15 +75,35 @@ function validate(values: ApplicationFormValues): Errors {
     return errors;
 }
 
-export default function ApplicationForm({ defaultValues, onSubmit, onCancel, submitLabel = 'Save' }: Props) {
+const ChevronDown = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+    >
+        <polyline points="6 9 12 15 18 9" />
+    </svg>
+);
+
+export default function ApplicationForm({ defaultValues, onSubmit, onCancel, submitLabel = 'Save', collapsibleCredentials = false }: Props) {
     const [values, setValues] = useState<ApplicationFormValues>(() => initialValues(defaultValues));
     const [errors, setErrors] = useState<Errors>({});
     const [submitting, setSubmitting] = useState(false);
+    const [credentialsOpen, setCredentialsOpen] = useState(false);
 
     const set = useCallback(<K extends keyof ApplicationFormValues>(key: K, val: ApplicationFormValues[K]) => {
         setValues(prev => ({ ...prev, [key]: val }));
         setErrors(prev => ({ ...prev, [key]: undefined }));
     }, []);
+
+    const toggleCredentials = useCallback(() => setCredentialsOpen(o => !o), []);
 
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
@@ -137,29 +162,68 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                     options={JOB_TYPE_OPTIONS}
                     onChange={e => set('jobType', e.target.value as JobType)}
                 />
-                <Input
-                    label="Website Link"
-                    type="url"
-                    value={values.websiteLink}
-                    onChange={e => set('websiteLink', e.target.value)}
-                    error={errors.websiteLink}
-                    placeholder="https://..."
-                />
-                <Input
-                    label="Portal Username"
-                    value={values.username}
-                    onChange={e => set('username', e.target.value)}
-                    placeholder="Optional"
-                />
+                <div className={collapsibleCredentials ? 'sm:col-span-2' : ''}>
+                    <Input
+                        label="Website Link"
+                        type="url"
+                        value={values.websiteLink}
+                        onChange={e => set('websiteLink', e.target.value)}
+                        error={errors.websiteLink}
+                        placeholder="https://..."
+                    />
+                </div>
+                {!collapsibleCredentials && (
+                    <Input
+                        label="Portal Username"
+                        value={values.username}
+                        onChange={e => set('username', e.target.value)}
+                        placeholder="Optional"
+                    />
+                )}
             </div>
 
-            <Input
-                label="Portal Password"
-                type="password"
-                value={values.password}
-                onChange={e => set('password', e.target.value)}
-                placeholder="Leave blank to keep existing"
-            />
+            {!collapsibleCredentials && (
+                <Input
+                    label="Portal Password"
+                    type="password"
+                    value={values.password}
+                    onChange={e => set('password', e.target.value)}
+                    placeholder="Leave blank to keep existing"
+                />
+            )}
+
+            {collapsibleCredentials && (
+                <div className="rounded-lg border border-[var(--border)] overflow-hidden">
+                    <button
+                        type="button"
+                        onClick={toggleCredentials}
+                        aria-expanded={credentialsOpen}
+                        className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+                    >
+                        <span>Portal Credentials</span>
+                        <span className={`transition-transform duration-200 ${credentialsOpen ? 'rotate-180' : ''}`}>
+                            <ChevronDown />
+                        </span>
+                    </button>
+                    {credentialsOpen && (
+                        <div className="border-t border-[var(--border)] px-4 py-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <Input
+                                label="Portal Username"
+                                value={values.username}
+                                onChange={e => set('username', e.target.value)}
+                                placeholder="Optional"
+                            />
+                            <Input
+                                label="Portal Password"
+                                type="password"
+                                value={values.password}
+                                onChange={e => set('password', e.target.value)}
+                                placeholder="Optional"
+                            />
+                        </div>
+                    )}
+                </div>
+            )}
 
             <div className="flex justify-end gap-3 pt-2">
                 <Button type="button" variant="secondary" onClick={onCancel} disabled={submitting}>
