@@ -8,6 +8,11 @@ jest.mock('@/context/ThemeContext', () => ({
     useTheme: () => ({ theme: mockTheme, setTheme: mockSetTheme }),
 }));
 
+jest.mock('@/components/settings/ProfileSection', () => ({
+    __esModule: true,
+    default: () => null,
+}));
+
 const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
     useRouter: () => ({ push: mockPush }),

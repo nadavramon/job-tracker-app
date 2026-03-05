@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated } from '@/lib/auth';
 import { useTheme } from '@/context/ThemeContext';
+import ProfileSection from '@/components/settings/ProfileSection';
 
 type ThemeOption = { value: 'light' | 'dark' | 'system'; label: string; description: string };
 
@@ -26,6 +27,10 @@ export default function SettingsPage() {
     return (
         <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
             <h1 className="text-2xl font-bold text-[var(--foreground)]">Settings</h1>
+
+            <section aria-labelledby="profile-heading">
+                <ProfileSection />
+            </section>
 
             <section aria-labelledby="appearance-heading">
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-4">
