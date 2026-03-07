@@ -37,13 +37,6 @@ export const getTokenExpiry = (): number | null => {
     }
 };
 
-//Checks if the stored token is expired
-export const isTokenExpired = (): boolean => {
-    const expiry = getTokenExpiry();
-    if (expiry === null) return true;
-    return Date.now() >= expiry;
-};
-
 //Saves username to localStorage after login/register
 export const setUsername = (username: string): void => {
     if (typeof window === 'undefined') return;

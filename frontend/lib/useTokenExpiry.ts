@@ -3,9 +3,7 @@
 import { useEffect } from 'react';
 import { getTokenExpiry, removeToken, removeUsername, getToken } from './auth';
 
-export function redirectToLogin() {
-    window.location.href = '/login?expired=true';
-}
+const MAX_TIMEOUT = 2_147_483_647;
 
 /**
  * Schedules an auto-redirect to /login when the JWT expires.
@@ -17,7 +15,7 @@ export function useTokenExpiry() {
         function handleExpiry() {
             removeToken();
             removeUsername();
-            redirectToLogin();
+            window.location.href = '/login?expired=true';
         }
 
         function checkAndSchedule(): ReturnType<typeof setTimeout> | null {
@@ -30,7 +28,7 @@ export function useTokenExpiry() {
                 return null;
             }
 
-            return setTimeout(handleExpiry, msUntilExpiry);
+            return setTimeout(handleExpiry, Math.min(msUntilExpiry, MAX_TIMEOUT));
         }
 
         let timer = checkAndSchedule();
