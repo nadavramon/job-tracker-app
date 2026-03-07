@@ -13,6 +13,11 @@ jest.mock('@/components/settings/ProfileSection', () => ({
     default: () => null,
 }));
 
+jest.mock('@/components/settings/AccountSection', () => ({
+    __esModule: true,
+    default: () => null,
+}));
+
 const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
     useRouter: () => ({ push: mockPush }),
@@ -20,6 +25,7 @@ jest.mock('next/navigation', () => ({
 
 jest.mock('@/lib/auth', () => ({
     isAuthenticated: jest.fn(() => true),
+    getUsername: jest.fn(() => 'testuser'),
 }));
 
 import { isAuthenticated } from '@/lib/auth';

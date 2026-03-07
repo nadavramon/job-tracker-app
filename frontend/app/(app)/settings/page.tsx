@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAuthenticated } from '@/lib/auth';
+import { isAuthenticated, getUsername } from '@/lib/auth';
 import { useTheme } from '@/context/ThemeContext';
 import ProfileSection from '@/components/settings/ProfileSection';
+import AccountSection from '@/components/settings/AccountSection';
 
 type ThemeOption = { value: 'light' | 'dark' | 'system'; label: string; description: string };
 
@@ -17,6 +18,7 @@ const THEME_OPTIONS: ThemeOption[] = [
 export default function SettingsPage() {
     const router = useRouter();
     const { theme, setTheme } = useTheme();
+    const username = useMemo(() => getUsername() ?? '', []);
 
     useEffect(() => {
         if (!isAuthenticated()) {
@@ -72,6 +74,12 @@ export default function SettingsPage() {
                     </fieldset>
                 </div>
             </section>
+
+            {username && (
+                <section>
+                    <AccountSection username={username} />
+                </section>
+            )}
         </div>
     );
 }
