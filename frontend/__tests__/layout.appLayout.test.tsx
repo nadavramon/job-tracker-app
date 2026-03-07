@@ -20,6 +20,9 @@ jest.mock('@/components/layout/MobileDrawer', () => ({ isOpen, onClose }: { isOp
 jest.mock('next/navigation', () => ({
     usePathname: jest.fn(() => '/dashboard'),
 }));
+jest.mock('@/lib/useTokenExpiry', () => ({
+    useTokenExpiry: jest.fn(),
+}));
 
 import { usePathname } from 'next/navigation';
 const mockUsePathname = usePathname as jest.Mock;

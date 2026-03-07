@@ -24,6 +24,19 @@ export const isAuthenticated = (): boolean => {
     return getToken() !== null;
 };
 
+//Returns the token's expiry time in ms since epoch, or null if invalid
+export const getTokenExpiry = (): number | null => {
+    const token = getToken();
+    if (!token) return null;
+    try {
+        const payload = token.split('.')[1];
+        const decoded = JSON.parse(atob(payload));
+        return typeof decoded.exp === 'number' ? decoded.exp * 1000 : null;
+    } catch {
+        return null;
+    }
+};
+
 //Saves username to localStorage after login/register
 export const setUsername = (username: string): void => {
     if (typeof window === 'undefined') return;
