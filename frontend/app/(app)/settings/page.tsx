@@ -76,7 +76,7 @@ export default function SettingsPage() {
             </section>
 
             {username && (
-                <section aria-labelledby="account-heading">
+                <section>
                     <AccountSection username={username} />
                 </section>
             )}

@@ -42,6 +42,7 @@ export default function AccountSection({ username }: AccountSectionProps) {
             removeToken();
             removeUsername();
             toast.success('Account deleted');
+            setDeleting(false);
             router.push('/login');
         } catch (error) {
             toast.error(getErrorMessage(error));
@@ -88,7 +89,7 @@ export default function AccountSection({ username }: AccountSectionProps) {
                             variant="destructive"
                             size="sm"
                             onClick={handleDelete}
-                            disabled={!canConfirm}
+                            disabled={!canConfirm || deleting}
                             loading={deleting}
                         >
                             Delete

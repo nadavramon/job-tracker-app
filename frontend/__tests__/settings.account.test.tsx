@@ -9,8 +9,6 @@ jest.mock('next/navigation', () => ({
 }));
 
 jest.mock('@/lib/userService', () => ({
-    getProfile: jest.fn(),
-    updateProfile: jest.fn(),
     deleteAccount: jest.fn(),
 }));
 
