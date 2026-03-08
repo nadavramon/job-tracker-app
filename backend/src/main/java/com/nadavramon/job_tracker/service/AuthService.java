@@ -28,7 +28,7 @@ public class AuthService {
         User user = new User();
         if (userRepository.existsByEmail(request.getEmail()) ||
                 userRepository.existsByUsername(request.getUsername())) {
-            throw new DuplicateResourceException("Registration failed");
+            throw new DuplicateResourceException("Email or username already taken");
         }
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
