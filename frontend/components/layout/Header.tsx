@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
 import { getUsername } from '@/lib/auth';
+import { useMounted } from '@/lib/useMounted';
 
 interface HeaderProps {
     onMenuClick: () => void;
@@ -15,10 +15,8 @@ const IconMenu = () => (
 );
 
 export default function Header({ onMenuClick, title }: HeaderProps) {
-    const username = useMemo<string | null>(() => {
-        if (typeof window === 'undefined') return null;
-        return getUsername();
-    }, []);
+    const mounted = useMounted();
+    const username = mounted ? getUsername() : null;
 
     return (
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-[var(--border)] bg-[var(--card)] px-4 md:hidden">
