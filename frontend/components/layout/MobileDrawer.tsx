@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { getUsername } from '@/lib/auth';
+import { useCallback, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { getUsername, removeToken, removeUsername } from '@/lib/auth';
 import { useMounted } from '@/lib/useMounted';
 import SidebarItem from './SidebarItem';
-import { NAV_ITEMS, IconUser } from './navItems';
+import { NAV_ITEMS, IconUser, IconLogout } from './navItems';
 
 interface MobileDrawerProps {
     isOpen: boolean;
@@ -21,7 +22,15 @@ const FOCUSABLE_SELECTORS = 'a[href], button:not([disabled]), [tabindex]:not([ta
 
 export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
     const mounted = useMounted();
+    const router = useRouter();
     const username = mounted ? getUsername() : null;
+
+    const handleLogout = useCallback(() => {
+        removeToken();
+        removeUsername();
+        onClose();
+        router.push('/login');
+    }, [onClose, router]);
 
     const drawerRef = useRef<HTMLDivElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -120,13 +129,26 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                     ))}
                 </nav>
 
-                <div className="shrink-0 border-t border-[var(--border)] px-4 py-4 flex items-center gap-3">
-                    <span className="shrink-0 h-5 w-5 text-[var(--muted-foreground)]" aria-hidden="true">
-                        <IconUser />
-                    </span>
-                    {username && (
-                        <span className="text-sm font-medium text-[var(--muted-foreground)] truncate">{username}</span>
-                    )}
+                <div className="shrink-0 border-t border-[var(--border)] px-4 py-4 flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                        <span className="shrink-0 h-5 w-5 text-[var(--muted-foreground)]" aria-hidden="true">
+                            <IconUser />
+                        </span>
+                        {username && (
+                            <span className="text-sm font-medium text-[var(--muted-foreground)] truncate">{username}</span>
+                        )}
+                    </div>
+                    <button
+                        onClick={handleLogout}
+                        className={[
+                            'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                            'text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+                        ].join(' ')}
+                    >
+                        <span className="shrink-0 h-5 w-5"><IconLogout /></span>
+                        <span className="truncate">Log out</span>
+                    </button>
                 </div>
             </div>
         </div>
