@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { getUsername } from '@/lib/auth';
+import { useMounted } from '@/lib/useMounted';
 import SidebarItem from './SidebarItem';
 import { NAV_ITEMS, IconUser } from './navItems';
 
@@ -19,10 +20,8 @@ const IconClose = () => (
 const FOCUSABLE_SELECTORS = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
-    const username = useMemo<string | null>(() => {
-        if (typeof window === 'undefined') return null;
-        return getUsername();
-    }, []);
+    const mounted = useMounted();
+    const username = mounted ? getUsername() : null;
 
     const drawerRef = useRef<HTMLDivElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);

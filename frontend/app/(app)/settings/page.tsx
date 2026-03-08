@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, getUsername } from '@/lib/auth';
 import { useTheme } from '@/context/ThemeContext';
+import { useMounted } from '@/lib/useMounted';
 import ProfileSection from '@/components/settings/ProfileSection';
 import AccountSection from '@/components/settings/AccountSection';
 
@@ -18,7 +19,8 @@ const THEME_OPTIONS: ThemeOption[] = [
 export default function SettingsPage() {
     const router = useRouter();
     const { theme, setTheme } = useTheme();
-    const username = useMemo(() => getUsername() ?? '', []);
+    const mounted = useMounted();
+    const username = mounted ? (getUsername() ?? '') : '';
 
     useEffect(() => {
         if (!isAuthenticated()) {
@@ -51,7 +53,7 @@ export default function SettingsPage() {
                                     key={value}
                                     className={[
                                         'flex items-center gap-4 rounded-lg border px-4 py-3 cursor-pointer transition-colors',
-                                        theme === value
+                                        mounted && theme === value
                                             ? 'border-[var(--primary)] bg-[var(--primary)]/5'
                                             : 'border-[var(--border)] hover:bg-[var(--muted)]',
                                     ].join(' ')}
@@ -60,7 +62,7 @@ export default function SettingsPage() {
                                         type="radio"
                                         name="theme"
                                         value={value}
-                                        checked={theme === value}
+                                        checked={mounted && theme === value}
                                         onChange={() => setTheme(value)}
                                         className="accent-[var(--primary)]"
                                     />
