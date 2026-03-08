@@ -8,6 +8,11 @@ jest.mock('next/navigation', () => ({
 }));
 
 describe('MobileDrawer', () => {
+    beforeEach(() => {
+        localStorage.clear();
+        mockPush.mockClear();
+    });
+
     it('renders nothing when isOpen is false', () => {
         render(<MobileDrawer isOpen={false} onClose={jest.fn()} />);
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -84,7 +89,6 @@ describe('MobileDrawer', () => {
         localStorage.setItem('username', 'drawertestuser');
         render(<MobileDrawer isOpen={true} onClose={jest.fn()} />);
         expect(screen.getByText('drawertestuser')).toBeInTheDocument();
-        localStorage.removeItem('username');
     });
 
     it('renders a log out button when open', () => {

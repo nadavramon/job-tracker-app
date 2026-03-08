@@ -108,7 +108,7 @@ export default function Sidebar() {
                 <button
                     onClick={handleLogout}
                     title={collapsed ? 'Log out' : undefined}
-                    aria-label={collapsed ? 'Log out' : undefined}
+                    aria-label="Log out"
                     className={[
                         'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                         'text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
