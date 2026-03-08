@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { getUsername } from '@/lib/auth';
 import { useMounted } from '@/lib/useMounted';
 import SidebarItem from './SidebarItem';
@@ -26,13 +26,10 @@ const IconChevronRight = () => (
 
 export default function Sidebar() {
     const mounted = useMounted();
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(() =>
+        typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEY) === 'true'
+    );
     const username = mounted ? getUsername() : null;
-
-    useEffect(() => {
-        const saved = localStorage.getItem(STORAGE_KEY) === 'true';
-        if (saved) setCollapsed(true);
-    }, []);
 
     const toggle = useCallback(() => {
         setCollapsed(prev => {
