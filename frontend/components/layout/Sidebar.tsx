@@ -1,10 +1,11 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { getUsername } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
+import { getUsername, removeToken, removeUsername } from '@/lib/auth';
 import { useMounted } from '@/lib/useMounted';
 import SidebarItem from './SidebarItem';
-import { NAV_ITEMS, IconUser } from './navItems';
+import { NAV_ITEMS, IconUser, IconLogout } from './navItems';
 
 const STORAGE_KEY = 'sidebar-collapsed';
 
@@ -26,6 +27,7 @@ const IconChevronRight = () => (
 
 export default function Sidebar() {
     const mounted = useMounted();
+    const router = useRouter();
     const [collapsed, setCollapsed] = useState(() =>
         typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEY) === 'true'
     );
@@ -38,6 +40,12 @@ export default function Sidebar() {
             return next;
         });
     }, []);
+
+    const handleLogout = useCallback(() => {
+        removeToken();
+        removeUsername();
+        router.push('/login');
+    }, [router]);
 
     return (
         <aside
@@ -82,20 +90,35 @@ export default function Sidebar() {
             </nav>
 
             {/* User section */}
-            <div className={[
-                'shrink-0 border-t border-[var(--border)] px-2 py-3',
-                'flex items-center gap-3',
-                collapsed ? 'justify-center' : '',
-            ].join(' ')}>
-                <span
-                    className="shrink-0 h-5 w-5 text-[var(--muted-foreground)]"
-                    aria-hidden="true"
+            <div className="shrink-0 border-t border-[var(--border)] px-2 py-3 flex flex-col gap-2">
+                <div className={[
+                    'flex items-center gap-3',
+                    collapsed ? 'justify-center' : '',
+                ].join(' ')}>
+                    <span
+                        className="shrink-0 h-5 w-5 text-[var(--muted-foreground)]"
+                        aria-hidden="true"
+                    >
+                        <IconUser />
+                    </span>
+                    {!collapsed && username && (
+                        <span className="text-sm text-[var(--muted-foreground)] truncate">{username}</span>
+                    )}
+                </div>
+                <button
+                    onClick={handleLogout}
+                    title={collapsed ? 'Log out' : undefined}
+                    aria-label={collapsed ? 'Log out' : undefined}
+                    className={[
+                        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                        'text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+                        collapsed ? 'justify-center px-2' : '',
+                    ].join(' ')}
                 >
-                    <IconUser />
-                </span>
-                {!collapsed && username && (
-                    <span className="text-sm text-[var(--muted-foreground)] truncate">{username}</span>
-                )}
+                    <span className="shrink-0 h-5 w-5"><IconLogout /></span>
+                    {!collapsed && <span className="truncate">Log out</span>}
+                </button>
             </div>
         </aside>
     );
