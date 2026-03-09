@@ -16,6 +16,7 @@ describe('Sidebar', () => {
     it('renders all nav items', () => {
         render(<Sidebar />);
         expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /^applications$/i })).toBeInTheDocument();
         expect(screen.getByRole('link', { name: /new application/i })).toBeInTheDocument();
         expect(screen.getByRole('link', { name: /settings/i })).toBeInTheDocument();
     });

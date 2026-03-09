@@ -9,6 +9,7 @@ import { useTokenExpiry } from '@/lib/useTokenExpiry';
 
 const ROUTE_TITLES: Record<string, string> = {
     '/dashboard': 'Dashboard',
+    '/applications': 'Applications',
     '/applications/new': 'New Application',
     '/settings': 'Settings',
 };
