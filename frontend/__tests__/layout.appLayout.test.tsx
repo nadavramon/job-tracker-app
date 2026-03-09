@@ -68,6 +68,12 @@ describe('AppLayout', () => {
         expect(screen.getByText('Dashboard')).toBeInTheDocument();
     });
 
+    it('passes "Applications" as title for /applications route', () => {
+        mockUsePathname.mockReturnValue('/applications');
+        render(<AppLayout><div /></AppLayout>);
+        expect(screen.getByText('Applications')).toBeInTheDocument();
+    });
+
     it('passes "New Application" as title for /applications/new route', () => {
         mockUsePathname.mockReturnValue('/applications/new');
         render(<AppLayout><div /></AppLayout>);
