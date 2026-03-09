@@ -36,9 +36,11 @@ describe('ApplicationsPage', () => {
         expect(screen.getByTestId('applications-table')).toBeInTheDocument();
     });
 
-    it('redirects to /login when not authenticated', () => {
-        mockIsAuthenticated.mockReturnValueOnce(false);
+    it('redirects to /login and renders nothing when not authenticated', () => {
+        mockIsAuthenticated.mockReturnValue(false);
         render(<ApplicationsPage />);
         expect(mockPush).toHaveBeenCalledWith('/login');
+        expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('applications-table')).not.toBeInTheDocument();
     });
 });

@@ -7,12 +7,15 @@ import ApplicationsTable from '@/components/applications/ApplicationsTable';
 
 export default function ApplicationsPage() {
     const router = useRouter();
+    const authenticated = isAuthenticated();
 
     useEffect(() => {
-        if (!isAuthenticated()) {
+        if (!authenticated) {
             router.push('/login');
         }
-    }, [router]);
+    }, [authenticated, router]);
+
+    if (!authenticated) return null;
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
