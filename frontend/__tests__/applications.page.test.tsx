@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import ApplicationsPage from '@/app/(app)/applications/page';
+import { isAuthenticated } from '@/lib/auth';
 
 const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
@@ -17,9 +18,12 @@ jest.mock('@/lib/auth', () => ({
     isAuthenticated: jest.fn(() => true),
 }));
 
+const mockIsAuthenticated = isAuthenticated as jest.Mock;
+
 describe('ApplicationsPage', () => {
     beforeEach(() => {
         mockPush.mockClear();
+        mockIsAuthenticated.mockReturnValue(true);
     });
 
     it('renders the page heading', () => {
@@ -33,8 +37,7 @@ describe('ApplicationsPage', () => {
     });
 
     it('redirects to /login when not authenticated', () => {
-        const { isAuthenticated } = require('@/lib/auth');
-        (isAuthenticated as jest.Mock).mockReturnValueOnce(false);
+        mockIsAuthenticated.mockReturnValueOnce(false);
         render(<ApplicationsPage />);
         expect(mockPush).toHaveBeenCalledWith('/login');
     });
