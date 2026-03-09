@@ -12,3 +12,8 @@ export const register = async (data: RegisterRequest): Promise<AuthResponse> => 
   const response = await api.post<AuthResponse>('/auth/register', data);
   return response.data;
 };
+
+//Sends POST to /auth/logout to clear the HttpOnly JWT cookie
+export const logout = async (): Promise<void> => {
+  await api.post('/auth/logout');
+};
