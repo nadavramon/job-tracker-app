@@ -63,6 +63,10 @@ public class JwtService {
                 .getPayload();
     }
 
+    public long getJwtExpiration() {
+        return jwtExpiration;
+    }
+
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
