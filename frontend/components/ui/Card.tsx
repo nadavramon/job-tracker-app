@@ -5,10 +5,11 @@ interface CardProps {
     value: string | number;
     icon?: React.ReactNode;
     subtitle?: string;
+    children?: React.ReactNode;
     className?: string;
 }
 
-export default function Card({ title, value, icon, subtitle, className = '' }: CardProps) {
+export default function Card({ title, value, icon, subtitle, children, className = '' }: CardProps) {
     return (
         <div
             className={[
@@ -22,16 +23,17 @@ export default function Card({ title, value, icon, subtitle, className = '' }: C
                     {icon}
                 </div>
             )}
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
                     {title}
                 </p>
-                <p className="mt-1 text-2xl font-bold text-[var(--card-foreground)] leading-none">
+                <p className="mt-1 text-3xl font-bold text-[var(--card-foreground)] leading-none">
                     {value}
                 </p>
                 {subtitle && (
                     <p className="mt-1 text-xs text-[var(--muted-foreground)]">{subtitle}</p>
                 )}
+                {children}
             </div>
         </div>
     );
