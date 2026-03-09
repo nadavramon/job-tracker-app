@@ -1,6 +1,7 @@
 'use client';
 
 import { StatsResponse, Status } from '@/types';
+import Card from '@/components/ui/Card';
 
 interface StatusConfig {
     label: string;
@@ -29,14 +30,7 @@ export default function StatsBar({ stats }: StatsBarProps) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Total Applications */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-                    Total Applications
-                </p>
-                <p className="mt-1 text-3xl font-bold text-[var(--card-foreground)] leading-none">
-                    {stats.totalApplications}
-                </p>
-            </div>
+            <Card title="Total Applications" value={stats.totalApplications} />
 
             {/* Status Breakdown */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
@@ -58,13 +52,7 @@ export default function StatsBar({ stats }: StatsBarProps) {
             </div>
 
             {/* Response Rate */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-                    Response Rate
-                </p>
-                <p className="mt-1 text-3xl font-bold text-[var(--card-foreground)] leading-none">
-                    {responseRatePct}%
-                </p>
+            <Card title="Response Rate" value={`${responseRatePct}%`}>
                 <div
                     role="progressbar"
                     aria-valuenow={responseRatePct}
@@ -81,7 +69,7 @@ export default function StatsBar({ stats }: StatsBarProps) {
                 <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
                     of applications received a response
                 </p>
-            </div>
+            </Card>
         </div>
     );
 }
