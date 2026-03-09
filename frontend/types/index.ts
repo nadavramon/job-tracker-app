@@ -64,15 +64,15 @@ export interface UpdateProfileRequest {
     themePreference?: ThemePreference;
 }
 
-// Mirrors Spring Page<T> response from paginated endpoints
+// Mirrors Spring Page<T> response from paginated endpoints (Spring Boot 4 format)
 export interface PagedResponse<T> {
     content: T[];
-    totalPages: number;
-    totalElements: number;
-    number: number;
-    size: number;
-    first: boolean;
-    last: boolean;
+    page: {
+        totalPages: number;
+        totalElements: number;
+        number: number;
+        size: number;
+    };
 }
 
 // Mirrors MonthlyCount DTO from GET /applications/stats
