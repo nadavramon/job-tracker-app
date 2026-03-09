@@ -55,16 +55,16 @@ const makeApp = (overrides: Partial<Application> = {}): Application => ({
 
 const makePage = (
     apps: Application[],
-    overrides: Partial<PagedResponse<Application>> = {},
+    pageOverrides: Partial<PagedResponse<Application>['page']> = {},
 ): PagedResponse<Application> => ({
     content: apps,
-    totalElements: apps.length,
-    totalPages: 1,
-    number: 0,
-    size: 20,
-    first: true,
-    last: true,
-    ...overrides,
+    page: {
+        totalElements: apps.length,
+        totalPages: 1,
+        number: 0,
+        size: 20,
+        ...pageOverrides,
+    },
 });
 
 describe('ApplicationsTable', () => {

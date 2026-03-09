@@ -115,7 +115,7 @@ export default function ApplicationsTable() {
                 return {
                     ...prev,
                     content: prev.content.filter(a => a.id !== pendingDeleteApp.id),
-                    totalElements: prev.totalElements - 1,
+                    page: { ...prev.page, totalElements: prev.page.totalElements - 1 },
                 };
             });
             toast.success('Application deleted');
@@ -217,13 +217,13 @@ export default function ApplicationsTable() {
                 </div>
             )}
 
-            {!loading && !error && (!data || data.totalElements === 0) && (
+            {!loading && !error && (!data || data.page.totalElements === 0) && (
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
                     <p className="text-[var(--muted-foreground)]">No applications yet.</p>
                 </div>
             )}
 
-            {!loading && !error && data && data.totalElements > 0 && (
+            {!loading && !error && data && data.page.totalElements > 0 && (
                 <>
                     {/* Desktop table */}
                     <div className="hidden md:block rounded-xl md:rounded-b-none border border-[var(--border)] bg-[var(--card)] overflow-hidden">
@@ -322,12 +322,12 @@ export default function ApplicationsTable() {
                                 </select>
                             </div>
 
-                            {data.totalPages > 1 && (
+                            {data.page.totalPages > 1 && (
                                 <Pagination
-                                    page={data.number}
-                                    totalPages={data.totalPages}
-                                    totalElements={data.totalElements}
-                                    pageSize={data.size}
+                                    page={data.page.number}
+                                    totalPages={data.page.totalPages}
+                                    totalElements={data.page.totalElements}
+                                    pageSize={data.page.size}
                                     onPageChange={handlePageChange}
                                 />
                             )}
