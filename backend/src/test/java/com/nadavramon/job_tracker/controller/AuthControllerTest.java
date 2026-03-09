@@ -17,17 +17,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
 @Import({SecurityConfig.class, JwtAuthenticationFilter.class, RateLimitFilter.class})
+@TestPropertySource(properties = "cookie.secure=false")
 public class AuthControllerTest {
 
     @Autowired
@@ -79,13 +81,18 @@ public class AuthControllerTest {
 
         AuthResponse response = new AuthResponse("mock-token", "newuser");
         when(authService.register(any(RegisterRequest.class))).thenReturn(response);
+        when(jwtService.getJwtExpiration()).thenReturn(86400000L);
 
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").value("mock-token"))
-                .andExpect(jsonPath("$.username").value("newuser"));
+                .andExpect(jsonPath("$.username").value("newuser"))
+                .andExpect(header().exists("Set-Cookie"))
+                .andExpect(header().string("Set-Cookie", containsString("jwt=mock-token")))
+                .andExpect(header().string("Set-Cookie", containsString("HttpOnly")))
+                .andExpect(header().string("Set-Cookie", containsString("Path=/")));
     }
 
     @Test
@@ -117,5 +124,33 @@ public class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void login_SetsCookieOnSuccess() throws Exception {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setIdentifier("test@test.com");
+        loginRequest.setPassword("password123");
+
+        AuthResponse response = new AuthResponse("login-token", "testuser");
+        when(authService.login(any(LoginRequest.class))).thenReturn(response);
+        when(jwtService.getJwtExpiration()).thenReturn(86400000L);
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(header().exists("Set-Cookie"))
+                .andExpect(header().string("Set-Cookie", containsString("jwt=login-token")))
+                .andExpect(header().string("Set-Cookie", containsString("HttpOnly")));
+    }
+
+    @Test
+    void logout_ClearsCookie() throws Exception {
+        mockMvc.perform(post("/auth/logout"))
+                .andExpect(status().isOk())
+                .andExpect(header().exists("Set-Cookie"))
+                .andExpect(header().string("Set-Cookie", containsString("jwt=")))
+                .andExpect(header().string("Set-Cookie", containsString("Max-Age=0")));
     }
 }
