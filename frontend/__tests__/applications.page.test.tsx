@@ -18,6 +18,10 @@ jest.mock('@/lib/auth', () => ({
     isAuthenticated: jest.fn(() => true),
 }));
 
+jest.mock('@/lib/useMounted', () => ({
+    useMounted: () => true,
+}));
+
 const mockIsAuthenticated = isAuthenticated as jest.Mock;
 
 describe('ApplicationsPage', () => {
