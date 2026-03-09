@@ -27,6 +27,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
+        // Cookie takes precedence over Authorization header during the migration period.
+        // Once the frontend is fully migrated, the Bearer fallback will be removed.
         String token = extractTokenFromCookie(request);
 
         if (token == null) {
@@ -57,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
+                if (CookieConstants.JWT_COOKIE_NAME.equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }

@@ -1,5 +1,6 @@
 package com.nadavramon.job_tracker.controller;
 
+import com.nadavramon.job_tracker.config.CookieConstants;
 import com.nadavramon.job_tracker.dto.AuthResponse;
 import com.nadavramon.job_tracker.dto.LoginRequest;
 import com.nadavramon.job_tracker.dto.RegisterRequest;
@@ -49,12 +50,8 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout() {
-        ResponseCookie clearCookie = ResponseCookie.from("jwt", "")
-                .httpOnly(true)
-                .secure(cookieSecure)
-                .path("/")
+        ResponseCookie clearCookie = baseCookieBuilder("")
                 .maxAge(0)
-                .sameSite("Lax")
                 .build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, clearCookie.toString())
@@ -62,12 +59,16 @@ public class AuthController {
     }
 
     private ResponseCookie buildJwtCookie(String token) {
-        return ResponseCookie.from("jwt", token)
+        return baseCookieBuilder(token)
+                .maxAge(Duration.ofMillis(jwtService.getJwtExpiration()))
+                .build();
+    }
+
+    private ResponseCookie.ResponseCookieBuilder baseCookieBuilder(String value) {
+        return ResponseCookie.from(CookieConstants.JWT_COOKIE_NAME, value)
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .path("/")
-                .maxAge(Duration.ofMillis(jwtService.getJwtExpiration()))
-                .sameSite("Lax")
-                .build();
+                .sameSite("Lax");
     }
 }
