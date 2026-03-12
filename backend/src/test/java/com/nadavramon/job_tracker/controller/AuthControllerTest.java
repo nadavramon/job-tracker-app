@@ -87,7 +87,7 @@ public class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("mock-token"))
+                .andExpect(jsonPath("$.token").doesNotExist())
                 .andExpect(jsonPath("$.username").value("newuser"))
                 .andExpect(header().exists("Set-Cookie"))
                 .andExpect(header().string("Set-Cookie", containsString("jwt=mock-token")))

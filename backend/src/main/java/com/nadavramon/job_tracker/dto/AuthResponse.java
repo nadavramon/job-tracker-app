@@ -1,5 +1,7 @@
 package com.nadavramon.job_tracker.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class AuthResponse {
     private String token;
     private String username;
@@ -9,6 +11,7 @@ public class AuthResponse {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getToken() {
         return token;
     }
