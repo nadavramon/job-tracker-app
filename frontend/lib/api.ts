@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getUsername, removeToken, removeUsername } from './auth';
+import { getUsername, removeUsername } from './auth';
 
 const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -28,7 +28,6 @@ api.interceptors.response.use(
             // failed login attempt (wrong credentials) and should be handled by the caller.
             const username = getUsername();
             if (username) {
-                removeToken();
                 removeUsername();
                 window.location.href = '/login?expired=true';
             }

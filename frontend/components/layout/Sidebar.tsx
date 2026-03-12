@@ -2,7 +2,8 @@
 
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getUsername, removeToken, removeUsername } from '@/lib/auth';
+import { getUsername, removeUsername } from '@/lib/auth';
+import { logout } from '@/lib/authService';
 import { useMounted } from '@/lib/useMounted';
 import SidebarItem from './SidebarItem';
 import { NAV_ITEMS, IconUser, IconLogout } from './navItems';
@@ -41,8 +42,8 @@ export default function Sidebar() {
         });
     }, []);
 
-    const handleLogout = useCallback(() => {
-        removeToken();
+    const handleLogout = useCallback(async () => {
+        try { await logout(); } catch { /* cookie clear failed — continue locally */ }
         removeUsername();
         router.push('/login');
     }, [router]);

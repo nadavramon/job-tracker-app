@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import RegisterPage from '@/app/(auth)/register/page';
 import { register } from '@/lib/authService';
-import { setToken } from '@/lib/auth';
+import { setUsername } from '@/lib/auth';
 import { ThemeProvider } from '@/context/ThemeContext';
 
 // Mock the modules
@@ -15,9 +15,9 @@ jest.mock('@/lib/authService', () => ({
 }));
 
 jest.mock('@/lib/auth', () => ({
-  setToken: jest.fn(),
   setUsername: jest.fn(),
-  getToken: jest.fn().mockReturnValue(null),
+  getUsername: jest.fn().mockReturnValue(null),
+  isAuthenticated: jest.fn().mockReturnValue(false),
 }));
 
 Object.defineProperty(window, 'matchMedia', {
@@ -78,7 +78,6 @@ describe('RegisterPage', () => {
 
   it('redirects to dashboard on successful registration', async () => {
     (register as jest.Mock).mockResolvedValue({
-      token: 'fake-token',
       username: 'testuser',
     });
 
@@ -105,7 +104,7 @@ describe('RegisterPage', () => {
         username: 'testuser',
         password: 'password123',
       });
-      expect(setToken).toHaveBeenCalledWith('fake-token');
+      expect(setUsername).toHaveBeenCalledWith('testuser');
       expect(mockPush).toHaveBeenCalledWith('/dashboard');
     });
   });

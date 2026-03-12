@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { login } from '@/lib/authService';
-import { setToken, setUsername } from '@/lib/auth';
+import { setUsername } from '@/lib/auth';
 import { getErrorMessage } from '@/lib/errorMessages';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import Button from '@/components/ui/Button';
@@ -28,7 +28,6 @@ function LoginContent() {
 
     try {
       const response = await login({ identifier, password });
-      setToken(response.token);
       setUsername(response.username);
       router.push('/dashboard');
     } catch (err) {

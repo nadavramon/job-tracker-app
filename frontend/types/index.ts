@@ -27,7 +27,6 @@ export interface ApiError {
 
 //Auth response - login endpoint
 export interface AuthResponse {
-    token: string;
     username: string;
 }
 

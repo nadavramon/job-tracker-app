@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { getToken } from '@/lib/auth';
+import { getUsername } from '@/lib/auth';
 import { updateProfile, getProfile } from '@/lib/userService';
 
 // Internal lowercase type (maps to backend's 'LIGHT' | 'DARK' | 'SYSTEM')
@@ -52,7 +52,7 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
         setResolvedTheme(resolved);
 
         // Sync to backend if logged in (fire-and-forget)
-        if (getToken()) {
+        if (getUsername()) {
             updateProfile({
                 themePreference: newTheme.toUpperCase() as 'LIGHT' | 'DARK' | 'SYSTEM'
             }).catch(() => { });
@@ -78,7 +78,7 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const stored = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
         // Only fetch from backend if no localStorage value AND user is logged in
-        if (!stored && getToken()) {
+        if (!stored && getUsername()) {
             getProfile()
                 .then((profile) => {
                     const backendTheme = profile.themePreference.toLowerCase() as Theme;

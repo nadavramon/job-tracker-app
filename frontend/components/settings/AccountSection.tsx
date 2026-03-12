@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteAccount } from '@/lib/userService';
-import { removeToken, removeUsername } from '@/lib/auth';
+import { removeUsername } from '@/lib/auth';
 import { useToast } from '@/context/ToastContext';
 import { getErrorMessage } from '@/lib/errorMessages';
 import Modal from '@/components/ui/Modal';
@@ -39,7 +39,6 @@ export default function AccountSection({ username }: AccountSectionProps) {
         setDeleting(true);
         try {
             await deleteAccount();
-            removeToken();
             removeUsername();
             toast.success('Account deleted');
             setDeleting(false);
