@@ -27,8 +27,8 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
     const username = mounted ? getUsername() : null;
 
     const handleLogout = useCallback(async () => {
-        try { await logout(); } catch { /* cookie clear failed — continue locally */ }
         removeUsername();
+        try { await logout(); } catch { /* cookie clear failed — already cleaned up locally */ }
         onClose();
         router.push('/login');
     }, [onClose, router]);
