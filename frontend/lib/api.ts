@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { removeToken, removeUsername } from './auth';
+import { getUsername, removeToken, removeUsername } from './auth';
 
 const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -26,7 +26,7 @@ api.interceptors.response.use(
         if (status === 401) {
             // Only treat as session expiry if there was a logged-in user; otherwise it's a
             // failed login attempt (wrong credentials) and should be handled by the caller.
-            const username = typeof window !== 'undefined' ? localStorage.getItem('username') : null;
+            const username = getUsername();
             if (username) {
                 removeToken();
                 removeUsername();

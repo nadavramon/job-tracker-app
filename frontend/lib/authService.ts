@@ -13,7 +13,7 @@ export const register = async (data: RegisterRequest): Promise<AuthResponse> => 
   return response.data;
 };
 
-//Sends POST to /auth/logout to clear the HttpOnly JWT cookie
+// Sends POST to /auth/logout to clear the HttpOnly JWT cookie
 export const logout = async (): Promise<void> => {
   await api.post('/auth/logout');
 };
