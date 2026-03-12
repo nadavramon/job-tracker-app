@@ -1,20 +1,12 @@
 import axios from 'axios';
-import { removeToken, removeUsername } from './auth';
+import { getUsername, removeToken, removeUsername } from './auth';
 
 const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
-});
-
-// Request interceptor — injects Bearer token on every request
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+    withCredentials: true,
 });
 
 // Injected toast callback — set at app boot by ApiInterceptorSetup
@@ -32,10 +24,10 @@ api.interceptors.response.use(
         const status = error.response?.status;
 
         if (status === 401) {
-            // Only treat as session expiry if there was a token; otherwise it's a
+            // Only treat as session expiry if there was a logged-in user; otherwise it's a
             // failed login attempt (wrong credentials) and should be handled by the caller.
-            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-            if (token) {
+            const username = getUsername();
+            if (username) {
                 removeToken();
                 removeUsername();
                 window.location.href = '/login?expired=true';
