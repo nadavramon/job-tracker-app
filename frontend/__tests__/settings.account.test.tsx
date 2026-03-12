@@ -1,7 +1,7 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import AccountSection from '@/components/settings/AccountSection';
 import { deleteAccount } from '@/lib/userService';
-import { removeToken, removeUsername } from '@/lib/auth';
+import { removeUsername } from '@/lib/auth';
 
 const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
@@ -13,7 +13,6 @@ jest.mock('@/lib/userService', () => ({
 }));
 
 jest.mock('@/lib/auth', () => ({
-    removeToken: jest.fn(),
     removeUsername: jest.fn(),
 }));
 
@@ -72,7 +71,6 @@ describe('AccountSection', () => {
 
         await waitFor(() => {
             expect(mockDeleteAccount).toHaveBeenCalled();
-            expect(removeToken).toHaveBeenCalled();
             expect(removeUsername).toHaveBeenCalled();
             expect(mockToast.success).toHaveBeenCalledWith('Account deleted');
             expect(mockPush).toHaveBeenCalledWith('/login');

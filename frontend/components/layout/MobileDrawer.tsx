@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { getUsername, removeToken, removeUsername } from '@/lib/auth';
+import { getUsername, removeUsername } from '@/lib/auth';
+import { logout } from '@/lib/authService';
 import { useMounted } from '@/lib/useMounted';
 import SidebarItem from './SidebarItem';
 import { NAV_ITEMS, IconUser, IconLogout } from './navItems';
@@ -25,9 +26,9 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
     const router = useRouter();
     const username = mounted ? getUsername() : null;
 
-    const handleLogout = useCallback(() => {
-        removeToken();
+    const handleLogout = useCallback(async () => {
         removeUsername();
+        try { await logout(); } catch { /* cookie clear failed — already cleaned up locally */ }
         onClose();
         router.push('/login');
     }, [onClose, router]);

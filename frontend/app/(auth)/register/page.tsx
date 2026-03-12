@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { register } from '@/lib/authService';
-import { setToken, setUsername as persistUsername } from '@/lib/auth';
+import { setUsername as persistUsername } from '@/lib/auth';
 import { getErrorMessage } from '@/lib/errorMessages';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import Button from '@/components/ui/Button';
@@ -39,7 +39,6 @@ export default function RegisterPage() {
 
     try {
       const response = await register({ email, username, password });
-      setToken(response.token);
       persistUsername(response.username);
       router.push('/dashboard');
     } catch (err) {

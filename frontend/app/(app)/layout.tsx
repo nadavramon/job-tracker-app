@@ -5,8 +5,6 @@ import { usePathname } from 'next/navigation';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import MobileDrawer from '@/components/layout/MobileDrawer';
-import { useTokenExpiry } from '@/lib/useTokenExpiry';
-
 const ROUTE_TITLES: Record<string, string> = {
     '/dashboard': 'Dashboard',
     '/applications': 'Applications',
@@ -15,7 +13,6 @@ const ROUTE_TITLES: Record<string, string> = {
 };
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-    useTokenExpiry();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const menuTriggerRef = useRef<Element | null>(null);
     const pathname = usePathname();

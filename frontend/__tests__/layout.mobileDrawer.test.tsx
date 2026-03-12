@@ -1,10 +1,14 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import MobileDrawer from '@/components/layout/MobileDrawer';
 
 const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
     usePathname: () => '/dashboard',
     useRouter: () => ({ push: mockPush }),
+}));
+
+jest.mock('@/lib/authService', () => ({
+    logout: jest.fn().mockResolvedValue(undefined),
 }));
 
 describe('MobileDrawer', () => {
@@ -97,17 +101,17 @@ describe('MobileDrawer', () => {
         expect(screen.getByRole('button', { name: /log out/i })).toBeInTheDocument();
     });
 
-    it('clears auth and redirects to /login when log out is clicked', () => {
-        localStorage.setItem('token', 'test-token');
+    it('clears auth and redirects to /login when log out is clicked', async () => {
         localStorage.setItem('username', 'testuser');
         const onClose = jest.fn();
         render(<MobileDrawer isOpen={true} onClose={onClose} />);
 
         fireEvent.click(screen.getByRole('button', { name: /log out/i }));
 
-        expect(localStorage.getItem('token')).toBeNull();
-        expect(localStorage.getItem('username')).toBeNull();
-        expect(onClose).toHaveBeenCalled();
-        expect(mockPush).toHaveBeenCalledWith('/login');
+        await waitFor(() => {
+            expect(localStorage.getItem('username')).toBeNull();
+            expect(onClose).toHaveBeenCalled();
+            expect(mockPush).toHaveBeenCalledWith('/login');
+        });
     });
 });
