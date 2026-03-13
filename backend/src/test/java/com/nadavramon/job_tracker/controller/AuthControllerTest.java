@@ -140,6 +140,7 @@ public class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").doesNotExist())
                 .andExpect(header().exists("Set-Cookie"))
                 .andExpect(header().string("Set-Cookie", containsString("jwt=login-token")))
                 .andExpect(header().string("Set-Cookie", containsString("HttpOnly")));
