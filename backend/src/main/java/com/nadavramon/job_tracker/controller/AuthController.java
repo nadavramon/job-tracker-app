@@ -35,16 +35,18 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> createUser(@Valid @RequestBody RegisterRequest registerRequest) {
         AuthResponse response = authService.register(registerRequest);
+        String token = jwtService.generateToken(response.getUsername());
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, buildJwtCookie(response.getToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, buildJwtCookie(token).toString())
                 .body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> userLogin(@Valid @RequestBody LoginRequest loginRequest) {
         AuthResponse response = authService.login(loginRequest);
+        String token = jwtService.generateToken(response.getUsername());
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, buildJwtCookie(response.getToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, buildJwtCookie(token).toString())
                 .body(response);
     }
 
