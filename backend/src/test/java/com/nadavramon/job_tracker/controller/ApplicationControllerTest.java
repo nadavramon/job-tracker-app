@@ -96,9 +96,9 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    void getAllApplications_Returns403_WhenNotAuthenticated() throws Exception {
+    void getAllApplications_Returns401_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(get("/applications"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -242,9 +242,9 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    void getStats_Returns403_WhenNotAuthenticated() throws Exception {
+    void getStats_Returns401_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(get("/applications/stats"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     // ── PATCH /applications/{id} ─────────────────────────────────────────────
@@ -348,9 +348,9 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    void getApplicationCredentials_Returns403_WhenNotAuthenticated() throws Exception {
+    void getApplicationCredentials_Returns401_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(get("/applications/" + UUID.randomUUID() + "/credentials"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     // ── GET /applications with query params ──────────────────────────────────
