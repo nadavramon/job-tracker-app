@@ -60,9 +60,9 @@ public class UserControllerTest {
     }
 
     @Test
-    void getProfile_Returns403_WhenNotAuthenticated() throws Exception {
+    void getProfile_Returns401_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(get("/me"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -135,9 +135,9 @@ public class UserControllerTest {
     }
 
     @Test
-    void deleteAccount_Returns403_WhenNotAuthenticated() throws Exception {
+    void deleteAccount_Returns401_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(delete("/me"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
