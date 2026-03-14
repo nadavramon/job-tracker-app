@@ -79,8 +79,9 @@ public class AuthControllerTest {
         request.setUsername("newuser");
         request.setPassword("password123");
 
-        AuthResponse response = new AuthResponse("mock-token", "newuser");
+        AuthResponse response = new AuthResponse("newuser");
         when(authService.register(any(RegisterRequest.class))).thenReturn(response);
+        when(jwtService.generateToken("newuser")).thenReturn("mock-token");
         when(jwtService.getJwtExpiration()).thenReturn(86400000L);
 
         mockMvc.perform(post("/auth/register")
@@ -132,8 +133,9 @@ public class AuthControllerTest {
         loginRequest.setIdentifier("test@test.com");
         loginRequest.setPassword("password123");
 
-        AuthResponse response = new AuthResponse("login-token", "testuser");
+        AuthResponse response = new AuthResponse("testuser");
         when(authService.login(any(LoginRequest.class))).thenReturn(response);
+        when(jwtService.generateToken("testuser")).thenReturn("login-token");
         when(jwtService.getJwtExpiration()).thenReturn(86400000L);
 
         mockMvc.perform(post("/auth/login")
