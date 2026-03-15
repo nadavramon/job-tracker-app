@@ -1,6 +1,7 @@
 package com.nadavramon.job_tracker.service;
 
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
+import com.nadavramon.job_tracker.dto.ApplicationUpdateRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
 import com.nadavramon.job_tracker.dto.ApplicationStatsResponse;
 import com.nadavramon.job_tracker.dto.CredentialsResponse;
@@ -72,7 +73,7 @@ public class ApplicationService {
         return toResponse(applicationRepository.save(application));
     }
 
-    public ApplicationResponse updateApplicationByUser(UUID id, ApplicationRequest request) {
+    public ApplicationResponse updateApplicationByUser(UUID id, ApplicationUpdateRequest request) {
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 

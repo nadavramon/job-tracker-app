@@ -7,6 +7,7 @@ import com.nadavramon.job_tracker.config.RateLimitFilter;
 import com.nadavramon.job_tracker.config.SecurityConfig;
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
+import com.nadavramon.job_tracker.dto.ApplicationUpdateRequest;
 import com.nadavramon.job_tracker.dto.ApplicationStatsResponse;
 import com.nadavramon.job_tracker.dto.CredentialsResponse;
 import com.nadavramon.job_tracker.dto.MonthlyCount;
@@ -269,7 +270,7 @@ public class ApplicationControllerTest {
                 appId, "Google Updated", JobType.FULL_TIME, "Tel Aviv", "Senior Developer",
                 LocalDate.now(), Status.INTERVIEWING, null, "https://google.com", null
         );
-        when(applicationService.updateApplicationByUser(eq(appId), any(ApplicationRequest.class)))
+        when(applicationService.updateApplicationByUser(eq(appId), any(ApplicationUpdateRequest.class)))
                 .thenReturn(updated);
 
         mockMvc.perform(patch("/applications/" + appId)
@@ -284,7 +285,7 @@ public class ApplicationControllerTest {
     @WithMockUser
     void updateApplication_ReturnsNotFound_WhenIdDoesNotExist() throws Exception {
         UUID randomId = UUID.randomUUID();
-        when(applicationService.updateApplicationByUser(eq(randomId), any(ApplicationRequest.class)))
+        when(applicationService.updateApplicationByUser(eq(randomId), any(ApplicationUpdateRequest.class)))
                 .thenThrow(new ResourceNotFoundException("Application not found"));
 
         mockMvc.perform(patch("/applications/" + randomId)
@@ -298,7 +299,7 @@ public class ApplicationControllerTest {
     @WithMockUser
     void updateApplication_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
         UUID appId = UUID.randomUUID();
-        when(applicationService.updateApplicationByUser(eq(appId), any(ApplicationRequest.class)))
+        when(applicationService.updateApplicationByUser(eq(appId), any(ApplicationUpdateRequest.class)))
                 .thenThrow(new AccessDeniedException("Access denied"));
 
         mockMvc.perform(patch("/applications/" + appId)
@@ -306,6 +307,24 @@ public class ApplicationControllerTest {
                         .content(objectMapper.writeValueAsString(validUpdateRequest())))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value("Access denied"));
+    }
+
+    @Test
+    @WithMockUser
+    void updateApplication_AcceptsPartialPayload_WhenOnlyStatusSent() throws Exception {
+        UUID appId = UUID.randomUUID();
+        ApplicationResponse updated = new ApplicationResponse(
+                appId, "Google", JobType.FULL_TIME, "Tel Aviv", "Developer",
+                LocalDate.now(), Status.OFFER, null, "https://google.com", null
+        );
+        when(applicationService.updateApplicationByUser(eq(appId), any(ApplicationUpdateRequest.class)))
+                .thenReturn(updated);
+
+        mockMvc.perform(patch("/applications/" + appId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"status\": \"OFFER\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OFFER"));
     }
 
     // ── GET /applications/{id}/credentials ───────────────────────────────────

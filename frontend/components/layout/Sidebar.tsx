@@ -86,6 +86,7 @@ export default function Sidebar() {
                         label={label}
                         icon={<Icon />}
                         collapsed={collapsed}
+                        siblingHrefs={NAV_ITEMS.map(n => n.href)}
                     />
                 ))}
             </nav>

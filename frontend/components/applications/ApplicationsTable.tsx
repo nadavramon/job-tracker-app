@@ -39,7 +39,11 @@ const thCls =
     'px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]';
 const tdCls = 'px-4 py-3 text-sm text-[var(--foreground)] whitespace-nowrap';
 
-export default function ApplicationsTable() {
+interface ApplicationsTableProps {
+    onDataChange?: () => void;
+}
+
+export default function ApplicationsTable({ onDataChange }: ApplicationsTableProps) {
     const { toast } = useToast();
 
     const [page, setPage]               = useState(0);
@@ -120,13 +124,14 @@ export default function ApplicationsTable() {
             });
             toast.success('Application deleted');
             setPendingDeleteApp(null);
+            onDataChange?.();
         } catch (error) {
             toast.error(getErrorMessage(error));
             setPendingDeleteApp(null);
         } finally {
             setDeleting(false);
         }
-    }, [pendingDeleteApp, toast]);
+    }, [pendingDeleteApp, toast, onDataChange]);
 
     const handleDeleteCancel = useCallback(() => {
         setPendingDeleteApp(null);
@@ -142,7 +147,8 @@ export default function ApplicationsTable() {
                 ),
             };
         });
-    }, []);
+        onDataChange?.();
+    }, [onDataChange]);
 
     const handleEditSaved = useCallback((updated: Application) => {
         setData(prev => {
@@ -152,7 +158,8 @@ export default function ApplicationsTable() {
                 content: prev.content.map(app => app.id === updated.id ? updated : app),
             };
         });
-    }, []);
+        onDataChange?.();
+    }, [onDataChange]);
 
     return (
         <>

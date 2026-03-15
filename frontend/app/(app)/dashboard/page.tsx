@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getStats } from '@/lib/applicationService';
 import { isAuthenticated } from '@/lib/auth';
@@ -17,25 +17,25 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const fetchStats = useCallback(async () => {
+    try {
+      const statsData = await getStats();
+      setStats(statsData);
+    } catch {
+      setError('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push('/login');
       return;
     }
 
-    const fetchData = async () => {
-      try {
-        const statsData = await getStats();
-        setStats(statsData);
-      } catch {
-        setError('Failed to load dashboard data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [router]);
+    fetchStats();
+  }, [router, fetchStats]);
 
   if (loading) {
     return (
@@ -63,7 +63,7 @@ export default function DashboardPage() {
         </>
       )}
 
-      <ApplicationsTable />
+      <ApplicationsTable onDataChange={fetchStats} />
     </div>
   );
 }

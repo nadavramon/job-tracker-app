@@ -2,34 +2,26 @@ package com.nadavramon.job_tracker.dto;
 
 import com.nadavramon.job_tracker.enums.JobType;
 import com.nadavramon.job_tracker.enums.Status;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public class ApplicationRequest {
+public class ApplicationUpdateRequest {
 
-    @NotBlank
     @Size(max = 255)
     private String companyName;
 
-    @NotBlank
     @Size(max = 255)
     private String jobRole;
 
-    @NotBlank
     @Size(max = 255)
     private String location;
 
-    @NotNull
     private Status status;
 
-    @NotNull
     private JobType jobType;
 
-    @NotNull
     private LocalDate appliedDate;
 
     @Pattern(regexp = "^https?://.*", message = "must be a valid http or https URL")

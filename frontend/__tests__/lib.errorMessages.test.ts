@@ -1,7 +1,7 @@
 import { getErrorMessage, FALLBACK_ERROR } from '@/lib/errorMessages';
 
-function axiosError(message: string) {
-    return { response: { data: { message } } };
+function axiosError(message: string, status?: number) {
+    return { response: { status, data: { message } } };
 }
 
 describe('getErrorMessage', () => {
@@ -35,7 +35,17 @@ describe('getErrorMessage', () => {
         );
     });
 
-    it('returns fallback for an unknown backend message', () => {
+    it('surfaces raw message for 400 validation errors', () => {
+        expect(getErrorMessage(axiosError('websiteLink: must be a valid http or https URL', 400))).toBe(
+            'websiteLink: must be a valid http or https URL'
+        );
+    });
+
+    it('returns fallback for non-400 unknown messages', () => {
+        expect(getErrorMessage(axiosError('Unexpected internal error', 500))).toBe(FALLBACK_ERROR);
+    });
+
+    it('returns fallback for an unknown backend message without status', () => {
         expect(getErrorMessage(axiosError('Unexpected internal error'))).toBe(FALLBACK_ERROR);
     });
 
