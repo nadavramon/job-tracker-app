@@ -42,5 +42,12 @@ export default function StatusHint({ status, appliedDate }: Props) {
         );
     }
 
-    return null;
+    return (
+        <span
+            className="inline-block h-2 w-2 rounded-full bg-green-500 shrink-0"
+            title={`Applied ${days} days ago — recently submitted`}
+            aria-label={`Applied ${days} days ago — recently submitted`}
+            role="img"
+        />
+    );
 }

@@ -31,20 +31,26 @@ describe('StatusHint', () => {
         },
     );
 
-    // --- APPLIED within 14 days ---
+    // --- Green: APPLIED within 14 days ---
 
-    it('renders nothing when APPLIED 0 days ago', () => {
-        const { container } = render(
-            <StatusHint status="APPLIED" appliedDate={dateMinusDays(0)} />,
-        );
-        expect(container.firstChild).toBeNull();
+    it('renders green dot when APPLIED 0 days ago', () => {
+        render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(0)} />);
+        const dot = screen.getByRole('img', { name: /0 days ago — recently submitted/i });
+        expect(dot).toBeInTheDocument();
+        expect(dot).toHaveClass('bg-green-500');
     });
 
-    it('renders nothing when APPLIED 13 days ago', () => {
-        const { container } = render(
-            <StatusHint status="APPLIED" appliedDate={dateMinusDays(13)} />,
-        );
-        expect(container.firstChild).toBeNull();
+    it('renders green dot when APPLIED 13 days ago', () => {
+        render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(13)} />);
+        const dot = screen.getByRole('img', { name: /13 days ago — recently submitted/i });
+        expect(dot).toBeInTheDocument();
+        expect(dot).toHaveClass('bg-green-500');
+    });
+
+    it('green dot has correct tooltip text', () => {
+        render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(5)} />);
+        const dot = screen.getByRole('img');
+        expect(dot).toHaveAttribute('title', 'Applied 5 days ago — recently submitted');
     });
 
     // --- Amber: 14–29 days ---

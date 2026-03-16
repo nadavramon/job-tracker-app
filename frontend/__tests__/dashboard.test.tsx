@@ -31,7 +31,7 @@ const mockStats: StatsResponse = {
   totalApplications: 5,
   statusBreakdown: { APPLIED: 3, OFFER: 2 },
   monthlyApplications: [],
-  responseRate: 0.4,
+  responseRate: 40.0,
 };
 
 describe('DashboardPage', () => {

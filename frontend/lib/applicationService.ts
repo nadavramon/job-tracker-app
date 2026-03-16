@@ -1,5 +1,5 @@
 import api from './api';
-import { Application, PagedResponse, StatsResponse } from '@/types';
+import { Application, CredentialsResponse, PagedResponse, StatsResponse } from '@/types';
 
 export const getApplications = async (
   page = 0,
@@ -37,6 +37,11 @@ export const updateApplication = async (id: string, data: Partial<Application>):
 
 export const deleteApplication = async (id: string): Promise<void> => {
   await api.delete(`/applications/${id}`);
+};
+
+export const getCredentials = async (id: string): Promise<CredentialsResponse> => {
+  const response = await api.get<CredentialsResponse>(`/applications/${id}/credentials`);
+  return response.data;
 };
 
 export const getStats = async (): Promise<StatsResponse> => {

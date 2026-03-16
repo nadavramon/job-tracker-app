@@ -25,7 +25,7 @@ interface StatsBarProps {
 }
 
 export default function StatsBar({ stats }: StatsBarProps) {
-    const responseRatePct = Math.round(stats.responseRate * 100);
+    const responseRatePct = Math.round(stats.responseRate);
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

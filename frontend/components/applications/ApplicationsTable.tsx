@@ -277,8 +277,8 @@ export default function ApplicationsTable({ onDataChange }: ApplicationsTablePro
                                             </td>
                                             <td className={tdCls}>
                                                 <CredentialCell
-                                                    username={app.username}
-                                                    password={app.password}
+                                                    applicationId={app.id}
+                                                    hasCredentials={app.username !== null || app.password !== null}
                                                 />
                                             </td>
                                             <td className={tdCls}>
