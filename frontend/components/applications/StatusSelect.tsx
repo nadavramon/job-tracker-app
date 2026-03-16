@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { updateApplication } from '@/lib/applicationService';
 import { Status } from '@/types';
 import { StatusBadge } from '@/components/ui/Badge';
@@ -28,6 +28,10 @@ export default function StatusSelect({ applicationId, status, onStatusChange }: 
     const [pendingStatus, setPendingStatus] = useState<Status>(status);
     const skipSaveRef = useRef(false);
     const { toast } = useToast();
+
+    useEffect(() => {
+        setCurrentStatus(status);
+    }, [status]);
 
     const save = useCallback(async (newStatus: Status) => {
         if (newStatus === currentStatus) {

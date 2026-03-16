@@ -17,13 +17,17 @@ export const FALLBACK_ERROR = 'Something went wrong. Please try again.';
  */
 export function getErrorMessage(error: unknown): string {
     if (error && typeof error === 'object' && 'response' in error) {
-        const data = (error as { response?: { data?: ApiError } }).response?.data;
+        const axiosError = error as { response?: { status?: number; data?: ApiError } };
+        const status = axiosError.response?.status;
+        const data = axiosError.response?.data;
         const message = data?.message;
         if (typeof message === 'string') {
             const lower = message.toLowerCase();
             for (const [pattern, friendly] of MESSAGE_MAP) {
                 if (lower.includes(pattern)) return friendly;
             }
+            // Surface validation messages from 400 responses directly
+            if (status === 400) return message;
         }
     }
     return FALLBACK_ERROR;

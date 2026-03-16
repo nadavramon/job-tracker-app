@@ -2,6 +2,7 @@ package com.nadavramon.job_tracker.controller;
 
 import com.nadavramon.job_tracker.dto.ApplicationRequest;
 import com.nadavramon.job_tracker.dto.ApplicationResponse;
+import com.nadavramon.job_tracker.dto.ApplicationUpdateRequest;
 import com.nadavramon.job_tracker.dto.ApplicationStatsResponse;
 import com.nadavramon.job_tracker.dto.CredentialsResponse;
 import com.nadavramon.job_tracker.enums.Status;
@@ -55,7 +56,7 @@ public class ApplicationController {
 
     @PatchMapping("/{id}")
     public ApplicationResponse updateApplication(@PathVariable UUID id
-            , @Valid @RequestBody ApplicationRequest request) {
+            , @Valid @RequestBody ApplicationUpdateRequest request) {
         return applicationService.updateApplicationByUser(id, request);
     }
 

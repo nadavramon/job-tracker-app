@@ -9,11 +9,15 @@ interface SidebarItemProps {
     icon: React.ReactNode;
     collapsed: boolean;
     onClick?: () => void;
+    siblingHrefs?: string[];
 }
 
-export default function SidebarItem({ href, label, icon, collapsed, onClick }: SidebarItemProps) {
+export default function SidebarItem({ href, label, icon, collapsed, onClick, siblingHrefs = [] }: SidebarItemProps) {
     const pathname = usePathname();
-    const isActive = pathname === href || (href !== '/' && pathname.startsWith(href + '/'));
+    const exactMatch = pathname === href;
+    const prefixMatch = href !== '/' && pathname.startsWith(href + '/');
+    // Don't use prefix matching if the pathname exactly matches another nav item
+    const isActive = exactMatch || (prefixMatch && !siblingHrefs.some(h => h === pathname));
 
     return (
         <Link

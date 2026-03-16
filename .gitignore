@@ -16,3 +16,4 @@ frontend/.env*.local
 .idea/
 .vscode/
 .claude/
+CLAUDE.md

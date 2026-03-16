@@ -126,6 +126,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                             icon={<Icon />}
                             collapsed={false}
                             onClick={onClose}
+                            siblingHrefs={NAV_ITEMS.map(n => n.href)}
                         />
                     ))}
                 </nav>
