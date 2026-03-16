@@ -74,6 +74,12 @@ export interface PagedResponse<T> {
     };
 }
 
+// Mirrors CredentialsResponse DTO from GET /applications/{id}/credentials
+export interface CredentialsResponse {
+    username: string | null;
+    password: string | null;
+}
+
 // Mirrors MonthlyCount DTO from GET /applications/stats
 export interface MonthlyCount {
     month: string;

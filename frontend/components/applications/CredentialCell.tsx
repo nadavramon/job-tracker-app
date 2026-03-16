@@ -1,10 +1,15 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { getCredentials } from '@/lib/applicationService';
+import { CredentialsResponse } from '@/types';
+import { useToast } from '@/context/ToastContext';
+import { getErrorMessage } from '@/lib/errorMessages';
+import Spinner from '@/components/ui/Spinner';
 
 interface Props {
-    username: string | null;
-    password: string | null;
+    applicationId: string;
+    hasCredentials: boolean;
 }
 
 function EyeIcon() {
@@ -40,38 +45,71 @@ function EyeOffIcon() {
     );
 }
 
-export default function CredentialCell({ username, password }: Props) {
+export default function CredentialCell({ applicationId, hasCredentials }: Props) {
+    const [credentials, setCredentials] = useState<CredentialsResponse | null>(null);
+    const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
+    const { toast } = useToast();
 
-    const toggle = useCallback(() => setVisible(prev => !prev), []);
+    const handleToggle = useCallback(async () => {
+        if (visible) {
+            setVisible(false);
+            setCredentials(null);
+            return;
+        }
+        setLoading(true);
+        try {
+            const data = await getCredentials(applicationId);
+            setCredentials(data);
+            setVisible(true);
+        } catch (error) {
+            toast.error(getErrorMessage(error));
+        } finally {
+            setLoading(false);
+        }
+    }, [visible, credentials, applicationId, toast]);
 
-    if (username === null && password === null) {
+    if (!hasCredentials) {
         return <span className="text-[var(--muted-foreground)]">—</span>;
     }
 
     return (
         <div className="flex items-center gap-2">
-            <div className="font-mono text-xs space-y-0.5">
-                {username !== null && (
+            {visible && credentials ? (
+                <div className="font-mono text-xs space-y-0.5">
+                    {credentials.username !== null && (
+                        <div>
+                            <span className="text-[var(--muted-foreground)]">user: </span>
+                            <span>{credentials.username}</span>
+                        </div>
+                    )}
+                    {credentials.password !== null && (
+                        <div>
+                            <span className="text-[var(--muted-foreground)]">pass: </span>
+                            <span>{credentials.password}</span>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className="font-mono text-xs space-y-0.5">
                     <div>
                         <span className="text-[var(--muted-foreground)]">user: </span>
-                        <span>{visible ? username : '••••••••'}</span>
+                        <span>••••••••</span>
                     </div>
-                )}
-                {password !== null && (
                     <div>
                         <span className="text-[var(--muted-foreground)]">pass: </span>
-                        <span>{visible ? password : '••••••••'}</span>
+                        <span>••••••••</span>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
 
             <button
-                onClick={toggle}
+                onClick={handleToggle}
+                disabled={loading}
                 aria-label={visible ? 'Hide credentials' : 'Show credentials'}
-                className="shrink-0 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                className="shrink-0 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50"
             >
-                {visible ? <EyeOffIcon /> : <EyeIcon />}
+                {loading ? <Spinner size="sm" /> : visible ? <EyeOffIcon /> : <EyeIcon />}
             </button>
         </div>
     );

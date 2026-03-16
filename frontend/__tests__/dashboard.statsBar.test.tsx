@@ -13,7 +13,7 @@ const mockStats: StatsResponse = {
         WITHDRAWN: 1,
     },
     monthlyApplications: [],
-    responseRate: 0.6,
+    responseRate: 60.0,
 };
 
 describe('StatsBar', () => {
@@ -71,7 +71,7 @@ describe('StatsBar', () => {
     it('rounds the response rate to the nearest integer', () => {
         const statsWithDecimal: StatsResponse = {
             ...mockStats,
-            responseRate: 0.333,
+            responseRate: 33.3,
         };
         render(<StatsBar stats={statsWithDecimal} />);
         expect(screen.getByText('33%')).toBeInTheDocument();

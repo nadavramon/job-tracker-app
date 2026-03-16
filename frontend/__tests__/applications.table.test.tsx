@@ -6,6 +6,7 @@ import { Application, PagedResponse } from '@/types';
 jest.mock('@/lib/applicationService', () => ({
     getApplications: jest.fn(),
     deleteApplication: jest.fn(),
+    getCredentials: jest.fn(),
 }));
 
 const mockToast = {
