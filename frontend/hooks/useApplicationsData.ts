@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useEffect, useState } from 'react';
 import { deleteApplication, getApplications } from '@/lib/applicationService';
 import { Application, PagedResponse, Status } from '@/types';
