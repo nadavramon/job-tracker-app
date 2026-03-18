@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useSyncExternalStore } from 'react';
+import { X } from 'lucide-react';
 
 interface ModalProps {
     open: boolean;
@@ -62,7 +63,7 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
         >
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/50"
+                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
                 onClick={onClose}
                 aria-hidden="true"
             />
@@ -75,6 +76,7 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
                     'relative w-full rounded-xl shadow-xl outline-none',
                     'bg-[var(--card)] text-[var(--card-foreground)]',
                     'border border-[var(--border)]',
+                    'animate-[scale-in_0.2s_ease-out]',
                     maxWidth,
                 ].join(' ')}
             >
@@ -89,9 +91,7 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
                             aria-label="Close"
                             className="rounded-md p-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            <X className="h-4 w-4" />
                         </button>
                     </div>
                 )}

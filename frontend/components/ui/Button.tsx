@@ -14,11 +14,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
     primary:
-        'bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+        'bg-[var(--primary)] text-[var(--primary-foreground)] hover:brightness-110 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-[var(--ring)]/50',
     secondary:
-        'bg-[var(--muted)] text-[var(--foreground)] hover:opacity-80 focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+        'bg-[var(--muted)] text-[var(--foreground)] hover:brightness-95 dark:hover:brightness-125 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-[var(--ring)]/50',
     destructive:
-        'bg-[var(--destructive)] text-[var(--destructive-foreground)] hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--destructive)]',
+        'bg-[var(--destructive)] text-[var(--destructive-foreground)] hover:brightness-110 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-[var(--destructive)]/50',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -42,7 +42,7 @@ export default function Button({
         <button
             disabled={isDisabled}
             className={[
-                'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-opacity outline-none',
+                'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-all outline-none active:scale-[0.98]',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
                 VARIANT_CLASSES[variant],
                 SIZE_CLASSES[size],

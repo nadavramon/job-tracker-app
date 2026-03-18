@@ -13,13 +13,14 @@ export default function Card({ title, value, icon, subtitle, children, className
     return (
         <div
             className={[
-                'rounded-xl border border-[var(--border)] bg-[var(--card)] p-5',
+                'rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm',
+                'hover:shadow-md hover:-translate-y-0.5 transition-all',
                 'flex items-start gap-4',
                 className,
             ].join(' ')}
         >
             {icon && (
-                <div className="shrink-0 rounded-lg bg-[var(--muted)] p-2.5 text-[var(--muted-foreground)]">
+                <div className="shrink-0 rounded-lg bg-[var(--primary)]/10 p-2.5 text-[var(--primary)]">
                     {icon}
                 </div>
             )}

@@ -1,5 +1,7 @@
 'use client';
 
+import { Loader2 } from 'lucide-react';
+
 export type SpinnerSize = 'sm' | 'md' | 'lg';
 
 interface SpinnerProps {
@@ -7,10 +9,10 @@ interface SpinnerProps {
     className?: string;
 }
 
-const SIZE_CLASSES: Record<SpinnerSize, string> = {
-    sm: 'h-3.5 w-3.5 border-2',
-    md: 'h-5 w-5 border-2',
-    lg: 'h-7 w-7 border-[3px]',
+const SIZE_PX: Record<SpinnerSize, number> = {
+    sm: 14,
+    md: 20,
+    lg: 28,
 };
 
 export default function Spinner({ size = 'md', className = '' }: SpinnerProps) {
@@ -18,11 +20,9 @@ export default function Spinner({ size = 'md', className = '' }: SpinnerProps) {
         <span
             role="status"
             aria-label="Loading"
-            className={[
-                'inline-block rounded-full border-current border-t-transparent animate-spin',
-                SIZE_CLASSES[size],
-                className,
-            ].join(' ')}
-        />
+            className={`inline-flex ${className}`}
+        >
+            <Loader2 className="animate-spin" size={SIZE_PX[size]} />
+        </span>
     );
 }

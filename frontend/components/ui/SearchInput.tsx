@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Search, X } from 'lucide-react';
 
 interface SearchInputProps {
     value: string;
@@ -44,16 +45,7 @@ export default function SearchInput({
     return (
         <div className={`relative ${className}`}>
             {/* Search icon */}
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)] pointer-events-none"
-            >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)] pointer-events-none" />
 
             <input
                 type="search"
@@ -61,10 +53,10 @@ export default function SearchInput({
                 onChange={handleChange}
                 placeholder={placeholder}
                 className={[
-                    'w-full rounded-md border px-3 py-2 pl-9 text-sm outline-none transition-colors',
+                    'w-full rounded-md border px-3 py-2 pl-9 text-sm outline-none transition-colors shadow-sm',
                     'bg-[var(--background)] text-[var(--foreground)]',
                     'border-[var(--border)] placeholder:text-[var(--muted-foreground)]',
-                    'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/30',
+                    'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/50',
                     local ? 'pr-8' : '',
                 ].join(' ')}
             />
@@ -77,9 +69,7 @@ export default function SearchInput({
                     aria-label="Clear search"
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-3.5 w-3.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <X className="h-3.5 w-3.5" />
                 </button>
             )}
         </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 interface PaginationProps {
     page: number;          // 0-based (matches Spring Pageable)
     totalPages: number;
@@ -49,9 +51,7 @@ export default function Pagination({
                     aria-label="Previous page"
                     className={`${btnBase} ${btnDefault}`}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                    </svg>
+                    <ChevronLeft className="h-4 w-4" />
                 </button>
 
                 {pages.map((p, i) =>
@@ -76,9 +76,7 @@ export default function Pagination({
                     aria-label="Next page"
                     className={`${btnBase} ${btnDefault}`}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
+                    <ChevronRight className="h-4 w-4" />
                 </button>
             </div>
         </div>
