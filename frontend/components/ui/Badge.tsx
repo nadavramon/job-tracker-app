@@ -6,12 +6,12 @@ import { Status } from '@/types';
 export type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
 
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
-    default:  'bg-blue-100   text-blue-800   dark:bg-blue-900/40  dark:text-blue-300',
-    success:  'bg-green-100  text-green-800  dark:bg-green-900/40 dark:text-green-300',
-    warning:  'bg-amber-100  text-amber-800  dark:bg-amber-900/40 dark:text-amber-300',
-    danger:   'bg-red-100    text-red-800    dark:bg-red-900/40   dark:text-red-300',
-    info:     'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300',
-    muted:    'bg-[var(--muted)] text-[var(--muted-foreground)]',
+    default:  'bg-[var(--status-applied)]/15 text-[var(--status-applied)] border border-[var(--status-applied)]/25',
+    success:  'bg-[var(--status-offer)]/15 text-[var(--status-offer)] border border-[var(--status-offer)]/25',
+    warning:  'bg-[var(--status-interviewing)]/15 text-[var(--status-interviewing)] border border-[var(--status-interviewing)]/25',
+    danger:   'bg-[var(--status-rejected)]/15 text-[var(--status-rejected)] border border-[var(--status-rejected)]/25',
+    info:     'bg-[var(--status-screening)]/15 text-[var(--status-screening)] border border-[var(--status-screening)]/25',
+    muted:    'bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]',
 };
 
 // Map application statuses to badge variants

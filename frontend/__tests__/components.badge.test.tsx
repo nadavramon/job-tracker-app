@@ -11,36 +11,36 @@ describe('Badge', () => {
     it('applies default variant class by default', () => {
         render(<Badge>Default</Badge>);
         const badge = screen.getByText('Default');
-        expect(badge.className).toContain('bg-blue-100');
-        expect(badge.className).toContain('text-blue-800');
+        expect(badge.className).toContain('bg-[var(--status-applied)]');
+        expect(badge.className).toContain('text-[var(--status-applied)]');
     });
 
     it('applies success variant classes', () => {
         render(<Badge variant="success">Success</Badge>);
         const badge = screen.getByText('Success');
-        expect(badge.className).toContain('bg-green-100');
-        expect(badge.className).toContain('text-green-800');
+        expect(badge.className).toContain('bg-[var(--status-offer)]');
+        expect(badge.className).toContain('text-[var(--status-offer)]');
     });
 
     it('applies warning variant classes', () => {
         render(<Badge variant="warning">Warning</Badge>);
         const badge = screen.getByText('Warning');
-        expect(badge.className).toContain('bg-amber-100');
-        expect(badge.className).toContain('text-amber-800');
+        expect(badge.className).toContain('bg-[var(--status-interviewing)]');
+        expect(badge.className).toContain('text-[var(--status-interviewing)]');
     });
 
     it('applies danger variant classes', () => {
         render(<Badge variant="danger">Danger</Badge>);
         const badge = screen.getByText('Danger');
-        expect(badge.className).toContain('bg-red-100');
-        expect(badge.className).toContain('text-red-800');
+        expect(badge.className).toContain('bg-[var(--status-rejected)]');
+        expect(badge.className).toContain('text-[var(--status-rejected)]');
     });
 
     it('applies info variant classes', () => {
         render(<Badge variant="info">Info</Badge>);
         const badge = screen.getByText('Info');
-        expect(badge.className).toContain('bg-purple-100');
-        expect(badge.className).toContain('text-purple-800');
+        expect(badge.className).toContain('bg-[var(--status-screening)]');
+        expect(badge.className).toContain('text-[var(--status-screening)]');
     });
 
     it('applies muted variant classes', () => {
@@ -71,29 +71,29 @@ describe('StatusBadge', () => {
         expect(screen.getByText(label)).toBeInTheDocument();
     });
 
-    it('APPLIED maps to default (blue) variant', () => {
+    it('APPLIED maps to default variant', () => {
         render(<StatusBadge status="APPLIED" />);
-        expect(screen.getByText('Applied').className).toContain('bg-blue-100');
+        expect(screen.getByText('Applied').className).toContain('bg-[var(--status-applied)]');
     });
 
-    it('SCREENING maps to info (purple) variant', () => {
+    it('SCREENING maps to info variant', () => {
         render(<StatusBadge status="SCREENING" />);
-        expect(screen.getByText('Screening').className).toContain('bg-purple-100');
+        expect(screen.getByText('Screening').className).toContain('bg-[var(--status-screening)]');
     });
 
-    it('INTERVIEWING maps to warning (amber) variant', () => {
+    it('INTERVIEWING maps to warning variant', () => {
         render(<StatusBadge status="INTERVIEWING" />);
-        expect(screen.getByText('Interviewing').className).toContain('bg-amber-100');
+        expect(screen.getByText('Interviewing').className).toContain('bg-[var(--status-interviewing)]');
     });
 
-    it('OFFER maps to success (green) variant', () => {
+    it('OFFER maps to success variant', () => {
         render(<StatusBadge status="OFFER" />);
-        expect(screen.getByText('Offer').className).toContain('bg-green-100');
+        expect(screen.getByText('Offer').className).toContain('bg-[var(--status-offer)]');
     });
 
-    it('REJECTED maps to danger (red) variant', () => {
+    it('REJECTED maps to danger variant', () => {
         render(<StatusBadge status="REJECTED" />);
-        expect(screen.getByText('Rejected').className).toContain('bg-red-100');
+        expect(screen.getByText('Rejected').className).toContain('bg-[var(--status-rejected)]');
     });
 
     it('WITHDRAWN maps to muted variant', () => {

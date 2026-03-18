@@ -1,6 +1,7 @@
 'use client';
 
 import { SelectHTMLAttributes, useId } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 export interface SelectOption {
     value: string;
@@ -36,37 +37,33 @@ export default function Select({
                     {label}
                 </label>
             )}
-            <select
-                id={selectId}
-                className={[
-                    'w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors appearance-none',
-                    'bg-[var(--background)] text-[var(--foreground)]',
-                    'border-[var(--border)]',
-                    'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/30',
-                    'disabled:opacity-50 disabled:cursor-not-allowed',
-                    error ? 'border-[var(--destructive)]' : '',
-                    className,
-                ].join(' ')}
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23737373' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 0.6rem center',
-                    backgroundSize: '1rem',
-                    paddingRight: '2.25rem',
-                }}
-                {...props}
-            >
-                {placeholder && (
-                    <option value="" disabled>
-                        {placeholder}
-                    </option>
-                )}
-                {options.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                    </option>
-                ))}
-            </select>
+            <div className="relative">
+                <select
+                    id={selectId}
+                    className={[
+                        'w-full rounded-md border px-3 py-2 pr-9 text-sm outline-none transition-colors appearance-none shadow-sm',
+                        'bg-[var(--background)] text-[var(--foreground)]',
+                        'border-[var(--border)]',
+                        'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/50',
+                        'disabled:opacity-50 disabled:cursor-not-allowed',
+                        error ? 'border-[var(--destructive)]' : '',
+                        className,
+                    ].join(' ')}
+                    {...props}
+                >
+                    {placeholder && (
+                        <option value="" disabled>
+                            {placeholder}
+                        </option>
+                    )}
+                    {options.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                        </option>
+                    ))}
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)] pointer-events-none" />
+            </div>
             {error && (
                 <p className="text-xs text-[var(--destructive)]">{error}</p>
             )}
