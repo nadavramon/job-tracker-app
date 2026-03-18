@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getUsername, removeUsername } from '@/lib/auth';
 import { logout } from '@/lib/authService';
 import { useMounted } from '@/lib/useMounted';
@@ -9,22 +10,6 @@ import SidebarItem from './SidebarItem';
 import { NAV_ITEMS, IconUser, IconLogout } from './navItems';
 
 const STORAGE_KEY = 'sidebar-collapsed';
-
-// --- Icons (Sidebar-only: collapse toggles) ---
-
-const IconChevronLeft = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fillRule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clipRule="evenodd" />
-    </svg>
-);
-
-const IconChevronRight = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fillRule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
-    </svg>
-);
-
-// --- Sidebar ---
 
 export default function Sidebar() {
     const mounted = useMounted();
@@ -52,7 +37,7 @@ export default function Sidebar() {
         <aside
             className={[
                 'hidden md:flex flex-col shrink-0 h-screen sticky top-0',
-                'bg-[var(--card)] border-r border-[var(--border)]',
+                'bg-[var(--card)] border-r border-[var(--border)] shadow-sm',
                 'transition-[width] duration-200 ease-in-out',
                 collapsed ? 'w-16' : 'w-60',
             ].join(' ')}
@@ -73,7 +58,7 @@ export default function Sidebar() {
                     aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                     className="rounded-md p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
                 >
-                    {collapsed ? <IconChevronRight /> : <IconChevronLeft />}
+                    {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
                 </button>
             </div>
 
@@ -84,7 +69,7 @@ export default function Sidebar() {
                         key={href}
                         href={href}
                         label={label}
-                        icon={<Icon />}
+                        icon={<Icon className="h-5 w-5" />}
                         collapsed={collapsed}
                         siblingHrefs={NAV_ITEMS.map(n => n.href)}
                     />
@@ -98,10 +83,10 @@ export default function Sidebar() {
                     collapsed ? 'justify-center' : '',
                 ].join(' ')}>
                     <span
-                        className="shrink-0 h-5 w-5 text-[var(--muted-foreground)]"
+                        className="shrink-0 text-[var(--muted-foreground)]"
                         aria-hidden="true"
                     >
-                        <IconUser />
+                        <IconUser className="h-5 w-5" />
                     </span>
                     {!collapsed && username && (
                         <span className="text-sm text-[var(--muted-foreground)] truncate">{username}</span>
@@ -118,7 +103,7 @@ export default function Sidebar() {
                         collapsed ? 'justify-center px-2' : '',
                     ].join(' ')}
                 >
-                    <span className="shrink-0 h-5 w-5"><IconLogout /></span>
+                    <IconLogout className="shrink-0 h-5 w-5" />
                     {!collapsed && <span className="truncate">Log out</span>}
                 </button>
             </div>

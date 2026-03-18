@@ -26,16 +26,16 @@ export default function SidebarItem({ href, label, icon, collapsed, onClick, sib
             title={collapsed ? label : undefined}
             aria-label={collapsed ? label : undefined}
             className={[
-                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)',
+                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
                 isActive
-                    ? 'bg-(--primary) text-(--primary-foreground)'
-                    : 'text-(--muted-foreground) hover:bg-(--muted) hover:text-foreground',
+                    ? 'bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm'
+                    : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
                 collapsed ? 'justify-center px-2' : '',
             ].join(' ')}
             aria-current={isActive ? 'page' : undefined}
         >
-            <span className="shrink-0 h-5 w-5">{icon}</span>
+            <span className="shrink-0">{icon}</span>
             {!collapsed && <span className="truncate">{label}</span>}
         </Link>
     );
