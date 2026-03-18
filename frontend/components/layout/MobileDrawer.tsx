@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { X } from 'lucide-react';
 import { getUsername, removeUsername } from '@/lib/auth';
 import { logout } from '@/lib/authService';
 import { useMounted } from '@/lib/useMounted';
@@ -12,12 +13,6 @@ interface MobileDrawerProps {
     isOpen: boolean;
     onClose: () => void;
 }
-
-const IconClose = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
 
 const FOCUSABLE_SELECTORS = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -90,7 +85,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
         <div className="fixed inset-0 z-50 md:hidden flex">
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/50 transition-opacity"
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
                 aria-hidden="true"
                 onClick={onClose}
             />
@@ -101,7 +96,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                 role="dialog"
                 aria-modal="true"
                 aria-label="Navigation menu"
-                className="relative flex w-64 flex-col bg-[var(--card)] shadow-xl h-full border-r border-[var(--border)]"
+                className="relative flex w-64 flex-col bg-[var(--card)] shadow-xl h-full border-r border-[var(--border)] animate-[slide-in-left_0.2s_ease-out]"
             >
                 <div className="flex items-center justify-between h-14 px-4 border-b border-[var(--border)] shrink-0">
                     <span className="font-semibold text-sm text-[var(--foreground)] truncate">
@@ -113,7 +108,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                         aria-label="Close menu"
                         className="rounded-md p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
                     >
-                        <IconClose />
+                        <X className="h-6 w-6" />
                     </button>
                 </div>
 
@@ -123,7 +118,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                             key={href}
                             href={href}
                             label={label}
-                            icon={<Icon />}
+                            icon={<Icon className="h-5 w-5" />}
                             collapsed={false}
                             onClick={onClose}
                             siblingHrefs={NAV_ITEMS.map(n => n.href)}
@@ -133,8 +128,8 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
 
                 <div className="shrink-0 border-t border-[var(--border)] px-4 py-4 flex flex-col gap-2">
                     <div className="flex items-center gap-3">
-                        <span className="shrink-0 h-5 w-5 text-[var(--muted-foreground)]" aria-hidden="true">
-                            <IconUser />
+                        <span className="shrink-0 text-[var(--muted-foreground)]" aria-hidden="true">
+                            <IconUser className="h-5 w-5" />
                         </span>
                         {username && (
                             <span className="text-sm font-medium text-[var(--muted-foreground)] truncate">{username}</span>
@@ -148,7 +143,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
                         ].join(' ')}
                     >
-                        <span className="shrink-0 h-5 w-5"><IconLogout /></span>
+                        <IconLogout className="shrink-0 h-5 w-5" />
                         <span className="truncate">Log out</span>
                     </button>
                 </div>
