@@ -2,18 +2,24 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Sun, Moon, Monitor } from 'lucide-react';
 import { isAuthenticated, getUsername } from '@/lib/auth';
 import { useTheme } from '@/context/ThemeContext';
 import { useMounted } from '@/lib/useMounted';
 import ProfileSection from '@/components/settings/ProfileSection';
 import AccountSection from '@/components/settings/AccountSection';
 
-type ThemeOption = { value: 'light' | 'dark' | 'system'; label: string; description: string };
+interface ThemeOption {
+    value: 'light' | 'dark' | 'system';
+    label: string;
+    description: string;
+    Icon: React.ComponentType<{ className?: string }>;
+}
 
 const THEME_OPTIONS: ThemeOption[] = [
-    { value: 'light', label: 'Light', description: 'Always use the light theme' },
-    { value: 'dark',  label: 'Dark',  description: 'Always use the dark theme' },
-    { value: 'system', label: 'System', description: 'Follow your device preference' },
+    { value: 'light', label: 'Light', description: 'Always use the light theme', Icon: Sun },
+    { value: 'dark',  label: 'Dark',  description: 'Always use the dark theme', Icon: Moon },
+    { value: 'system', label: 'System', description: 'Follow your device preference', Icon: Monitor },
 ];
 
 export default function SettingsPage() {
@@ -29,7 +35,7 @@ export default function SettingsPage() {
     }, [router]);
 
     return (
-        <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
+        <div className="max-w-2xl mx-auto px-4 py-8 space-y-8 animate-[fade-in_0.3s_ease-out]">
             <h1 className="text-2xl font-bold text-[var(--foreground)]">Settings</h1>
 
             <section aria-labelledby="profile-heading">
@@ -48,7 +54,7 @@ export default function SettingsPage() {
                     <fieldset>
                         <legend className="sr-only">Theme</legend>
                         <div className="space-y-2">
-                            {THEME_OPTIONS.map(({ value, label, description }) => (
+                            {THEME_OPTIONS.map(({ value, label, description, Icon }) => (
                                 <label
                                     key={value}
                                     className={[
@@ -66,6 +72,7 @@ export default function SettingsPage() {
                                         onChange={() => setTheme(value)}
                                         className="accent-[var(--primary)]"
                                     />
+                                    <Icon className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
                                     <div>
                                         <p className="text-sm font-medium text-[var(--foreground)]">{label}</p>
                                         <p className="text-xs text-[var(--muted-foreground)]">{description}</p>

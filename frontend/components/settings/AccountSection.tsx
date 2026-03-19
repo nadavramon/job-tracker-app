@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { AlertTriangle } from 'lucide-react';
 import { deleteAccount } from '@/lib/userService';
 import { removeUsername } from '@/lib/auth';
 import { useToast } from '@/context/ToastContext';
@@ -54,7 +55,8 @@ export default function AccountSection({ username }: AccountSectionProps) {
     return (
         <div className="rounded-xl border border-[var(--destructive)]/30 bg-[var(--card)] p-6 space-y-4">
             <div>
-                <h2 id="account-heading" className="text-base font-semibold text-[var(--destructive)]">
+                <h2 id="account-heading" className="text-base font-semibold text-[var(--destructive)] flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4" aria-hidden="true" />
                     Delete Account
                 </h2>
                 <p className="text-sm text-[var(--muted-foreground)] mt-1">

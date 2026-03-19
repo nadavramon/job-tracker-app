@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { Lock, X } from 'lucide-react';
 import { getProfile, updateProfile } from '@/lib/userService';
 import { UserProfileResponse, UpdateProfileRequest } from '@/types';
 import { useToast } from '@/context/ToastContext';
@@ -8,12 +9,12 @@ import { getErrorMessage } from '@/lib/errorMessages';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 
-type ProfileErrors = {
+interface ProfileErrors {
     username?: string;
     currentPassword?: string;
     newPassword?: string;
     confirmPassword?: string;
-};
+}
 
 function validate(
     username: string,
@@ -196,19 +197,24 @@ export default function ProfileSection() {
                     <button
                         type="button"
                         onClick={togglePasswordFields}
-                        className="text-sm text-[var(--primary)] hover:underline"
+                        className="inline-flex items-center gap-1.5 text-sm text-[var(--primary)] hover:underline"
                     >
+                        <Lock className="h-3.5 w-3.5" aria-hidden="true" />
                         Change password
                     </button>
                 ) : (
                     <div className="space-y-3 rounded-lg border border-[var(--border)] p-4">
                         <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-[var(--foreground)]">Change Password</p>
+                            <p className="text-sm font-medium text-[var(--foreground)] flex items-center gap-1.5">
+                                <Lock className="h-3.5 w-3.5" aria-hidden="true" />
+                                Change Password
+                            </p>
                             <button
                                 type="button"
                                 onClick={togglePasswordFields}
-                                className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                                className="inline-flex items-center gap-1 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
                             >
+                                <X className="h-3 w-3" aria-hidden="true" />
                                 Cancel
                             </button>
                         </div>
