@@ -3,7 +3,6 @@ import { JobType } from '@/types';
 export type AiErrorCode =
     | 'AI_UNAVAILABLE'
     | 'INVALID_INPUT'
-    | 'EXTRACTION_FAILED'
     | 'RATE_LIMITED';
 
 export interface AiErrorResponse {
