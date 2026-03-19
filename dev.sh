@@ -16,7 +16,11 @@ echo "🌐 Starting frontend on http://localhost:3000..."
 FRONTEND_PID=$!
 
 # When Ctrl+C is pressed, kill both processes
-trap "echo '🛑 Shutting down...'; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; exit" INT TERM
+cleanup() {
+    lsof -i :8080 -t | xargs kill -9 2>/dev/null
+    lsof -i :3000 -t | xargs kill -9 2>/dev/null
+}
+trap cleanup EXIT INT TERM
 
 echo ""
 echo "✅ Both servers starting. Press Ctrl+C to stop both."
