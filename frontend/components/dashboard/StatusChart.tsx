@@ -2,17 +2,8 @@
 
 import { useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useTheme } from '@/context/ThemeContext';
+import useChartColors from '@/hooks/useChartColors';
 import { Status } from '@/types';
-
-const STATUS_COLORS: Record<Status, string> = {
-    APPLIED:      '#3b82f6',
-    SCREENING:    '#a855f7',
-    INTERVIEWING: '#f59e0b',
-    OFFER:        '#22c55e',
-    REJECTED:     '#ef4444',
-    WITHDRAWN:    '#6b7280',
-};
 
 const STATUS_LABELS: Record<Status, string> = {
     APPLIED:      'Applied',
@@ -30,15 +21,7 @@ interface StatusChartProps {
 }
 
 export default function StatusChart({ statusBreakdown }: StatusChartProps) {
-    const { resolvedTheme } = useTheme();
-
-    const tooltipColors = useMemo(() => (
-        resolvedTheme === 'dark'
-            ? { bg: '#1a1a1a', border: '#2e2e2e', text: '#ededed' }
-            : { bg: '#ffffff', border: '#e5e5e5', text: '#171717' }
-    ), [resolvedTheme]);
-
-    const legendColor = resolvedTheme === 'dark' ? '#a3a3a3' : '#737373';
+    const colors = useChartColors();
 
     const chartData = useMemo(
         () => STATUS_ORDER
@@ -46,9 +29,9 @@ export default function StatusChart({ statusBreakdown }: StatusChartProps) {
             .map((s) => ({
                 name: STATUS_LABELS[s],
                 value: statusBreakdown[s]!,
-                color: STATUS_COLORS[s],
+                color: colors.status[s],
             })),
-        [statusBreakdown],
+        [statusBreakdown, colors.status],
     );
 
     if (chartData.length === 0) {
@@ -81,10 +64,10 @@ export default function StatusChart({ statusBreakdown }: StatusChartProps) {
                     </Pie>
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: tooltipColors.bg,
-                            border: `1px solid ${tooltipColors.border}`,
+                            backgroundColor: colors.tooltipBg,
+                            border: `1px solid ${colors.tooltipBorder}`,
                             borderRadius: '8px',
-                            color: tooltipColors.text,
+                            color: colors.tooltipText,
                             fontSize: 12,
                         }}
                     />
@@ -92,7 +75,7 @@ export default function StatusChart({ statusBreakdown }: StatusChartProps) {
                         iconType="circle"
                         iconSize={8}
                         formatter={(value) => (
-                            <span style={{ fontSize: 12, color: legendColor }}>{value}</span>
+                            <span style={{ fontSize: 12, color: colors.legendText }}>{value}</span>
                         )}
                     />
                 </PieChart>

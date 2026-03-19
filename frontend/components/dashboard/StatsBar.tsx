@@ -1,21 +1,22 @@
 'use client';
 
+import { Briefcase, TrendingUp } from 'lucide-react';
 import { StatsResponse, Status } from '@/types';
 import Card from '@/components/ui/Card';
 
 interface StatusConfig {
     label: string;
-    bg: string;
     text: string;
+    bg: string;
 }
 
 const STATUS_CONFIG: Record<Status, StatusConfig> = {
-    APPLIED:      { label: 'Applied',      bg: 'bg-blue-100   dark:bg-blue-900/40',    text: 'text-blue-800   dark:text-blue-300'   },
-    SCREENING:    { label: 'Screening',    bg: 'bg-purple-100 dark:bg-purple-900/40',  text: 'text-purple-800 dark:text-purple-300' },
-    INTERVIEWING: { label: 'Interviewing', bg: 'bg-amber-100  dark:bg-amber-900/40',   text: 'text-amber-800  dark:text-amber-300'  },
-    OFFER:        { label: 'Offer',        bg: 'bg-green-100  dark:bg-green-900/40',   text: 'text-green-800  dark:text-green-300'  },
-    REJECTED:     { label: 'Rejected',     bg: 'bg-red-100    dark:bg-red-900/40',     text: 'text-red-800    dark:text-red-300'    },
-    WITHDRAWN:    { label: 'Withdrawn',    bg: 'bg-[var(--muted)]',                    text: 'text-[var(--muted-foreground)]'       },
+    APPLIED:      { label: 'Applied',      text: 'text-[var(--status-applied)]',      bg: 'bg-[var(--status-applied)]/15' },
+    SCREENING:    { label: 'Screening',    text: 'text-[var(--status-screening)]',    bg: 'bg-[var(--status-screening)]/15' },
+    INTERVIEWING: { label: 'Interviewing', text: 'text-[var(--status-interviewing)]', bg: 'bg-[var(--status-interviewing)]/15' },
+    OFFER:        { label: 'Offer',        text: 'text-[var(--status-offer)]',        bg: 'bg-[var(--status-offer)]/15' },
+    REJECTED:     { label: 'Rejected',     text: 'text-[var(--status-rejected)]',     bg: 'bg-[var(--status-rejected)]/15' },
+    WITHDRAWN:    { label: 'Withdrawn',    text: 'text-[var(--status-withdrawn)]',    bg: 'bg-[var(--status-withdrawn)]/15' },
 };
 
 const STATUS_ORDER: Status[] = ['APPLIED', 'SCREENING', 'INTERVIEWING', 'OFFER', 'REJECTED', 'WITHDRAWN'];
@@ -30,21 +31,37 @@ export default function StatsBar({ stats }: StatsBarProps) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Total Applications */}
-            <Card title="Total Applications" value={stats.totalApplications} />
+            <div className="animate-[fade-in_0.4s_ease-out]">
+                <Card
+                    title="Total Applications"
+                    value={stats.totalApplications}
+                    icon={<Briefcase className="h-5 w-5" />}
+                />
+            </div>
 
             {/* Status Breakdown */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
+            <div
+                className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm animate-[fade-in_0.4s_ease-out_0.1s_both]"
+            >
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)] mb-3">
                     Status Breakdown
                 </p>
                 <div className="grid grid-cols-3 gap-2">
-                    {STATUS_ORDER.map((status) => {
-                        const { label, bg, text } = STATUS_CONFIG[status];
+                    {STATUS_ORDER.map((status, i) => {
+                        const { label, text, bg } = STATUS_CONFIG[status];
                         const count = stats.statusBreakdown[status] ?? 0;
                         return (
-                            <div key={status} className={`rounded-lg p-2 ${bg}`}>
-                                <p className={`text-lg font-bold leading-none ${text}`}>{count}</p>
-                                <p className={`mt-0.5 text-xs ${text}`}>{label}</p>
+                            <div
+                                key={status}
+                                className={`rounded-lg p-2 animate-[fade-in_0.3s_ease-out_both] ${bg}`}
+                                style={{ animationDelay: `${0.15 + i * 0.05}s` }}
+                            >
+                                <p className={`text-lg font-bold leading-none ${text}`}>
+                                    {count}
+                                </p>
+                                <p className={`mt-0.5 text-xs ${text}`}>
+                                    {label}
+                                </p>
                             </div>
                         );
                     })}
@@ -52,24 +69,30 @@ export default function StatsBar({ stats }: StatsBarProps) {
             </div>
 
             {/* Response Rate */}
-            <Card title="Response Rate" value={`${responseRatePct}%`}>
-                <div
-                    role="progressbar"
-                    aria-valuenow={responseRatePct}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-label="Response rate progress"
-                    className="mt-3 h-2 rounded-full bg-[var(--muted)] overflow-hidden"
+            <div className="animate-[fade-in_0.4s_ease-out_0.2s_both]">
+                <Card
+                    title="Response Rate"
+                    value={`${responseRatePct}%`}
+                    icon={<TrendingUp className="h-5 w-5" />}
                 >
                     <div
-                        className="h-full rounded-full bg-[var(--primary)] transition-all duration-500"
-                        style={{ width: `${responseRatePct}%` }}
-                    />
-                </div>
-                <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
-                    of applications received a response
-                </p>
-            </Card>
+                        role="progressbar"
+                        aria-valuenow={responseRatePct}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label="Response rate progress"
+                        className="mt-3 h-2 rounded-full bg-[var(--muted)] overflow-hidden"
+                    >
+                        <div
+                            className="h-full rounded-full bg-[var(--primary)] transition-all duration-500"
+                            style={{ width: `${responseRatePct}%` }}
+                        />
+                    </div>
+                    <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
+                        of applications received a response
+                    </p>
+                </Card>
+            </div>
         </div>
     );
 }

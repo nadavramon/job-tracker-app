@@ -44,9 +44,9 @@ export default function NewApplicationPage() {
     }, [router]);
 
     return (
-        <div className="max-w-3xl mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto px-4 py-8 animate-[fade-in_0.3s_ease-out]">
             <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">New Application</h1>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
                 <ApplicationForm
                     onSubmit={handleSubmit}
                     onCancel={handleCancel}

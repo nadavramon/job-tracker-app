@@ -5,7 +5,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
     Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { useTheme } from '@/context/ThemeContext';
+import useChartColors from '@/hooks/useChartColors';
 import { MonthlyCount } from '@/types';
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -20,13 +20,7 @@ interface ApplicationsChartProps {
 }
 
 export default function ApplicationsChart({ data }: ApplicationsChartProps) {
-    const { resolvedTheme } = useTheme();
-
-    const colors = useMemo(() => (
-        resolvedTheme === 'dark'
-            ? { axis: '#a3a3a3', grid: '#2e2e2e', tooltipBg: '#1a1a1a', tooltipBorder: '#2e2e2e', tooltipText: '#ededed', bar: '#3b82f6', cursor: '#2e2e2e' }
-            : { axis: '#737373', grid: '#e5e5e5', tooltipBg: '#ffffff', tooltipBorder: '#e5e5e5', tooltipText: '#171717', bar: '#2563eb', cursor: '#f5f5f5' }
-    ), [resolvedTheme]);
+    const colors = useChartColors();
 
     const chartData = useMemo(
         () => data.map((d) => ({ ...d, month: formatMonth(d.month) })),
@@ -71,7 +65,7 @@ export default function ApplicationsChart({ data }: ApplicationsChartProps) {
                         }}
                         cursor={{ fill: colors.cursor }}
                     />
-                    <Bar dataKey="count" fill={colors.bar} radius={[4, 4, 0, 0]} name="Applications" />
+                    <Bar dataKey="count" fill={colors.primary} radius={[4, 4, 0, 0]} name="Applications" />
                 </BarChart>
             </ResponsiveContainer>
         </div>

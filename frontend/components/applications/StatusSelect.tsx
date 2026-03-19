@@ -16,6 +16,15 @@ const STATUS_OPTIONS: { value: Status; label: string }[] = [
     { value: 'WITHDRAWN',    label: 'Withdrawn' },
 ];
 
+const STATUS_DOT_CLASS: Record<Status, string> = {
+    APPLIED:      'bg-[var(--status-applied)]',
+    SCREENING:    'bg-[var(--status-screening)]',
+    INTERVIEWING: 'bg-[var(--status-interviewing)]',
+    OFFER:        'bg-[var(--status-offer)]',
+    REJECTED:     'bg-[var(--status-rejected)]',
+    WITHDRAWN:    'bg-[var(--status-withdrawn)]',
+};
+
 interface StatusSelectProps {
     applicationId: string;
     status: Status;
@@ -84,23 +93,29 @@ export default function StatusSelect({ applicationId, status, onStatusChange }: 
 
     if (editState === 'editing') {
         return (
-            <select
-                autoFocus
-                value={pendingStatus}
-                onChange={(e) => setPendingStatus(e.target.value as Status)}
-                onBlur={handleBlur}
-                onKeyDown={handleKeyDown}
-                aria-label="Change status"
-                className={[
-                    'rounded-md border border-[var(--border)] bg-[var(--background)]',
-                    'text-[var(--foreground)] text-xs px-2 py-1 outline-none',
-                    'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/30',
-                ].join(' ')}
-            >
-                {STATUS_OPTIONS.map(({ value, label }) => (
-                    <option key={value} value={value}>{label}</option>
-                ))}
-            </select>
+            <div className="inline-flex items-center gap-1.5">
+                <span
+                    className={`inline-block h-2 w-2 rounded-full shrink-0 ${STATUS_DOT_CLASS[pendingStatus]}`}
+                    aria-hidden="true"
+                />
+                <select
+                    autoFocus
+                    value={pendingStatus}
+                    onChange={(e) => setPendingStatus(e.target.value as Status)}
+                    onBlur={handleBlur}
+                    onKeyDown={handleKeyDown}
+                    aria-label="Change status"
+                    className={[
+                        'rounded-md border border-[var(--border)] bg-[var(--background)]',
+                        'text-[var(--foreground)] text-xs px-2 py-1 outline-none',
+                        'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/30',
+                    ].join(' ')}
+                >
+                    {STATUS_OPTIONS.map(({ value, label }) => (
+                        <option key={value} value={value}>{label}</option>
+                    ))}
+                </select>
+            </div>
         );
     }
 
