@@ -157,7 +157,6 @@ export async function POST(request: NextRequest) {
         const statusMap: Record<string, number> = {
             RATE_LIMITED: 429,
             AI_UNAVAILABLE: 502,
-            EXTRACTION_FAILED: 502,
             INVALID_INPUT: 400,
         };
         return errorResponse(statusMap[result.error] ?? 502, result.error, result.message);

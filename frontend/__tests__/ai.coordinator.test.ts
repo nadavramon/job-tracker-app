@@ -18,6 +18,10 @@ jest.mock('@anthropic-ai/sdk', () => {
     };
 });
 
+jest.mock('@/lib/ai/client', () => ({
+    getClient: jest.fn(() => ({})),
+}));
+
 describe('runAgent', () => {
     it('returns success when agent resolves', async () => {
         const agent = jest.fn().mockResolvedValue({ field: 'value' });
@@ -26,18 +30,6 @@ describe('runAgent', () => {
 
         expect(result).toEqual({ success: true, data: { field: 'value' } });
         expect(agent).toHaveBeenCalledWith(expect.any(Object), { input: 'test' });
-    });
-
-    it('returns EXTRACTION_FAILED on SyntaxError', async () => {
-        const agent = jest.fn().mockRejectedValue(new SyntaxError('Unexpected token'));
-
-        const result = await runAgent(agent, { input: 'test' });
-
-        expect(result).toEqual({
-            success: false,
-            error: 'EXTRACTION_FAILED',
-            message: 'Failed to parse AI response.',
-        });
     });
 
     it('returns RATE_LIMITED on APIError 429', async () => {
