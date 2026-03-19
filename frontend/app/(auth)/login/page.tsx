@@ -3,6 +3,7 @@
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Briefcase, CircleAlert } from 'lucide-react';
 import { login } from '@/lib/authService';
 import { setUsername } from '@/lib/auth';
 import { getErrorMessage } from '@/lib/errorMessages';
@@ -63,25 +64,12 @@ function LoginContent() {
       </Modal>
 
       {/* Auth card */}
-      <div className="relative mx-4 w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 shadow-xl shadow-black/5 dark:shadow-black/30">
+      <div className="relative mx-4 w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 shadow-xl shadow-black/5 dark:shadow-black/30 animate-[fade-in_0.4s_ease-out]">
 
         {/* Brand mark */}
         <div className="mb-8 flex flex-col items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-6 w-6"
-              aria-hidden="true"
-            >
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-              <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
-            </svg>
+            <Briefcase className="h-6 w-6" aria-hidden="true" />
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-tight text-[var(--card-foreground)]">
@@ -96,19 +84,7 @@ function LoginContent() {
         {/* Error banner */}
         {error && (
           <div className="mb-5 flex items-start gap-3 rounded-lg border border-[var(--destructive)]/30 bg-[var(--destructive)]/10 px-4 py-3 text-sm text-[var(--destructive)]">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="mt-0.5 h-4 w-4 shrink-0"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             {error}
           </div>
         )}
