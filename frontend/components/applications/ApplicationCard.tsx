@@ -16,7 +16,7 @@ export default function ApplicationCard({ application, onEdit, onDelete }: Props
     const { companyName, jobRole, status, appliedDate, location, jobType, websiteLink } = application;
 
     return (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
             <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
                     <p className="font-semibold text-[var(--foreground)] flex items-center gap-1.5 truncate">

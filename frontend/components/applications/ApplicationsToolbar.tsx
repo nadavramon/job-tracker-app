@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowDown, ArrowUp, ChevronDown } from 'lucide-react';
 import { Status } from '@/types';
 import SearchInput from '@/components/ui/SearchInput';
 
@@ -44,24 +45,23 @@ export default function ApplicationsToolbar({
                 className="flex-1 min-w-[180px]"
             />
 
-            <select
-                value={statusFilter}
-                onChange={onStatusFilterChange}
-                aria-label="Filter by status"
-                className={selectCls}
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23737373' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 0.6rem center',
-                    backgroundSize: '1rem',
-                    paddingRight: '2.25rem',
-                }}
-            >
-                <option value="">All Statuses</option>
-                {STATUS_OPTIONS.map(({ value, label }) => (
-                    <option key={value} value={value}>{label}</option>
-                ))}
-            </select>
+            <div className="relative">
+                <select
+                    value={statusFilter}
+                    onChange={onStatusFilterChange}
+                    aria-label="Filter by status"
+                    className={`${selectCls} pr-9`}
+                >
+                    <option value="">All Statuses</option>
+                    {STATUS_OPTIONS.map(({ value, label }) => (
+                        <option key={value} value={value}>{label}</option>
+                    ))}
+                </select>
+                <ChevronDown
+                    className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]"
+                    aria-hidden="true"
+                />
+            </div>
 
             <button
                 onClick={onSortToggle}
@@ -72,7 +72,11 @@ export default function ApplicationsToolbar({
                     'hover:bg-[var(--muted)] transition-colors whitespace-nowrap',
                 ].join(' ')}
             >
-                Applied Date {sortDir === 'desc' ? '↓' : '↑'}
+                Applied Date
+                {sortDir === 'desc'
+                    ? <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
+                    : <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
+                }
             </button>
         </div>
     );

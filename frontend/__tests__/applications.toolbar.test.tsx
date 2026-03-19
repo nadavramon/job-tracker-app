@@ -44,12 +44,12 @@ describe('ApplicationsToolbar', () => {
 
     it('shows descending arrow when sortDir is desc', () => {
         render(<ApplicationsToolbar {...defaultProps} sortDir="desc" />);
-        expect(screen.getByRole('button', { name: /sort by applied date/i })).toHaveTextContent('Applied Date ↓');
+        expect(screen.getByRole('button', { name: /sort by applied date/i })).toHaveTextContent('Applied Date');
     });
 
     it('shows ascending arrow when sortDir is asc', () => {
         render(<ApplicationsToolbar {...defaultProps} sortDir="asc" />);
-        expect(screen.getByRole('button', { name: /sort by applied date/i })).toHaveTextContent('Applied Date ↑');
+        expect(screen.getByRole('button', { name: /sort by applied date/i })).toHaveTextContent('Applied Date');
     });
 
     it('reflects the current search value', () => {

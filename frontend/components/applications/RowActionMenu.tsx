@@ -1,27 +1,12 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { MoreVertical, Pencil, ExternalLink, Trash2 } from 'lucide-react';
 
 interface Props {
     websiteLink: string | null;
     onEdit: () => void;
     onDelete: () => void;
-}
-
-function KebabIcon() {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-            <circle cx="12" cy="5" r="1.5" />
-            <circle cx="12" cy="12" r="1.5" />
-            <circle cx="12" cy="19" r="1.5" />
-        </svg>
-    );
 }
 
 export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) {
@@ -83,7 +68,7 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
                 aria-haspopup="menu"
                 className="rounded p-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
             >
-                <KebabIcon />
+                <MoreVertical className="h-4 w-4" aria-hidden="true" />
             </button>
 
             {open && (
@@ -97,8 +82,9 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
                     <button
                         role="menuitem"
                         onClick={handleEdit}
-                        className="w-full px-3 py-2 text-left text-sm text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-sm text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
                     >
+                        <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
                         Edit
                     </button>
 
@@ -107,20 +93,22 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
                         onClick={handleOpenWebsite}
                         disabled={!isSafeUrl}
                         className={[
-                            'w-full px-3 py-2 text-left text-sm transition-colors',
+                            'w-full flex items-center gap-2 px-3 py-2 text-left text-sm transition-colors',
                             isSafeUrl
                                 ? 'text-[var(--foreground)] hover:bg-[var(--muted)]'
                                 : 'text-[var(--muted-foreground)] cursor-not-allowed',
                         ].join(' ')}
                     >
+                        <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                         Open Website
                     </button>
 
                     <button
                         role="menuitem"
                         onClick={handleDelete}
-                        className="w-full px-3 py-2 text-left text-sm text-red-500 hover:bg-[var(--muted)] transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-sm text-red-500 hover:bg-[var(--muted)] transition-colors"
                     >
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         Delete
                     </button>
                 </div>

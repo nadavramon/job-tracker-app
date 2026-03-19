@@ -14,7 +14,7 @@ import ApplicationsToolbar from '@/components/applications/ApplicationsToolbar';
 import ApplicationsFooter from '@/components/applications/ApplicationsFooter';
 
 const thCls =
-    'px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]';
+    'px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]';
 const tdCls = 'px-4 py-3 text-sm text-[var(--foreground)] whitespace-nowrap';
 
 interface ApplicationsTableProps {
@@ -86,10 +86,10 @@ export default function ApplicationsTable({ onDataChange }: ApplicationsTablePro
             {!loading && !error && data && data.page.totalElements > 0 && (
                 <>
                     {/* Desktop table */}
-                    <div className="hidden md:block rounded-xl md:rounded-b-none border border-[var(--border)] bg-[var(--card)] overflow-hidden">
+                    <div className="hidden md:block rounded-xl md:rounded-b-none border border-[var(--border)] bg-[var(--card)] overflow-hidden shadow-sm animate-[fade-in_0.3s_ease-out]">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-[var(--border)]">
-                                <thead className="bg-[var(--muted)]/40">
+                                <thead className="bg-[var(--muted)]/60">
                                     <tr>
                                         <th className={thCls}>Company</th>
                                         <th className={thCls}>Role</th>
