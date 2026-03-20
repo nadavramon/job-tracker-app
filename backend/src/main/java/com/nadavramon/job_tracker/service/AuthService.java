@@ -1,6 +1,5 @@
 package com.nadavramon.job_tracker.service;
 
-import com.nadavramon.job_tracker.dto.AuthResponse;
 import com.nadavramon.job_tracker.dto.LoginRequest;
 import com.nadavramon.job_tracker.dto.RegisterRequest;
 import com.nadavramon.job_tracker.entity.User;
@@ -21,21 +20,21 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AuthResponse register(@Valid RegisterRequest request) {
-        User user = new User();
+    public User register(@Valid RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail()) ||
                 userRepository.existsByUsername(request.getUsername())) {
             throw new DuplicateResourceException("Email or username already taken");
         }
+        User user = new User();
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
 
-        return new AuthResponse(user.getUsername());
+        return user;
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public User login(LoginRequest request) {
         String identifier = request.getIdentifier();
 
         User user = userRepository.findByEmail(identifier)
@@ -45,6 +44,11 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
             throw new InvalidCredentialsException("Invalid credentials");
 
-        return new AuthResponse(user.getUsername());
+        return user;
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElse(null);
     }
 }

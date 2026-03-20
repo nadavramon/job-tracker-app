@@ -20,12 +20,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ApplicationRepository applicationRepository;
+    private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, ApplicationRepository applicationRepository,
-                       PasswordEncoder passwordEncoder) {
+                       RefreshTokenService refreshTokenService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.applicationRepository = applicationRepository;
+        this.refreshTokenService = refreshTokenService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -67,6 +69,7 @@ public class UserService {
     public void deleteCurrentUser() {
         User user = getCurrentUser();
         LocalDateTime now = LocalDateTime.now();
+        refreshTokenService.revokeAllUserTokens(user);
         applicationRepository.softDeleteAllByUser(user, now);
         user.setDeletedAt(now);
         userRepository.save(user);
