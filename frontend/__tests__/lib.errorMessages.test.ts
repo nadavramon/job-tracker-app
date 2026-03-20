@@ -68,4 +68,10 @@ describe('getErrorMessage', () => {
     it('returns fallback when response data message is not a string', () => {
         expect(getErrorMessage({ response: { data: { message: 42 } } })).toBe(FALLBACK_ERROR);
     });
+
+    it('maps "Session invalidated for security reasons" to a friendly message', () => {
+        expect(getErrorMessage(axiosError('Session invalidated for security reasons'))).toBe(
+            'Your session was ended for security reasons. Please log in again.'
+        );
+    });
 });

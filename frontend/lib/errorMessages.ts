@@ -6,6 +6,7 @@ const MESSAGE_MAP: Array<[pattern: string, friendly: string]> = [
     ['email or username already taken', 'This email or username is already registered.'],
     ['application not found', 'This application no longer exists.'],
     ['access denied', "You don't have permission to do this."],
+    ['session invalidated for security reasons', 'Your session was ended for security reasons. Please log in again.'],
 ];
 
 export const FALLBACK_ERROR = 'Something went wrong. Please try again.';
