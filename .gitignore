@@ -17,3 +17,6 @@ frontend/.env*.local
 .vscode/
 .claude/
 CLAUDE.md
+node_modules/
+package.json
+package-lock.json
