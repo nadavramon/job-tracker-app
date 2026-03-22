@@ -9,6 +9,7 @@ interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>
     type?: InputType;
     label?: string;
     error?: string;
+    variant?: 'default' | 'glass';
 }
 
 export default function Input({
@@ -17,6 +18,7 @@ export default function Input({
     error,
     id,
     className = '',
+    variant = 'default',
     ...props
 }: InputProps) {
     const [showPassword, setShowPassword] = useState(false);
@@ -40,9 +42,9 @@ export default function Input({
                     type={resolvedType}
                     className={[
                         'w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors shadow-sm',
-                        'bg-[var(--background)] text-[var(--foreground)]',
-                        'border-[var(--border)] placeholder:text-[var(--muted-foreground)]',
-                        'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/50',
+                        variant === 'glass'
+                            ? 'bg-[var(--auth-glass-bg)] border-[var(--auth-glass-border)] backdrop-blur-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--auth-gradient-to)] focus:ring-2 focus:ring-[var(--auth-gradient-to)]/30'
+                            : 'bg-[var(--background)] text-[var(--foreground)] border-[var(--border)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/50',
                         'disabled:opacity-50 disabled:cursor-not-allowed',
                         error ? 'border-[var(--destructive)]' : '',
                         type === 'password' ? 'pr-9' : '',

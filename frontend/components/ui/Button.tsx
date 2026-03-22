@@ -3,7 +3,7 @@
 import { ButtonHTMLAttributes } from 'react';
 import Spinner from './Spinner';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'destructive';
+export type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'glass';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -19,6 +19,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
         'bg-[var(--muted)] text-[var(--foreground)] hover:brightness-95 dark:hover:brightness-125 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-[var(--ring)]/50',
     destructive:
         'bg-[var(--destructive)] text-[var(--destructive-foreground)] hover:brightness-110 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-[var(--destructive)]/50',
+    glass: 'bg-gradient-to-br from-[var(--auth-gradient-from)] to-[var(--auth-gradient-to)] text-white font-semibold shadow-lg hover:shadow-[0_0_20px_var(--auth-glow)] focus-visible:ring-2 focus-visible:ring-[var(--auth-gradient-to)]/50 transition-shadow',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {

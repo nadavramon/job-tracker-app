@@ -7,7 +7,7 @@ import { Briefcase, CircleAlert } from 'lucide-react';
 import { login } from '@/lib/authService';
 import { setUsername } from '@/lib/auth';
 import { getErrorMessage } from '@/lib/errorMessages';
-import ThemeToggle from '@/components/ui/ThemeToggle';
+import SegmentedThemeToggle from '@/components/ui/SegmentedThemeToggle';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
@@ -39,16 +39,19 @@ function LoginContent() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--background)]">
-      {/* Decorative background gradient for depth */}
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--auth-bg)]">
+      {/* Mesh gradient — top-left */}
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 via-transparent to-transparent"
+        className="pointer-events-none absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full"
+        style={{ background: 'radial-gradient(circle, var(--auth-mesh-1) 0%, transparent 70%)' }}
         aria-hidden="true"
       />
-
-      <div className="absolute right-4 top-4 z-10">
-        <ThemeToggle />
-      </div>
+      {/* Mesh gradient — bottom-right */}
+      <div
+        className="pointer-events-none absolute -bottom-40 -right-40 h-[600px] w-[600px] rounded-full"
+        style={{ background: 'radial-gradient(circle, var(--auth-mesh-2) 0%, transparent 70%)' }}
+        aria-hidden="true"
+      />
 
       <Modal
         open={expiredOpen}
@@ -64,7 +67,7 @@ function LoginContent() {
       </Modal>
 
       {/* Auth card */}
-      <div className="relative mx-4 w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 shadow-xl shadow-black/5 dark:shadow-black/30 animate-[fade-in_0.4s_ease-out]">
+      <div className="relative mx-4 w-full max-w-md rounded-2xl border border-[var(--auth-glass-border)] bg-[var(--auth-glass-bg)] p-8 shadow-xl shadow-black/5 dark:shadow-black/30 backdrop-blur-xl animate-[fade-in_0.4s_ease-out]">
 
         {/* Brand mark */}
         <div className="mb-8 flex flex-col items-center gap-4">
@@ -91,6 +94,7 @@ function LoginContent() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <Input
+            variant="glass"
             label="Email or Username"
             type="text"
             value={identifier}
@@ -99,6 +103,7 @@ function LoginContent() {
             required
           />
           <Input
+            variant="glass"
             label="Password"
             type="password"
             value={password}
@@ -106,16 +111,16 @@ function LoginContent() {
             autoComplete="current-password"
             required
           />
-          <Button type="submit" loading={loading} size="lg" className="mt-1 w-full">
+          <Button variant="glass" type="submit" loading={loading} size="lg" className="mt-1 w-full">
             {loading ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
 
         {/* Divider */}
         <div className="my-6 flex items-center gap-3" aria-hidden="true">
-          <div className="h-px flex-1 bg-[var(--border)]" />
+          <div className="h-px flex-1 bg-[var(--auth-glass-border)]" />
           <span className="text-xs text-[var(--muted-foreground)]">or</span>
-          <div className="h-px flex-1 bg-[var(--border)]" />
+          <div className="h-px flex-1 bg-[var(--auth-glass-border)]" />
         </div>
 
         <p className="text-center text-sm text-[var(--muted-foreground)]">
@@ -127,6 +132,11 @@ function LoginContent() {
             Create one
           </Link>
         </p>
+
+        {/* Theme toggle */}
+        <div className="mt-6 flex justify-center">
+          <SegmentedThemeToggle />
+        </div>
       </div>
     </div>
   );
