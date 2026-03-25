@@ -1,5 +1,5 @@
 export const AI_CONFIG = {
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     maxTokens: {
         extract: 512,
         analyze: 1024,
