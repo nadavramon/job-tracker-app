@@ -7,6 +7,10 @@ const MESSAGE_MAP: Array<[pattern: string, friendly: string]> = [
     ['application not found', 'This application no longer exists.'],
     ['access denied', "You don't have permission to do this."],
     ['session invalidated for security reasons', 'Your session was ended for security reasons. Please log in again.'],
+    ['ai service configuration error', 'AI service configuration error. Contact administrator.'],
+    ['ai service is rate limited', 'AI service is rate limited. Please try again shortly.'],
+    ['ai service is temporarily unavailable', 'AI service is temporarily unavailable.'],
+    ['invalid request to ai service', 'Invalid request to AI service.'],
 ];
 
 export const FALLBACK_ERROR = 'Something went wrong. Please try again.';
