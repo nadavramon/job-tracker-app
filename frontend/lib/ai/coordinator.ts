@@ -30,11 +30,10 @@ export async function runAgent<TInput, TOutput>(
                 };
             }
             if (error.status === 400) {
-                const apiMessage = (error.error as { error?: { message?: string } })?.error?.message;
                 return {
                     success: false,
-                    error: 'INVALID_INPUT',
-                    message: apiMessage || 'Invalid request to AI service.',
+                    error: 'AI_UNAVAILABLE',
+                    message: 'AI service is temporarily unavailable.',
                 };
             }
             return {
