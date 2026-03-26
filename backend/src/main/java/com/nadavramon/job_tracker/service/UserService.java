@@ -1,6 +1,5 @@
 package com.nadavramon.job_tracker.service;
 
-import com.nadavramon.job_tracker.dto.ApiKeyResponse;
 import com.nadavramon.job_tracker.dto.UpdateProfileRequest;
 import com.nadavramon.job_tracker.dto.UserProfileResponse;
 import com.nadavramon.job_tracker.entity.User;
