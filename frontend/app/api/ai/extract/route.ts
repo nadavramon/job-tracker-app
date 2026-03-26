@@ -160,7 +160,7 @@ export async function POST(request: NextRequest) {
 
     if (!result.success) {
         const statusMap: Record<string, number> = {
-            AUTH_ERROR: 401,
+            AUTH_ERROR: 502,
             RATE_LIMITED: 429,
             AI_UNAVAILABLE: 502,
             INVALID_INPUT: 400,
