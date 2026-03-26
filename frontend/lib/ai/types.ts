@@ -2,6 +2,7 @@ import { JobType } from '@/types';
 
 export type AiErrorCode =
     | 'AI_UNAVAILABLE'
+    | 'AUTH_ERROR'
     | 'INVALID_INPUT'
     | 'RATE_LIMITED';
 

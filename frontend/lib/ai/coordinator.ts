@@ -15,11 +15,25 @@ export async function runAgent<TInput, TOutput>(
         return { success: true, data };
     } catch (error) {
         if (error instanceof Anthropic.APIError) {
+            if (error.status === 401) {
+                return {
+                    success: false,
+                    error: 'AUTH_ERROR',
+                    message: 'AI service configuration error. Contact administrator.',
+                };
+            }
             if (error.status === 429) {
                 return {
                     success: false,
                     error: 'RATE_LIMITED',
                     message: 'AI service is rate limited. Please try again shortly.',
+                };
+            }
+            if (error.status === 400) {
+                return {
+                    success: false,
+                    error: 'AI_UNAVAILABLE',
+                    message: 'AI service is temporarily unavailable.',
                 };
             }
             return {
