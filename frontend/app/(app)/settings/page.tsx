@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sun, Moon, Monitor } from 'lucide-react';
 import { isAuthenticated, getUsername } from '@/lib/auth';
 import { useTheme } from '@/context/ThemeContext';
 import { useMounted } from '@/lib/useMounted';
+import { getProfile } from '@/lib/userService';
 import ProfileSection from '@/components/settings/ProfileSection';
+import ApiKeySection from '@/components/settings/ApiKeySection';
 import AccountSection from '@/components/settings/AccountSection';
 
 interface ThemeOption {
@@ -27,12 +29,19 @@ export default function SettingsPage() {
     const { theme, setTheme } = useTheme();
     const mounted = useMounted();
     const username = mounted ? (getUsername() ?? '') : '';
+    const [hasApiKey, setHasApiKey] = useState(false);
 
     useEffect(() => {
         if (!isAuthenticated()) {
             router.push('/login');
+            return;
         }
+        getProfile().then((p) => setHasApiKey(p.hasApiKey)).catch(() => {});
     }, [router]);
+
+    const handleApiKeyUpdated = useCallback((configured: boolean) => {
+        setHasApiKey(configured);
+    }, []);
 
     return (
         <div className="max-w-2xl mx-auto px-4 py-8 space-y-8 animate-[fade-in_0.3s_ease-out]">
@@ -82,6 +91,10 @@ export default function SettingsPage() {
                         </div>
                     </fieldset>
                 </div>
+            </section>
+
+            <section aria-labelledby="ai-heading">
+                <ApiKeySection hasApiKey={hasApiKey} onUpdated={handleApiKeyUpdated} />
             </section>
 
             {username && (
