@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validateSession } from '@/lib/ai/auth';
+import { validateSession, fetchUserApiKey } from '@/lib/ai/auth';
 import { runAgent } from '@/lib/ai/coordinator';
 import { extractJobPosting } from '@/lib/ai/agents/extractJobPosting';
 import { AiErrorResponse, ExtractJobPostingInput } from '@/lib/ai/types';
@@ -114,6 +114,11 @@ export async function POST(request: NextRequest) {
         return errorResponse(401, 'INVALID_INPUT', 'Authentication required.');
     }
 
+    const apiKey = await fetchUserApiKey(cookie);
+    if (!apiKey) {
+        return errorResponse(400, 'INVALID_INPUT', 'Anthropic API key not configured. Add your key in Settings.');
+    }
+
     const sessionKey = cookie.slice(0, 64);
     if (isRateLimited(sessionKey)) {
         return errorResponse(429, 'RATE_LIMITED', 'Too many requests. Please wait a moment.');
@@ -151,7 +156,7 @@ export async function POST(request: NextRequest) {
         input = { text: rawText };
     }
 
-    const result = await runAgent(extractJobPosting, input);
+    const result = await runAgent(extractJobPosting, input, apiKey);
 
     if (!result.success) {
         const statusMap: Record<string, number> = {

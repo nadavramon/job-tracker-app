@@ -7,8 +7,9 @@ type AgentFn<TInput, TOutput> = (client: Anthropic, input: TInput) => Promise<TO
 export async function runAgent<TInput, TOutput>(
     agentFn: AgentFn<TInput, TOutput>,
     input: TInput,
+    apiKey: string,
 ): Promise<AiResponse<TOutput>> {
-    const client = getClient();
+    const client = getClient(apiKey);
 
     try {
         const data = await agentFn(client, input);
@@ -19,7 +20,7 @@ export async function runAgent<TInput, TOutput>(
                 return {
                     success: false,
                     error: 'AUTH_ERROR',
-                    message: 'AI service configuration error. Contact administrator.',
+                    message: 'Invalid API key. Please check your key in Settings.',
                 };
             }
             if (error.status === 429) {
