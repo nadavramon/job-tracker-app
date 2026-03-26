@@ -48,7 +48,7 @@ public class UserControllerTest {
     @WithMockUser
     void getProfile_ReturnsProfile_WhenAuthenticated() throws Exception {
         UserProfileResponse profile = new UserProfileResponse(
-                UUID.randomUUID(), "test@test.com", "testuser", ThemePreference.SYSTEM
+                UUID.randomUUID(), "test@test.com", "testuser", ThemePreference.SYSTEM, false
         );
         when(userService.getUserProfile()).thenReturn(profile);
 
@@ -72,7 +72,7 @@ public class UserControllerTest {
         request.setThemePreference(ThemePreference.DARK);
 
         UserProfileResponse updated = new UserProfileResponse(
-                UUID.randomUUID(), "test@test.com", "testuser", ThemePreference.DARK
+                UUID.randomUUID(), "test@test.com", "testuser", ThemePreference.DARK, false
         );
         when(userService.updateUserProfile(any(UpdateProfileRequest.class))).thenReturn(updated);
 

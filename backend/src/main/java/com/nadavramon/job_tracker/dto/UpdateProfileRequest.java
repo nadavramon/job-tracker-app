@@ -19,6 +19,9 @@ public class UpdateProfileRequest {
 
     private ThemePreference themePreference;
 
+    @Size(max = 2000)
+    private String anthropicApiKey;
+
     public String getEmail() {
         return email;
     }
@@ -57,5 +60,13 @@ public class UpdateProfileRequest {
 
     public void setThemePreference(ThemePreference themePreference) {
         this.themePreference = themePreference;
+    }
+
+    public String getAnthropicApiKey() {
+        return anthropicApiKey;
+    }
+
+    public void setAnthropicApiKey(String anthropicApiKey) {
+        this.anthropicApiKey = anthropicApiKey;
     }
 }
