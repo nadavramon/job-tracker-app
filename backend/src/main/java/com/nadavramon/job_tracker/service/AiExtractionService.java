@@ -8,6 +8,7 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,15 +65,15 @@ public class AiExtractionService {
     private final int maxRequests;
     private final ConcurrentHashMap<String, Bucket> rateLimitBuckets = new ConcurrentHashMap<>();
 
+    @Autowired
     public AiExtractionService(
             UserService userService,
-            ObjectMapper objectMapper,
             @Value("${ai.anthropic.api-url:https://api.anthropic.com/v1/messages}") String apiUrl,
             @Value("${ai.anthropic.model:claude-sonnet-4-6}") String model,
             @Value("${ai.anthropic.max-tokens:512}") int maxTokens,
             @Value("${ai.rate-limit.max-requests:15}") int maxRequests) {
         this.userService = userService;
-        this.objectMapper = objectMapper;
+        this.objectMapper = new ObjectMapper();
         this.model = model;
         this.maxTokens = maxTokens;
         this.maxRequests = maxRequests;
