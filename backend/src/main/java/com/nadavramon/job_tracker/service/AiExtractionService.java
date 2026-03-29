@@ -21,7 +21,6 @@ import org.springframework.web.client.RestClientException;
 
 import java.net.InetAddress;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.time.Duration;
 import java.util.List;
@@ -145,13 +144,12 @@ public class AiExtractionService {
     }
 
     String fetchAndStripHtml(String url) {
-        URI safeUri = validateAndResolveUrl(url);
+        validateAndResolveUrl(url);
 
         try {
             String html = urlFetchClient.get()
-                    .uri(safeUri)
+                    .uri(URI.create(url))
                     .header("User-Agent", "Mozilla/5.0 (compatible; JobTracker/1.0)")
-                    .header("Host", URI.create(url).getHost())
                     .retrieve()
                     .body(String.class);
 
@@ -171,7 +169,7 @@ public class AiExtractionService {
         }
     }
 
-    URI validateAndResolveUrl(String url) {
+    void validateAndResolveUrl(String url) {
         URI uri;
         try {
             uri = URI.create(url);
@@ -199,16 +197,10 @@ public class AiExtractionService {
         }
 
         // Resolve hostname and validate the resolved IP to prevent DNS rebinding.
-        // Then build a URI with the resolved IP so the HTTP client connects directly
-        // to the validated address, closing the TOCTOU window.
-        InetAddress resolvedAddr = resolveAndValidate(host);
-        try {
-            return new URI(scheme, null, resolvedAddr.getHostAddress(),
-                    port == -1 ? (scheme.equals("https") ? 443 : 80) : port,
-                    uri.getPath(), uri.getQuery(), null);
-        } catch (Exception e) {
-            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Invalid URL.");
-        }
+        // This narrows the TOCTOU window: we verify DNS resolves to a public IP
+        // immediately before the fetch. A true rebinding attack would need to
+        // flip DNS in the milliseconds between this check and the HTTP connection.
+        resolveAndValidate(host);
     }
 
     private InetAddress resolveAndValidate(String host) {

@@ -182,12 +182,9 @@ public class AiExtractionServiceTest {
     }
 
     @Test
-    void validateAndResolveUrl_ReturnsResolvedUri_ForValidPublicUrl() {
-        // example.com should resolve to a public IP and return a URI with the resolved IP
-        java.net.URI result = service.validateAndResolveUrl("https://example.com/path?q=1");
-        assertNotNull(result);
-        // The returned URI should use the resolved IP, not the hostname
-        assertNotEquals("example.com", result.getHost());
+    void validateAndResolveUrl_DoesNotThrow_ForValidPublicUrl() {
+        // Should not throw for a valid public URL
+        assertDoesNotThrow(() -> service.validateAndResolveUrl("https://example.com/path?q=1"));
     }
 
     // --- Rate limiting ---
