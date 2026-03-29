@@ -26,6 +26,7 @@ interface Props {
     onCancel: () => void;
     submitLabel?: string;
     collapsibleCredentials?: boolean;
+    extracting?: boolean;
 }
 
 const STATUS_OPTIONS = [
@@ -77,7 +78,7 @@ function validate(values: ApplicationFormValues): Errors {
     return errors;
 }
 
-export default function ApplicationForm({ defaultValues, onSubmit, onCancel, submitLabel = 'Save', collapsibleCredentials = false }: Props) {
+export default function ApplicationForm({ defaultValues, onSubmit, onCancel, submitLabel = 'Save', collapsibleCredentials = false, extracting = false }: Props) {
     const [values, setValues] = useState<ApplicationFormValues>(() => initialValues(defaultValues));
     const [errors, setErrors] = useState<Errors>({});
     const [submitting, setSubmitting] = useState(false);
@@ -106,7 +107,15 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
     }, [values, onSubmit]);
 
     return (
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="relative space-y-4">
+            {extracting && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-[var(--card)]/80 backdrop-blur-[1px]">
+                    <div className="flex items-center gap-3 text-sm text-[var(--muted-foreground)]">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--primary)] border-t-transparent" />
+                        Extracting job details...
+                    </div>
+                </div>
+            )}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Input
                     label="Company Name"
