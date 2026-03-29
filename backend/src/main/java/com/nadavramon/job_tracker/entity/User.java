@@ -27,6 +27,10 @@ public class User {
     @JsonIgnore
     private String password;
 
+    @Column(name = "anthropic_api_key")
+    @JsonIgnore
+    private String anthropicApiKey;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ThemePreference themePreference = ThemePreference.SYSTEM;
@@ -64,6 +68,14 @@ public class User {
     }
 
     private LocalDateTime deletedAt;
+
+    public String getAnthropicApiKey() {
+        return anthropicApiKey;
+    }
+
+    public void setAnthropicApiKey(String anthropicApiKey) {
+        this.anthropicApiKey = anthropicApiKey;
+    }
 
     public ThemePreference getThemePreference() {
         return themePreference;

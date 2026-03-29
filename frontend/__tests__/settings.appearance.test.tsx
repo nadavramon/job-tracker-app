@@ -18,6 +18,15 @@ jest.mock('@/components/settings/AccountSection', () => ({
     default: () => null,
 }));
 
+jest.mock('@/components/settings/ApiKeySection', () => ({
+    __esModule: true,
+    default: () => null,
+}));
+
+jest.mock('@/lib/userService', () => ({
+    getProfile: jest.fn(() => Promise.resolve({ hasApiKey: false })),
+}));
+
 const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
     useRouter: () => ({ push: mockPush }),

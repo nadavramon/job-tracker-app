@@ -22,13 +22,16 @@ public class UserService {
     private final ApplicationRepository applicationRepository;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final EncryptionService encryptionService;
 
     public UserService(UserRepository userRepository, ApplicationRepository applicationRepository,
-                       RefreshTokenService refreshTokenService, PasswordEncoder passwordEncoder) {
+                       RefreshTokenService refreshTokenService, PasswordEncoder passwordEncoder,
+                       EncryptionService encryptionService) {
         this.userRepository = userRepository;
         this.applicationRepository = applicationRepository;
         this.refreshTokenService = refreshTokenService;
         this.passwordEncoder = passwordEncoder;
+        this.encryptionService = encryptionService;
     }
 
     public UserProfileResponse getUserProfile() {
@@ -62,7 +65,23 @@ public class UserService {
             user.setThemePreference(request.getThemePreference());
         }
 
+        if (request.getAnthropicApiKey() != null) {
+            if (request.getAnthropicApiKey().isEmpty()) {
+                user.setAnthropicApiKey(null);
+            } else {
+                user.setAnthropicApiKey(encryptionService.encrypt(request.getAnthropicApiKey()));
+            }
+        }
+
         return toResponse(userRepository.save(user));
+    }
+
+    public String getUserApiKey() {
+        User user = getCurrentUser();
+        if (user.getAnthropicApiKey() == null) {
+            return null;
+        }
+        return encryptionService.decrypt(user.getAnthropicApiKey());
     }
 
     @Transactional
@@ -83,6 +102,6 @@ public class UserService {
 
     private UserProfileResponse toResponse(User user) {
         return new UserProfileResponse(user.getId(), user.getEmail(), user.getUsername(),
-                user.getThemePreference());
+                user.getThemePreference(), user.getAnthropicApiKey() != null);
     }
 }

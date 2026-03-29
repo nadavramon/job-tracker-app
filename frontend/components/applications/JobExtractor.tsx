@@ -10,9 +10,10 @@ import { extractJobPosting } from '@/lib/aiService';
 
 interface Props {
     onExtracted: (data: ExtractJobPostingOutput) => void;
+    onLoadingChange?: (loading: boolean) => void;
 }
 
-export default function JobExtractor({ onExtracted }: Props) {
+export default function JobExtractor({ onExtracted, onLoadingChange }: Props) {
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
@@ -21,6 +22,7 @@ export default function JobExtractor({ onExtracted }: Props) {
         if (!text.trim()) return;
 
         setLoading(true);
+        onLoadingChange?.(true);
 
         try {
             const data = await extractJobPosting(text.trim());
@@ -29,8 +31,9 @@ export default function JobExtractor({ onExtracted }: Props) {
             toast.error(getErrorMessage(error));
         } finally {
             setLoading(false);
+            onLoadingChange?.(false);
         }
-    }, [text, onExtracted, toast]);
+    }, [text, onExtracted, onLoadingChange, toast]);
 
     return (
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">

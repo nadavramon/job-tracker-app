@@ -10,12 +10,15 @@ public class UserProfileResponse {
     private String email;
     private String username;
     private ThemePreference themePreference;
+    private boolean hasApiKey;
 
-    public UserProfileResponse(UUID id, String email, String username, ThemePreference themePreference) {
+    public UserProfileResponse(UUID id, String email, String username, ThemePreference themePreference,
+                               boolean hasApiKey) {
         this.id = id;
         this.email = email;
         this.username = username;
         this.themePreference = themePreference;
+        this.hasApiKey = hasApiKey;
     }
 
     public UUID getId() {
@@ -48,5 +51,13 @@ public class UserProfileResponse {
 
     public void setThemePreference(ThemePreference themePreference) {
         this.themePreference = themePreference;
+    }
+
+    public boolean isHasApiKey() {
+        return hasApiKey;
+    }
+
+    public void setHasApiKey(boolean hasApiKey) {
+        this.hasApiKey = hasApiKey;
     }
 }

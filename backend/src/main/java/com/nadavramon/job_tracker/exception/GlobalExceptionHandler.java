@@ -77,6 +77,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AiServiceException.class)
+    public ResponseEntity<ErrorResponse> handleAiServiceException(AiServiceException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getHttpStatus().value(),
+                ex.getMessage());
+        return new ResponseEntity<>(error, ex.getHttpStatus());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         log.error("Unhandled exception", ex);

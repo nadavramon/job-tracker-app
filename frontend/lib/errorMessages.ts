@@ -7,7 +7,9 @@ const MESSAGE_MAP: Array<[pattern: string, friendly: string]> = [
     ['application not found', 'This application no longer exists.'],
     ['access denied', "You don't have permission to do this."],
     ['session invalidated for security reasons', 'Your session was ended for security reasons. Please log in again.'],
-    ['ai service configuration error', 'AI service configuration error. Contact administrator.'],
+    ['api key not configured', 'Anthropic API key not configured. Add your key in Settings.'],
+    ['invalid api key', 'Invalid API key. Please check your key in Settings.'],
+    ['too many requests', 'Too many requests. Please wait a moment.'],
     ['ai service is rate limited', 'AI service is rate limited. Please try again shortly.'],
     ['ai service is temporarily unavailable', 'AI service is temporarily unavailable.'],
 ];

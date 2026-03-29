@@ -52,6 +52,7 @@ export interface UserProfileResponse {
     email: string;
     username: string;
     themePreference: ThemePreference;
+    hasApiKey: boolean;
 }
 
 // For PATCH /me (all fields optional since it's a partial update)
@@ -61,6 +62,7 @@ export interface UpdateProfileRequest {
     currentPassword?: string;
     password?: string;
     themePreference?: ThemePreference;
+    anthropicApiKey?: string;
 }
 
 // Mirrors Spring Page<T> response from paginated endpoints (Spring Boot 4 format)
