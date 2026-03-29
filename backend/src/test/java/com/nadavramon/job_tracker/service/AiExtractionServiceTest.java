@@ -125,19 +125,19 @@ public class AiExtractionServiceTest {
     // --- Port restriction ---
 
     @Test
-    void validateUrl_ThrowsBadRequest_ForNonStandardPort() {
+    void validateAndResolveUrl_ThrowsBadRequest_ForNonStandardPort() {
         AiServiceException ex = assertThrows(AiServiceException.class,
-                () -> service.validateUrl("https://example.com:8080/path"));
+                () -> service.validateAndResolveUrl("https://example.com:8080/path"));
         assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
         assertTrue(ex.getMessage().contains("standard HTTP ports"));
     }
 
     @Test
-    void validateUrl_AllowsPort80() {
+    void validateAndResolveUrl_AllowsPort80() {
         // Should not throw for port 80 (may throw for private host resolution, but not for port)
         // We test that it doesn't throw the port error
         try {
-            service.validateUrl("http://example.com:80/path");
+            service.validateAndResolveUrl("http://example.com:80/path");
         } catch (AiServiceException e) {
             assertFalse(e.getMessage().contains("standard HTTP ports"),
                     "Port 80 should be allowed");
@@ -145,9 +145,9 @@ public class AiExtractionServiceTest {
     }
 
     @Test
-    void validateUrl_AllowsPort443() {
+    void validateAndResolveUrl_AllowsPort443() {
         try {
-            service.validateUrl("https://example.com:443/path");
+            service.validateAndResolveUrl("https://example.com:443/path");
         } catch (AiServiceException e) {
             assertFalse(e.getMessage().contains("standard HTTP ports"),
                     "Port 443 should be allowed");
@@ -155,10 +155,10 @@ public class AiExtractionServiceTest {
     }
 
     @Test
-    void validateUrl_AllowsDefaultPort() {
+    void validateAndResolveUrl_AllowsDefaultPort() {
         // Default port (-1) should be allowed
         try {
-            service.validateUrl("https://example.com/path");
+            service.validateAndResolveUrl("https://example.com/path");
         } catch (AiServiceException e) {
             assertFalse(e.getMessage().contains("standard HTTP ports"),
                     "Default port should be allowed");
@@ -166,11 +166,28 @@ public class AiExtractionServiceTest {
     }
 
     @Test
-    void validateUrl_ThrowsBadRequest_ForPrivateHost() {
+    void validateAndResolveUrl_ThrowsBadRequest_ForPrivateHost() {
         AiServiceException ex = assertThrows(AiServiceException.class,
-                () -> service.validateUrl("https://localhost/path"));
+                () -> service.validateAndResolveUrl("https://localhost/path"));
         assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
         assertTrue(ex.getMessage().contains("private or reserved"));
+    }
+
+    @Test
+    void validateAndResolveUrl_ThrowsBadRequest_ForNonHttpScheme() {
+        AiServiceException ex = assertThrows(AiServiceException.class,
+                () -> service.validateAndResolveUrl("ftp://example.com/path"));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
+        assertTrue(ex.getMessage().contains("HTTP and HTTPS"));
+    }
+
+    @Test
+    void validateAndResolveUrl_ReturnsResolvedUri_ForValidPublicUrl() {
+        // example.com should resolve to a public IP and return a URI with the resolved IP
+        java.net.URI result = service.validateAndResolveUrl("https://example.com/path?q=1");
+        assertNotNull(result);
+        // The returned URI should use the resolved IP, not the hostname
+        assertNotEquals("example.com", result.getHost());
     }
 
     // --- Rate limiting ---

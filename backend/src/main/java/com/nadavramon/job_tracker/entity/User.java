@@ -28,6 +28,7 @@ public class User {
     private String password;
 
     @Column(name = "anthropic_api_key")
+    @JsonIgnore
     private String anthropicApiKey;
 
     @Enumerated(EnumType.STRING)

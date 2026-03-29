@@ -20,6 +20,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.time.Duration;
 import java.util.List;
@@ -143,12 +144,13 @@ public class AiExtractionService {
     }
 
     String fetchAndStripHtml(String url) {
-        validateUrl(url);
+        URI safeUri = validateAndResolveUrl(url);
 
         try {
             String html = urlFetchClient.get()
-                    .uri(URI.create(url))
+                    .uri(safeUri)
                     .header("User-Agent", "Mozilla/5.0 (compatible; JobTracker/1.0)")
+                    .header("Host", URI.create(url).getHost())
                     .retrieve()
                     .body(String.class);
 
@@ -168,12 +170,17 @@ public class AiExtractionService {
         }
     }
 
-    void validateUrl(String url) {
+    URI validateAndResolveUrl(String url) {
         URI uri;
         try {
             uri = URI.create(url);
         } catch (IllegalArgumentException e) {
             throw new AiServiceException(HttpStatus.BAD_REQUEST, "Invalid URL.");
+        }
+
+        String scheme = uri.getScheme();
+        if (scheme == null || (!scheme.equals("http") && !scheme.equals("https"))) {
+            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Only HTTP and HTTPS URLs are allowed.");
         }
 
         String host = uri.getHost();
@@ -188,6 +195,32 @@ public class AiExtractionService {
 
         if (isPrivateHost(host)) {
             throw new AiServiceException(HttpStatus.BAD_REQUEST, "URL points to a private or reserved address.");
+        }
+
+        // Resolve hostname and validate the resolved IP to prevent DNS rebinding.
+        // Then build a URI with the resolved IP so the HTTP client connects directly
+        // to the validated address, closing the TOCTOU window.
+        InetAddress resolvedAddr = resolveAndValidate(host);
+        try {
+            return new URI(scheme, null, resolvedAddr.getHostAddress(),
+                    port == -1 ? (scheme.equals("https") ? 443 : 80) : port,
+                    uri.getPath(), uri.getQuery(), null);
+        } catch (Exception e) {
+            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Invalid URL.");
+        }
+    }
+
+    private InetAddress resolveAndValidate(String host) {
+        try {
+            InetAddress addr = InetAddress.getByName(host);
+            if (addr.isLoopbackAddress() || addr.isLinkLocalAddress() ||
+                    addr.isSiteLocalAddress() || addr.isAnyLocalAddress()) {
+                throw new AiServiceException(HttpStatus.BAD_REQUEST,
+                        "URL points to a private or reserved address.");
+            }
+            return addr;
+        } catch (UnknownHostException e) {
+            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Could not resolve hostname.");
         }
     }
 
@@ -217,19 +250,6 @@ public class AiExtractionService {
             } catch (NumberFormatException e) {
                 // Not a valid IPv4 — fall through to DNS resolution
             }
-        }
-
-        // Resolve hostname to check for DNS rebinding to private IPs
-        try {
-            InetAddress[] addresses = InetAddress.getAllByName(host);
-            for (InetAddress addr : addresses) {
-                if (addr.isLoopbackAddress() || addr.isLinkLocalAddress() ||
-                        addr.isSiteLocalAddress() || addr.isAnyLocalAddress()) {
-                    return true;
-                }
-            }
-        } catch (UnknownHostException e) {
-            return true; // Can't resolve — block it
         }
 
         return false;
