@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { X } from 'lucide-react';
 import { getUsername, removeUsername } from '@/lib/auth';
 import { logout } from '@/lib/authService';
-import { useMounted } from '@/lib/useMounted';
+import { useMounted } from '@/hooks/useMounted';
 import SidebarItem from './SidebarItem';
 import { NAV_ITEMS, IconUser, IconLogout } from './navItems';
 

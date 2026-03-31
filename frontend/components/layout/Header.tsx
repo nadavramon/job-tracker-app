@@ -2,7 +2,7 @@
 
 import { Menu } from 'lucide-react';
 import { getUsername } from '@/lib/auth';
-import { useMounted } from '@/lib/useMounted';
+import { useMounted } from '@/hooks/useMounted';
 
 interface HeaderProps {
     onMenuClick: () => void;

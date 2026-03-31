@@ -2,7 +2,7 @@
 
 import { Sun, Moon, Monitor } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
-import { useMounted } from '@/lib/useMounted';
+import { useMounted } from '@/hooks/useMounted';
 
 type Segment = {
     value: 'light' | 'dark' | 'system';

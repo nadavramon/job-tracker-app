@@ -18,7 +18,7 @@ jest.mock('@/lib/auth', () => ({
     isAuthenticated: jest.fn(() => true),
 }));
 
-jest.mock('@/lib/useMounted', () => ({
+jest.mock('@/hooks/useMounted', () => ({
     useMounted: () => true,
 }));
 

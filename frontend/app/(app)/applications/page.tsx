@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated } from '@/lib/auth';
-import { useMounted } from '@/lib/useMounted';
+import { useMounted } from '@/hooks/useMounted';
 import ApplicationsTable from '@/components/applications/ApplicationsTable';
 import Spinner from '@/components/ui/Spinner';
 
