@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Sun, Moon, Monitor } from 'lucide-react';
 import { isAuthenticated, getUsername } from '@/lib/auth';
 import { useTheme } from '@/context/ThemeContext';
-import { useMounted } from '@/lib/useMounted';
+import { useMounted } from '@/hooks/useMounted';
 import { getProfile } from '@/lib/userService';
 import ProfileSection from '@/components/settings/ProfileSection';
 import ApiKeySection from '@/components/settings/ApiKeySection';
