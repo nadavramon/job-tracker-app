@@ -30,8 +30,13 @@ interface ChartColors {
     legendText: string;
 }
 
-export default function useChartColors(): ChartColors {
+interface UseChartColorsOptions {
+    dashboard?: boolean;
+}
+
+export default function useChartColors(options?: UseChartColorsOptions): ChartColors {
     const { resolvedTheme } = useTheme();
+    const dashboard = options?.dashboard ?? false;
 
     return useMemo(() => {
         // resolvedTheme is used as a cache key — when the theme changes,
@@ -41,6 +46,20 @@ export default function useChartColors(): ChartColors {
         const status = {} as Record<Status, string>;
         for (const [key, cssVar] of Object.entries(STATUS_VAR_MAP)) {
             status[key as Status] = resolve(cssVar);
+        }
+
+        if (dashboard) {
+            return {
+                status,
+                axis: resolve('--dash-chart-axis'),
+                grid: resolve('--dash-chart-grid'),
+                tooltipBg: resolve('--dash-card'),
+                tooltipBorder: resolve('--dash-card-border'),
+                tooltipText: resolve('--dash-heading'),
+                cursor: resolve('--dash-table-row-hover'),
+                primary: resolve('--dash-primary'),
+                legendText: resolve('--dash-subtext'),
+            };
         }
 
         return {
@@ -54,5 +73,5 @@ export default function useChartColors(): ChartColors {
             primary: resolve('--primary'),
             legendText: resolve('--muted-foreground'),
         };
-    }, [resolvedTheme]);
+    }, [resolvedTheme, dashboard]);
 }

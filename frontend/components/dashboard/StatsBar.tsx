@@ -1,8 +1,6 @@
 'use client';
 
-import { Briefcase, TrendingUp } from 'lucide-react';
 import { StatsResponse, Status } from '@/types';
-import Card from '@/components/ui/Card';
 
 interface StatusConfig {
     label: string;
@@ -31,19 +29,26 @@ export default function StatsBar({ stats }: StatsBarProps) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Total Applications */}
-            <div className="animate-[fade-in_0.4s_ease-out]">
-                <Card
-                    title="Total Applications"
-                    value={stats.totalApplications}
-                    icon={<Briefcase className="h-5 w-5" />}
+            <div
+                className="relative overflow-hidden rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 animate-[fade-in_0.4s_ease-out]"
+            >
+                <div
+                    className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-[var(--dash-stat-circle)]"
+                    aria-hidden="true"
                 />
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--dash-subtext)]">
+                    Total Applications
+                </p>
+                <p className="mt-2 text-4xl font-bold text-[var(--dash-primary)]">
+                    {stats.totalApplications}
+                </p>
             </div>
 
             {/* Status Breakdown */}
             <div
-                className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm animate-[fade-in_0.4s_ease-out_0.1s_both]"
+                className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 animate-[fade-in_0.4s_ease-out_0.1s_both]"
             >
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)] mb-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--dash-subtext)] mb-3">
                     Status Breakdown
                 </p>
                 <div className="grid grid-cols-3 gap-2">
@@ -69,29 +74,35 @@ export default function StatsBar({ stats }: StatsBarProps) {
             </div>
 
             {/* Response Rate */}
-            <div className="animate-[fade-in_0.4s_ease-out_0.2s_both]">
-                <Card
-                    title="Response Rate"
-                    value={`${responseRatePct}%`}
-                    icon={<TrendingUp className="h-5 w-5" />}
+            <div
+                className="relative overflow-hidden rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 animate-[fade-in_0.4s_ease-out_0.2s_both]"
+            >
+                <div
+                    className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-[var(--dash-stat-circle)]"
+                    aria-hidden="true"
+                />
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--dash-subtext)]">
+                    Response Rate
+                </p>
+                <p className="mt-2 text-4xl font-bold text-[var(--dash-primary)]">
+                    {responseRatePct}%
+                </p>
+                <div
+                    role="progressbar"
+                    aria-valuenow={responseRatePct}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label="Response rate progress"
+                    className="mt-3 h-2 rounded-full bg-[var(--dash-progress-track)] overflow-hidden"
                 >
                     <div
-                        role="progressbar"
-                        aria-valuenow={responseRatePct}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-label="Response rate progress"
-                        className="mt-3 h-2 rounded-full bg-[var(--muted)] overflow-hidden"
-                    >
-                        <div
-                            className="h-full rounded-full bg-[var(--primary)] transition-all duration-500"
-                            style={{ width: `${responseRatePct}%` }}
-                        />
-                    </div>
-                    <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
-                        of applications received a response
-                    </p>
-                </Card>
+                        className="h-full rounded-full bg-[var(--dash-primary)] transition-all duration-500"
+                        style={{ width: `${responseRatePct}%` }}
+                    />
+                </div>
+                <p className="mt-1.5 text-xs text-[var(--dash-subtext)]">
+                    of applications received a response
+                </p>
             </div>
         </div>
     );

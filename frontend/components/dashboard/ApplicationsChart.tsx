@@ -20,7 +20,7 @@ interface ApplicationsChartProps {
 }
 
 export default function ApplicationsChart({ data }: ApplicationsChartProps) {
-    const colors = useChartColors();
+    const colors = useChartColors({ dashboard: true });
 
     const chartData = useMemo(
         () => data.map((d) => ({ ...d, month: formatMonth(d.month) })),
@@ -29,18 +29,17 @@ export default function ApplicationsChart({ data }: ApplicationsChartProps) {
 
     if (data.length === 0) {
         return (
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 flex items-center justify-center h-64">
-                <p className="text-sm text-[var(--muted-foreground)]">No monthly data yet</p>
+            <div className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 flex items-center justify-center h-64">
+                <p className="text-sm text-[var(--dash-subtext)]">No monthly data yet</p>
             </div>
         );
     }
 
     return (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)] mb-4">
-                Applications by Month
-            </p>
-            <ResponsiveContainer width="100%" height={220}>
+        <div className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6">
+            <h3 className="text-lg font-bold text-[var(--dash-heading)]">Applications by Month</h3>
+            <p className="mt-0.5 text-xs text-[var(--dash-subtext)] mb-4">Monthly application activity</p>
+            <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
                     <XAxis
@@ -65,7 +64,7 @@ export default function ApplicationsChart({ data }: ApplicationsChartProps) {
                         }}
                         cursor={{ fill: colors.cursor }}
                     />
-                    <Bar dataKey="count" fill={colors.primary} radius={[4, 4, 0, 0]} name="Applications" />
+                    <Bar dataKey="count" fill={colors.primary} radius={[6, 6, 0, 0]} name="Applications" />
                 </BarChart>
             </ResponsiveContainer>
         </div>

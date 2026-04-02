@@ -37,6 +37,27 @@
   --auth-glow: rgba(0, 82, 204, 0.3);
   --auth-mesh-1: rgba(0, 82, 204, 0.08);
   --auth-mesh-2: rgba(18, 183, 106, 0.05);
+
+  --dash-bg: #f0f4f8;
+  --dash-card: #ffffff;
+  --dash-card-alt: rgba(255, 255, 255, 0.85);
+  --dash-card-border: rgba(37, 99, 235, 0.08);
+  --dash-card-hover-border: rgba(37, 99, 235, 0.15);
+  --dash-heading: #0f172a;
+  --dash-subtext: #64748b;
+  --dash-primary: #2563eb;
+  --dash-primary-dim: #3b82f6;
+  --dash-primary-glow: rgba(37, 99, 235, 0.12);
+  --dash-secondary: #d97706;
+  --dash-tertiary: #16a34a;
+  --dash-mesh-1: rgba(37, 99, 235, 0.06);
+  --dash-mesh-2: rgba(22, 163, 106, 0.04);
+  --dash-chart-grid: #e2e8f0;
+  --dash-chart-axis: #94a3b8;
+  --dash-table-header-bg: rgba(241, 245, 249, 0.8);
+  --dash-table-row-hover: rgba(37, 99, 235, 0.04);
+  --dash-progress-track: #e2e8f0;
+  --dash-stat-circle: rgba(37, 99, 235, 0.06);
 }
 
 .dark {
@@ -75,6 +96,27 @@
   --auth-glow: rgba(133, 173, 255, 0.4);
   --auth-mesh-1: rgba(133, 173, 255, 0.15);
   --auth-mesh-2: rgba(155, 255, 206, 0.08);
+
+  --dash-bg: #060e20;
+  --dash-card: #091328;
+  --dash-card-alt: rgba(15, 25, 48, 0.6);
+  --dash-card-border: rgba(133, 173, 255, 0.08);
+  --dash-card-hover-border: rgba(133, 173, 255, 0.15);
+  --dash-heading: #dee5ff;
+  --dash-subtext: #94a3b8;
+  --dash-primary: #85adff;
+  --dash-primary-dim: #699cff;
+  --dash-primary-glow: rgba(133, 173, 255, 0.15);
+  --dash-secondary: #f8a010;
+  --dash-tertiary: #9bffce;
+  --dash-mesh-1: rgba(133, 173, 255, 0.08);
+  --dash-mesh-2: rgba(155, 255, 206, 0.05);
+  --dash-chart-grid: rgba(133, 173, 255, 0.06);
+  --dash-chart-axis: #64748b;
+  --dash-table-header-bg: rgba(15, 25, 48, 0.8);
+  --dash-table-row-hover: rgba(133, 173, 255, 0.04);
+  --dash-progress-track: rgba(133, 173, 255, 0.1);
+  --dash-stat-circle: rgba(133, 173, 255, 0.06);
 }
 
 
@@ -83,6 +125,18 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+.dashboard-scope {
+  --card: var(--dash-card);
+  --card-foreground: var(--dash-heading);
+  --border: var(--dash-card-border);
+  --muted: var(--dash-table-header-bg);
+  --muted-foreground: var(--dash-subtext);
+  --primary: var(--dash-primary);
+  --background: var(--dash-bg);
+  --foreground: var(--dash-heading);
+  --ring: var(--dash-primary);
 }
 
 body {

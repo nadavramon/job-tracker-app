@@ -19,9 +19,10 @@ const tdCls = 'px-4 py-3 text-sm text-[var(--foreground)] whitespace-nowrap';
 
 interface ApplicationsTableProps {
     onDataChange?: () => void;
+    title?: string;
 }
 
-export default function ApplicationsTable({ onDataChange }: ApplicationsTableProps) {
+export default function ApplicationsTable({ onDataChange, title }: ApplicationsTableProps) {
     const {
         data,
         loading,
@@ -50,6 +51,12 @@ export default function ApplicationsTable({ onDataChange }: ApplicationsTablePro
     return (
         <>
         <div className="space-y-4">
+            {title && (
+                <div>
+                    <h2 className="text-lg font-bold text-[var(--foreground)]">{title}</h2>
+                    <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">Manage and track your applications</p>
+                </div>
+            )}
             <ApplicationsToolbar
                 search={search}
                 onSearchChange={handleSearchChange}
@@ -86,7 +93,7 @@ export default function ApplicationsTable({ onDataChange }: ApplicationsTablePro
             {!loading && !error && data && data.page.totalElements > 0 && (
                 <>
                     {/* Desktop table */}
-                    <div className="hidden md:block rounded-xl md:rounded-b-none border border-[var(--border)] bg-[var(--card)] overflow-hidden shadow-sm animate-[fade-in_0.3s_ease-out]">
+                    <div className="hidden md:block rounded-2xl md:rounded-b-none border border-[var(--border)] bg-[var(--card)] overflow-hidden shadow-sm animate-[fade-in_0.3s_ease-out]">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-[var(--border)]">
                                 <thead className="bg-[var(--muted)]/60">
