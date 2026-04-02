@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import useChartColors from '@/hooks/useChartColors';
 import { Status } from '@/types';
 
@@ -21,7 +21,7 @@ interface StatusChartProps {
 }
 
 export default function StatusChart({ statusBreakdown }: StatusChartProps) {
-    const colors = useChartColors();
+    const colors = useChartColors({ dashboard: true });
 
     const chartData = useMemo(
         () => STATUS_ORDER
@@ -34,20 +34,24 @@ export default function StatusChart({ statusBreakdown }: StatusChartProps) {
         [statusBreakdown, colors.status],
     );
 
+    const total = useMemo(
+        () => chartData.reduce((sum, d) => sum + d.value, 0),
+        [chartData],
+    );
+
     if (chartData.length === 0) {
         return (
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 flex items-center justify-center h-64">
-                <p className="text-sm text-[var(--muted-foreground)]">No applications yet</p>
+            <div className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 flex items-center justify-center h-64">
+                <p className="text-sm text-[var(--dash-subtext)]">No applications yet</p>
             </div>
         );
     }
 
     return (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)] mb-4">
-                Status Breakdown
-            </p>
-            <ResponsiveContainer width="100%" height={220}>
+        <div className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6">
+            <h3 className="text-lg font-bold text-[var(--dash-heading)]">Status Breakdown</h3>
+            <p className="mt-0.5 text-xs text-[var(--dash-subtext)] mb-4">Current application statuses</p>
+            <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                     <Pie
                         data={chartData}
@@ -71,15 +75,41 @@ export default function StatusChart({ statusBreakdown }: StatusChartProps) {
                             fontSize: 12,
                         }}
                     />
-                    <Legend
-                        iconType="circle"
-                        iconSize={8}
-                        formatter={(value) => (
-                            <span style={{ fontSize: 12, color: colors.legendText }}>{value}</span>
-                        )}
-                    />
+                    {/* Center label */}
+                    <text
+                        x="50%"
+                        y="47%"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className="fill-[var(--dash-heading)]"
+                        style={{ fontSize: 24, fontWeight: 700 }}
+                    >
+                        {total}
+                    </text>
+                    <text
+                        x="50%"
+                        y="58%"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className="fill-[var(--dash-subtext)]"
+                        style={{ fontSize: 11 }}
+                    >
+                        Active
+                    </text>
                 </PieChart>
             </ResponsiveContainer>
+            {/* Custom legend */}
+            <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
+                {chartData.map((entry) => (
+                    <div key={entry.name} className="flex items-center gap-1.5">
+                        <span
+                            className="inline-block h-2 w-2 rounded-full"
+                            style={{ backgroundColor: entry.color }}
+                        />
+                        <span className="text-xs text-[var(--dash-subtext)]">{entry.name}</span>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

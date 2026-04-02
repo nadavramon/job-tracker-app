@@ -46,24 +46,54 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-      {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-400">
-          {error}
-        </div>
-      )}
+    <div className="dashboard-scope relative min-h-full">
+      <div
+        className="-mx-4 -mt-8 px-4 pt-8 pb-8"
+        style={{ background: 'var(--dash-bg)' }}
+      >
+        {/* Mesh gradient — top-left */}
+        <div
+          className="pointer-events-none absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full"
+          style={{ background: 'radial-gradient(circle, var(--dash-mesh-1) 0%, transparent 70%)' }}
+          aria-hidden="true"
+        />
+        {/* Mesh gradient — bottom-right */}
+        <div
+          className="pointer-events-none absolute -bottom-40 -right-40 h-[600px] w-[600px] rounded-full"
+          style={{ background: 'radial-gradient(circle, var(--dash-mesh-2) 0%, transparent 70%)' }}
+          aria-hidden="true"
+        />
 
-      {stats && (
-        <>
-          <StatsBar stats={stats} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ApplicationsChart data={stats.monthlyApplications} />
-            <StatusChart statusBreakdown={stats.statusBreakdown} />
+        <div className="relative max-w-7xl mx-auto space-y-8">
+          {/* Page header */}
+          <div className="animate-[fade-in_0.4s_ease-out]">
+            <h1 className="text-2xl font-bold text-[var(--dash-heading)]">Dashboard</h1>
+            <p className="mt-1 text-sm text-[var(--dash-subtext)]">
+              Track your job application progress
+            </p>
           </div>
-        </>
-      )}
 
-      <ApplicationsTable onDataChange={fetchStats} />
+          {error && (
+            <div className="rounded-xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] px-4 py-3 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+
+          {stats && (
+            <>
+              <StatsBar stats={stats} />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2">
+                  <ApplicationsChart data={stats.monthlyApplications} />
+                </div>
+                <StatusChart statusBreakdown={stats.statusBreakdown} />
+              </div>
+            </>
+          )}
+
+          <ApplicationsTable onDataChange={fetchStats} title="Application Tracker" />
+        </div>
+      </div>
     </div>
   );
 }

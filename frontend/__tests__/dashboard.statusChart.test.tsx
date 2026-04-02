@@ -9,9 +9,6 @@ jest.mock('recharts', () => ({
     ),
     Cell: () => null,
     Tooltip: () => null,
-    Legend: ({ formatter }: { formatter: (v: string) => React.ReactNode }) => (
-        <div data-testid="legend">{['Applied', 'Rejected'].map((v) => <span key={v}>{formatter(v)}</span>)}</div>
-    ),
 }));
 
 jest.mock('@/context/ThemeContext', () => ({
@@ -47,10 +44,15 @@ describe('StatusChart', () => {
         expect(pie).toHaveAttribute('data-slices', '2');
     });
 
-    it('renders legend with status labels', () => {
+    it('renders custom legend with status labels', () => {
         render(<StatusChart statusBreakdown={{ APPLIED: 3, REJECTED: 2 }} />);
-        expect(screen.getByTestId('legend')).toBeInTheDocument();
         expect(screen.getByText('Applied')).toBeInTheDocument();
         expect(screen.getByText('Rejected')).toBeInTheDocument();
+    });
+
+    it('renders center label with total count', () => {
+        render(<StatusChart statusBreakdown={{ APPLIED: 3, REJECTED: 2 }} />);
+        expect(screen.getByText('5')).toBeInTheDocument();
+        expect(screen.getByText('Active')).toBeInTheDocument();
     });
 });
