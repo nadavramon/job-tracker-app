@@ -5,13 +5,12 @@ import com.nadavramon.job_tracker.enums.ThemePreference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 @SQLRestriction("deleted_at IS NULL")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -67,8 +66,6 @@ public class User {
         this.password = password;
     }
 
-    private LocalDateTime deletedAt;
-
     public String getAnthropicApiKey() {
         return anthropicApiKey;
     }
@@ -85,11 +82,4 @@ public class User {
         this.themePreference = themePreference;
     }
 
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
-    }
 }
