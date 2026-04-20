@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -20,16 +21,20 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
+    private SecretKey signingKey;
+
     @PostConstruct
-    public void validateSecretKey() {
+    public void init() {
         if (secretKey == null || secretKey.length() < 32) {
             throw new IllegalStateException(
                     "JWT secret must be at least 32 characters long. Set the jwt.secret property.");
         }
+        signingKey = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String generateToken(String username) {
         return Jwts.builder()
+                .id(UUID.randomUUID().toString())
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
@@ -39,6 +44,10 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractTokenId(String token) {
+        return extractClaim(token, Claims::getId);
     }
 
     public boolean isTokenValid(String token, String username) {
@@ -68,7 +77,7 @@ public class JwtService {
     }
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secretKey.getBytes());
+        return signingKey;
     }
 
 }

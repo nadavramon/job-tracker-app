@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.OptimisticLockException;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
@@ -44,6 +46,14 @@ public class RefreshTokenService {
 
     @Transactional
     public RotationResult rotateRefreshToken(String tokenValue) {
+        try {
+            return doRotate(tokenValue);
+        } catch (OptimisticLockException e) {
+            throw new InvalidCredentialsException("Token already used");
+        }
+    }
+
+    private RotationResult doRotate(String tokenValue) {
         RefreshToken existingToken = refreshTokenRepository.findByToken(tokenValue)
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid refresh token"));
 
