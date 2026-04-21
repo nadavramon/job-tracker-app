@@ -1,6 +1,7 @@
 'use client';
 
 import { Status } from '@/types';
+import { STATUS_LABELS } from '@/lib/constants';
 
 // Generic variant badge
 export type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
@@ -22,15 +23,6 @@ const STATUS_VARIANT: Record<Status, BadgeVariant> = {
     OFFER:        'success',
     REJECTED:     'danger',
     WITHDRAWN:    'muted',
-};
-
-const STATUS_LABEL: Record<Status, string> = {
-    APPLIED:      'Applied',
-    SCREENING:    'Screening',
-    INTERVIEWING: 'Interviewing',
-    OFFER:        'Offer',
-    REJECTED:     'Rejected',
-    WITHDRAWN:    'Withdrawn',
 };
 
 interface BadgeProps {
@@ -57,7 +49,7 @@ export default function Badge({ variant = 'default', children, className = '' }:
 export function StatusBadge({ status, className }: { status: Status; className?: string }) {
     return (
         <Badge variant={STATUS_VARIANT[status]} className={className}>
-            {STATUS_LABEL[status]}
+            {STATUS_LABELS[status]}
         </Badge>
     );
 }

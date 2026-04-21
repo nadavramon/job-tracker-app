@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Application, JobType, Status } from '@/types';
+import { STATUS_OPTIONS, JOB_TYPE_OPTIONS } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
 import Input from '@/components/ui/Input';
@@ -28,22 +29,6 @@ interface Props {
     collapsibleCredentials?: boolean;
     extracting?: boolean;
 }
-
-const STATUS_OPTIONS = [
-    { value: 'APPLIED',      label: 'Applied' },
-    { value: 'SCREENING',    label: 'Screening' },
-    { value: 'INTERVIEWING', label: 'Interviewing' },
-    { value: 'OFFER',        label: 'Offer' },
-    { value: 'REJECTED',     label: 'Rejected' },
-    { value: 'WITHDRAWN',    label: 'Withdrawn' },
-];
-
-const JOB_TYPE_OPTIONS = [
-    { value: 'FULL_TIME',   label: 'Full-time' },
-    { value: 'PART_TIME',   label: 'Part-time' },
-    { value: 'CONTRACT',    label: 'Contract' },
-    { value: 'INTERNSHIP',  label: 'Internship' },
-];
 
 function todayIso(): string {
     const d = new Date();
