@@ -2,6 +2,7 @@
 
 import { ThemeProvider } from '@/context/ThemeContext';
 import { ToastProvider } from '@/context/ToastContext';
+import ErrorBoundary from '@/components/ui/ErrorBoundary';
 import ApiInterceptorSetup from '@/components/layout/ApiInterceptorSetup';
 import OfflineBanner from '@/components/layout/OfflineBanner';
 
@@ -11,7 +12,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             <ToastProvider>
                 <ApiInterceptorSetup />
                 <OfflineBanner />
-                {children}
+                <ErrorBoundary>
+                    {children}
+                </ErrorBoundary>
             </ToastProvider>
         </ThemeProvider>
     );
