@@ -12,10 +12,8 @@ import com.nadavramon.job_tracker.enums.Status;
 import com.nadavramon.job_tracker.exception.AccessDeniedException;
 import com.nadavramon.job_tracker.exception.ResourceNotFoundException;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
-import com.nadavramon.job_tracker.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,13 +29,13 @@ import java.util.UUID;
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
-    private final UserRepository userRepository;
+    private final CurrentUserService currentUserService;
     private final EncryptionService encryptionService;
 
-    public ApplicationService(ApplicationRepository applicationRepository, UserRepository userRepository,
+    public ApplicationService(ApplicationRepository applicationRepository, CurrentUserService currentUserService,
                               EncryptionService encryptionService) {
         this.applicationRepository = applicationRepository;
-        this.userRepository = userRepository;
+        this.currentUserService = currentUserService;
         this.encryptionService = encryptionService;
     }
 
@@ -63,6 +61,7 @@ public class ApplicationService {
         application.setJobRole(request.getJobRole());
         application.setLocation(request.getLocation());
         application.setStatus(request.getStatus());
+        application.setStatusChangedDate(LocalDate.now());
         application.setJobType(request.getJobType());
         application.setAppliedDate(request.getAppliedDate());
         application.setWebsiteLink(request.getWebsiteLink());
@@ -93,8 +92,10 @@ public class ApplicationService {
         if (request.getJobRole() != null)
             application.setJobRole(request.getJobRole());
 
-        if (request.getStatus() != null)
+        if (request.getStatus() != null && request.getStatus() != application.getStatus()) {
             application.setStatus(request.getStatus());
+            application.setStatusChangedDate(LocalDate.now());
+        }
 
         if (request.getAppliedDate() != null)
             application.setAppliedDate(request.getAppliedDate());
@@ -179,9 +180,7 @@ public class ApplicationService {
     }
 
     private User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return currentUserService.getCurrentUser();
     }
 
     private ApplicationResponse toResponse(Application application) {

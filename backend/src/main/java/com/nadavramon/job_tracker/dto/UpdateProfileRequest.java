@@ -9,9 +9,6 @@ public class UpdateProfileRequest {
     @Email
     private String email;
 
-    @Size(min = 3, max = 14)
-    private String username;
-
     @Size(min = 8, max = 14)
     private String password;
 
@@ -28,14 +25,6 @@ public class UpdateProfileRequest {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {

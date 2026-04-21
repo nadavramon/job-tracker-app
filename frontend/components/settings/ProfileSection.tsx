@@ -10,24 +10,18 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 
 interface ProfileErrors {
-    username?: string;
     currentPassword?: string;
     newPassword?: string;
     confirmPassword?: string;
 }
 
 function validate(
-    username: string,
     showPasswordFields: boolean,
     currentPassword: string,
     newPassword: string,
     confirmPassword: string,
 ): ProfileErrors {
     const errors: ProfileErrors = {};
-
-    if (username.length < 3 || username.length > 14) {
-        errors.username = 'Username must be 3–14 characters';
-    }
 
     if (showPasswordFields) {
         if (!currentPassword) {
@@ -50,7 +44,6 @@ export default function ProfileSection() {
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState('');
 
-    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState<ProfileErrors>({});
@@ -65,7 +58,6 @@ export default function ProfileSection() {
             try {
                 const p = await getProfile();
                 setProfile(p);
-                setUsername(p.username);
                 setEmail(p.email);
             } catch {
                 setLoadError('Failed to load profile. Please refresh.');
@@ -82,11 +74,6 @@ export default function ProfileSection() {
         setNewPassword('');
         setConfirmPassword('');
         setErrors({});
-    }, []);
-
-    const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setUsername(e.target.value);
-        setErrors(prev => ({ ...prev, username: undefined }));
     }, []);
 
     const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +97,7 @@ export default function ProfileSection() {
 
     const handleSave = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
-        const errs = validate(username, showPasswordFields, currentPassword, newPassword, confirmPassword);
+        const errs = validate(showPasswordFields, currentPassword, newPassword, confirmPassword);
         if (Object.keys(errs).length > 0) {
             setErrors(errs);
             return;
@@ -118,7 +105,6 @@ export default function ProfileSection() {
         setErrors({});
 
         const payload: UpdateProfileRequest = {};
-        if (username !== profile?.username) payload.username = username;
         if (email !== profile?.email) payload.email = email;
         if (showPasswordFields && newPassword) {
             payload.currentPassword = currentPassword;
@@ -134,7 +120,6 @@ export default function ProfileSection() {
         try {
             const updated = await updateProfile(payload);
             setProfile(updated);
-            setUsername(updated.username);
             setEmail(updated.email);
             toast.success('Profile updated');
             if (showPasswordFields) {
@@ -148,7 +133,7 @@ export default function ProfileSection() {
         } finally {
             setSaving(false);
         }
-    }, [username, email, profile, showPasswordFields, currentPassword, newPassword, confirmPassword, toast]);
+    }, [email, profile, showPasswordFields, currentPassword, newPassword, confirmPassword, toast]);
 
     if (loading) {
         return (
@@ -173,18 +158,11 @@ export default function ProfileSection() {
             <div>
                 <h2 id="profile-heading" className="text-base font-semibold text-[var(--foreground)]">Profile</h2>
                 <p className="text-sm text-[var(--muted-foreground)] mt-1">
-                    Update your username and email address.
+                    Update your email address and password.
                 </p>
             </div>
 
             <form onSubmit={handleSave} noValidate className="space-y-4">
-                <Input
-                    label="Username"
-                    value={username}
-                    onChange={handleUsernameChange}
-                    error={errors.username}
-                    placeholder="3–14 characters"
-                />
                 <Input
                     label="Email"
                     type="email"

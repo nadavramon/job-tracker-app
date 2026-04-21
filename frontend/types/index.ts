@@ -58,7 +58,6 @@ export interface UserProfileResponse {
 // For PATCH /me (all fields optional since it's a partial update)
 export interface UpdateProfileRequest {
     email?: string;
-    username?: string;
     currentPassword?: string;
     password?: string;
     themePreference?: ThemePreference;

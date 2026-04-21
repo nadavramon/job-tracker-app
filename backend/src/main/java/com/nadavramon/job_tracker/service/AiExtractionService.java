@@ -12,16 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.UnknownHostException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AiExtractionService {
 
     private static final Logger log = LoggerFactory.getLogger(AiExtractionService.class);
-
-    private static final int MAX_FETCH_BYTES = 1_024_000;
-    private static final Duration FETCH_TIMEOUT = Duration.ofSeconds(10);
 
     private static final String SYSTEM_PROMPT = """
             You are a job posting data extractor. Extract structured information from job posting text.
@@ -56,9 +49,10 @@ public class AiExtractionService {
     );
 
     private final UserService userService;
+    private final CurrentUserService currentUserService;
+    private final UrlFetchService urlFetchService;
     private final ObjectMapper objectMapper;
     private final RestClient anthropicClient;
-    private final RestClient urlFetchClient;
     private final String model;
     private final int maxTokens;
     private final int maxRequests;
@@ -67,11 +61,15 @@ public class AiExtractionService {
     @Autowired
     public AiExtractionService(
             UserService userService,
+            CurrentUserService currentUserService,
+            UrlFetchService urlFetchService,
             @Value("${ai.anthropic.api-url:https://api.anthropic.com/v1/messages}") String apiUrl,
             @Value("${ai.anthropic.model:claude-sonnet-4-6}") String model,
             @Value("${ai.anthropic.max-tokens:512}") int maxTokens,
             @Value("${ai.rate-limit.max-requests:15}") int maxRequests) {
         this.userService = userService;
+        this.currentUserService = currentUserService;
+        this.urlFetchService = urlFetchService;
         this.objectMapper = new ObjectMapper();
         this.model = model;
         this.maxTokens = maxTokens;
@@ -79,23 +77,23 @@ public class AiExtractionService {
         this.anthropicClient = RestClient.builder()
                 .baseUrl(apiUrl)
                 .build();
-        this.urlFetchClient = RestClient.builder()
-                .build();
     }
 
     // Package-private constructor for testing
     AiExtractionService(
             UserService userService,
+            CurrentUserService currentUserService,
+            UrlFetchService urlFetchService,
             ObjectMapper objectMapper,
             RestClient anthropicClient,
-            RestClient urlFetchClient,
             String model,
             int maxTokens,
             int maxRequests) {
         this.userService = userService;
+        this.currentUserService = currentUserService;
+        this.urlFetchService = urlFetchService;
         this.objectMapper = objectMapper;
         this.anthropicClient = anthropicClient;
-        this.urlFetchClient = urlFetchClient;
         this.model = model;
         this.maxTokens = maxTokens;
         this.maxRequests = maxRequests;
@@ -115,7 +113,7 @@ public class AiExtractionService {
 
         if (processedText.startsWith("http://") || processedText.startsWith("https://")) {
             sourceUrl = processedText;
-            processedText = fetchAndStripHtml(processedText);
+            processedText = urlFetchService.fetchAndStripHtml(processedText);
             if (processedText.isEmpty()) {
                 throw new AiServiceException(HttpStatus.BAD_REQUEST,
                         "Could not extract text from URL.");
@@ -129,7 +127,7 @@ public class AiExtractionService {
     }
 
     private void enforceRateLimit() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = currentUserService.getCurrentUser().getUsername();
         Bucket bucket = rateLimitBuckets.computeIfAbsent(username, k -> Bucket.builder()
                 .addLimit(Bandwidth.builder()
                         .capacity(maxRequests)
@@ -141,111 +139,6 @@ public class AiExtractionService {
             throw new AiServiceException(HttpStatus.TOO_MANY_REQUESTS,
                     "Too many requests. Please wait a moment.");
         }
-    }
-
-    String fetchAndStripHtml(String url) {
-        validateAndResolveUrl(url);
-
-        try {
-            String html = urlFetchClient.get()
-                    .uri(URI.create(url))
-                    .header("User-Agent", "Mozilla/5.0 (compatible; JobTracker/1.0)")
-                    .retrieve()
-                    .body(String.class);
-
-            if (html == null) {
-                throw new AiServiceException(HttpStatus.BAD_REQUEST, "No response body from URL.");
-            }
-
-            if (html.length() > MAX_FETCH_BYTES) {
-                html = html.substring(0, MAX_FETCH_BYTES);
-            }
-
-            return html.replaceAll("<[^>]*>", " ").replaceAll("\\s+", " ").trim();
-        } catch (AiServiceException e) {
-            throw e;
-        } catch (RestClientException e) {
-            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Failed to fetch the provided URL.");
-        }
-    }
-
-    void validateAndResolveUrl(String url) {
-        URI uri;
-        try {
-            uri = URI.create(url);
-        } catch (IllegalArgumentException e) {
-            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Invalid URL.");
-        }
-
-        String scheme = uri.getScheme();
-        if (scheme == null || (!scheme.equals("http") && !scheme.equals("https"))) {
-            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Only HTTP and HTTPS URLs are allowed.");
-        }
-
-        String host = uri.getHost();
-        if (host == null) {
-            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Invalid URL.");
-        }
-
-        int port = uri.getPort();
-        if (port != -1 && port != 80 && port != 443) {
-            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Only standard HTTP ports are allowed.");
-        }
-
-        if (isPrivateHost(host)) {
-            throw new AiServiceException(HttpStatus.BAD_REQUEST, "URL points to a private or reserved address.");
-        }
-
-        // Resolve hostname and validate the resolved IP to prevent DNS rebinding.
-        // This narrows the TOCTOU window: we verify DNS resolves to a public IP
-        // immediately before the fetch. A true rebinding attack would need to
-        // flip DNS in the milliseconds between this check and the HTTP connection.
-        resolveAndValidate(host);
-    }
-
-    private InetAddress resolveAndValidate(String host) {
-        try {
-            InetAddress addr = InetAddress.getByName(host);
-            if (addr.isLoopbackAddress() || addr.isLinkLocalAddress() ||
-                    addr.isSiteLocalAddress() || addr.isAnyLocalAddress()) {
-                throw new AiServiceException(HttpStatus.BAD_REQUEST,
-                        "URL points to a private or reserved address.");
-            }
-            return addr;
-        } catch (UnknownHostException e) {
-            throw new AiServiceException(HttpStatus.BAD_REQUEST, "Could not resolve hostname.");
-        }
-    }
-
-    boolean isPrivateHost(String host) {
-        if ("localhost".equals(host) || "[::1]".equals(host)) {
-            return true;
-        }
-
-        String cleanHost = host.replaceAll("^\\[|]$", "");
-        if ("::1".equals(cleanHost) || cleanHost.startsWith("fe80:") ||
-                cleanHost.startsWith("fc") || cleanHost.startsWith("fd")) {
-            return true;
-        }
-
-        // Check IPv4 private ranges
-        String[] parts = host.split("\\.");
-        if (parts.length == 4) {
-            try {
-                int a = Integer.parseInt(parts[0]);
-                int b = Integer.parseInt(parts[1]);
-                if (a == 127) return true;                          // 127.0.0.0/8
-                if (a == 10) return true;                           // 10.0.0.0/8
-                if (a == 172 && b >= 16 && b <= 31) return true;   // 172.16.0.0/12
-                if (a == 192 && b == 168) return true;              // 192.168.0.0/16
-                if (a == 169 && b == 254) return true;              // 169.254.0.0/16
-                if (a == 0) return true;                            // 0.0.0.0/8
-            } catch (NumberFormatException e) {
-                // Not a valid IPv4 — fall through to DNS resolution
-            }
-        }
-
-        return false;
     }
 
     private AiExtractResponse callAnthropic(String apiKey, String text, String sourceUrl) {

@@ -2,26 +2,20 @@ package com.nadavramon.job_tracker.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nadavramon.job_tracker.dto.AiExtractResponse;
+import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.exception.AiServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import org.mockito.Answers;
@@ -33,10 +27,13 @@ public class AiExtractionServiceTest {
     private UserService userService;
 
     @Mock
-    private RestClient anthropicClient;
+    private CurrentUserService currentUserService;
 
     @Mock
-    private RestClient urlFetchClient;
+    private UrlFetchService urlFetchService;
+
+    @Mock
+    private RestClient anthropicClient;
 
     private ObjectMapper objectMapper;
     private AiExtractionService service;
@@ -45,15 +42,15 @@ public class AiExtractionServiceTest {
     void setUp() {
         objectMapper = new ObjectMapper();
         service = new AiExtractionService(
-                userService, objectMapper, anthropicClient, urlFetchClient,
+                userService, currentUserService, urlFetchService, objectMapper, anthropicClient,
                 "claude-sonnet-4-6", 512, 15
         );
     }
 
-    private void setUpSecurityContext(String username) {
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList())
-        );
+    private void setUpCurrentUser(String username) {
+        User user = new User();
+        user.setUsername(username);
+        when(currentUserService.getCurrentUser()).thenReturn(user);
     }
 
     /**
@@ -65,7 +62,6 @@ public class AiExtractionServiceTest {
         RestClient.RequestBodySpec bodySpec = mock(RestClient.RequestBodySpec.class, Answers.RETURNS_SELF);
 
         when(anthropicClient.post()).thenReturn(bodyUriSpec);
-        // header() on the UriSpec returns the bodySpec
         when(bodyUriSpec.header(anyString(), anyString())).thenReturn(bodySpec);
 
         return bodySpec;
@@ -75,7 +71,6 @@ public class AiExtractionServiceTest {
 
     @Test
     void extract_ThrowsBadRequest_WhenApiKeyIsNull() {
-        setUpSecurityContext("testuser");
         when(userService.getUserApiKey()).thenReturn(null);
 
         AiServiceException ex = assertThrows(AiServiceException.class, () -> service.extract("some text"));
@@ -83,115 +78,11 @@ public class AiExtractionServiceTest {
         assertTrue(ex.getMessage().contains("API key not configured"));
     }
 
-    // --- SSRF: isPrivateHost ---
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "localhost",
-            "127.0.0.1",
-            "127.255.255.255",
-            "10.0.0.1",
-            "10.255.255.255",
-            "172.16.0.1",
-            "172.31.255.255",
-            "192.168.0.1",
-            "192.168.255.255",
-            "169.254.0.1",
-            "169.254.255.255",
-            "0.0.0.0",
-            "0.1.2.3",
-            "[::1]"
-    })
-    void isPrivateHost_ReturnsTrue_ForPrivateAddresses(String host) {
-        assertTrue(service.isPrivateHost(host), "Expected " + host + " to be private");
-    }
-
-    @Test
-    void isPrivateHost_ReturnsTrue_ForIpv6Loopback() {
-        assertTrue(service.isPrivateHost("::1"));
-    }
-
-    @Test
-    void isPrivateHost_ReturnsTrue_ForIpv6LinkLocal() {
-        assertTrue(service.isPrivateHost("fe80:0000:0000:0000:0000:0000:0000:0001"));
-    }
-
-    @Test
-    void isPrivateHost_ReturnsTrue_ForIpv6UniqueLocal() {
-        assertTrue(service.isPrivateHost("fc00::1"));
-        assertTrue(service.isPrivateHost("fd00::1"));
-    }
-
-    // --- Port restriction ---
-
-    @Test
-    void validateAndResolveUrl_ThrowsBadRequest_ForNonStandardPort() {
-        AiServiceException ex = assertThrows(AiServiceException.class,
-                () -> service.validateAndResolveUrl("https://example.com:8080/path"));
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
-        assertTrue(ex.getMessage().contains("standard HTTP ports"));
-    }
-
-    @Test
-    void validateAndResolveUrl_AllowsPort80() {
-        // Should not throw for port 80 (may throw for private host resolution, but not for port)
-        // We test that it doesn't throw the port error
-        try {
-            service.validateAndResolveUrl("http://example.com:80/path");
-        } catch (AiServiceException e) {
-            assertFalse(e.getMessage().contains("standard HTTP ports"),
-                    "Port 80 should be allowed");
-        }
-    }
-
-    @Test
-    void validateAndResolveUrl_AllowsPort443() {
-        try {
-            service.validateAndResolveUrl("https://example.com:443/path");
-        } catch (AiServiceException e) {
-            assertFalse(e.getMessage().contains("standard HTTP ports"),
-                    "Port 443 should be allowed");
-        }
-    }
-
-    @Test
-    void validateAndResolveUrl_AllowsDefaultPort() {
-        // Default port (-1) should be allowed
-        try {
-            service.validateAndResolveUrl("https://example.com/path");
-        } catch (AiServiceException e) {
-            assertFalse(e.getMessage().contains("standard HTTP ports"),
-                    "Default port should be allowed");
-        }
-    }
-
-    @Test
-    void validateAndResolveUrl_ThrowsBadRequest_ForPrivateHost() {
-        AiServiceException ex = assertThrows(AiServiceException.class,
-                () -> service.validateAndResolveUrl("https://localhost/path"));
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
-        assertTrue(ex.getMessage().contains("private or reserved"));
-    }
-
-    @Test
-    void validateAndResolveUrl_ThrowsBadRequest_ForNonHttpScheme() {
-        AiServiceException ex = assertThrows(AiServiceException.class,
-                () -> service.validateAndResolveUrl("ftp://example.com/path"));
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
-        assertTrue(ex.getMessage().contains("HTTP and HTTPS"));
-    }
-
-    @Test
-    void validateAndResolveUrl_DoesNotThrow_ForValidPublicUrl() {
-        // Should not throw for a valid public URL
-        assertDoesNotThrow(() -> service.validateAndResolveUrl("https://example.com/path?q=1"));
-    }
-
     // --- Rate limiting ---
 
     @Test
     void extract_ThrowsTooManyRequests_AfterRateLimitExceeded() {
-        setUpSecurityContext("ratelimituser");
+        setUpCurrentUser("ratelimituser");
         when(userService.getUserApiKey()).thenReturn("sk-ant-test-key");
 
         RestClient.RequestBodySpec bodySpec = mockAnthropicClientChain();
@@ -231,7 +122,7 @@ public class AiExtractionServiceTest {
 
     @Test
     void extract_ThrowsBadGateway_WhenAnthropicReturns401() {
-        setUpSecurityContext("testuser401");
+        setUpCurrentUser("testuser401");
         when(userService.getUserApiKey()).thenReturn("sk-ant-bad-key");
 
         RestClient.RequestBodySpec bodySpec = mockAnthropicClientChain();
@@ -245,7 +136,7 @@ public class AiExtractionServiceTest {
 
     @Test
     void extract_ThrowsTooManyRequests_WhenAnthropicReturns429() {
-        setUpSecurityContext("testuser429");
+        setUpCurrentUser("testuser429");
         when(userService.getUserApiKey()).thenReturn("sk-ant-key");
 
         RestClient.RequestBodySpec bodySpec = mockAnthropicClientChain();
@@ -258,7 +149,7 @@ public class AiExtractionServiceTest {
 
     @Test
     void extract_ThrowsBadGateway_WhenAnthropicReturns500() {
-        setUpSecurityContext("testuser500");
+        setUpCurrentUser("testuser500");
         when(userService.getUserApiKey()).thenReturn("sk-ant-key");
 
         RestClient.RequestBodySpec bodySpec = mockAnthropicClientChain();
@@ -273,7 +164,7 @@ public class AiExtractionServiceTest {
 
     @Test
     void extract_ReturnsResponse_WhenAnthropicReturnsValidToolUse() {
-        setUpSecurityContext("testuserSuccess");
+        setUpCurrentUser("testuserSuccess");
         when(userService.getUserApiKey()).thenReturn("sk-ant-key");
 
         RestClient.RequestBodySpec bodySpec = mockAnthropicClientChain();
@@ -312,7 +203,7 @@ public class AiExtractionServiceTest {
 
     @Test
     void extract_ReturnsResponseWithNulls_WhenFieldsMissing() {
-        setUpSecurityContext("testuserPartial");
+        setUpCurrentUser("testuserPartial");
         when(userService.getUserApiKey()).thenReturn("sk-ant-key");
 
         RestClient.RequestBodySpec bodySpec = mockAnthropicClientChain();

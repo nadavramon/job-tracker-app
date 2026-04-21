@@ -142,22 +142,6 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser
-    void updateProfile_ReturnsConflict_WhenUsernameAlreadyTaken() throws Exception {
-        UpdateProfileRequest request = new UpdateProfileRequest();
-        request.setUsername("takenuser");
-
-        when(userService.updateUserProfile(any(UpdateProfileRequest.class)))
-                .thenThrow(new DuplicateResourceException("Username already taken"));
-
-        mockMvc.perform(patch("/me")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("Username already taken"));
-    }
-
-    @Test
-    @WithMockUser
     void updateProfile_ReturnsUnauthorized_WhenCurrentPasswordIsIncorrect() throws Exception {
         UpdateProfileRequest request = new UpdateProfileRequest();
         request.setCurrentPassword("wrongpassword");
