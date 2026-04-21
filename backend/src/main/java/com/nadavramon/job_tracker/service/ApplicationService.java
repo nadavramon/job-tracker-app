@@ -9,7 +9,7 @@ import com.nadavramon.job_tracker.dto.MonthlyCount;
 import com.nadavramon.job_tracker.entity.Application;
 import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.enums.Status;
-import com.nadavramon.job_tracker.exception.AccessDeniedException;
+import com.nadavramon.job_tracker.exception.ResourceOwnershipException;
 import com.nadavramon.job_tracker.exception.ResourceNotFoundException;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
 import org.springframework.data.domain.Page;
@@ -50,7 +50,7 @@ public class ApplicationService {
                 .orElseThrow(() -> new ResourceNotFoundException("User's application not found"));
 
         if (!application.getUser().getId().equals(getCurrentUser().getId()))
-            throw new AccessDeniedException("Access denied");
+            throw new ResourceOwnershipException("Access denied");
         return toResponse(application);
     }
 
@@ -77,7 +77,7 @@ public class ApplicationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         if (!application.getUser().getId().equals(getCurrentUser().getId())) {
-            throw new AccessDeniedException("Access denied");
+            throw new ResourceOwnershipException("Access denied");
         }
 
         if (request.getCompanyName() != null)
@@ -160,7 +160,7 @@ public class ApplicationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         if (!application.getUser().getId().equals(getCurrentUser().getId()))
-            throw new AccessDeniedException("Access denied");
+            throw new ResourceOwnershipException("Access denied");
 
         return new CredentialsResponse(
                 application.getUsername(),
@@ -173,7 +173,7 @@ public class ApplicationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         if (!application.getUser().getId().equals(getCurrentUser().getId())) {
-            throw new AccessDeniedException("Access denied");
+            throw new ResourceOwnershipException("Access denied");
         }
         application.setDeletedAt(LocalDateTime.now());
         applicationRepository.save(application);
