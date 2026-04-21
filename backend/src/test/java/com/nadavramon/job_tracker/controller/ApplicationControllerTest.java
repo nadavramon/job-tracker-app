@@ -162,7 +162,7 @@ public class ApplicationControllerTest {
         mockMvc.perform(post("/applications")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.companyName").value("Google"));
     }
 
@@ -173,7 +173,7 @@ public class ApplicationControllerTest {
         doNothing().when(applicationService).deleteApplicationByUser(appId);
 
         mockMvc.perform(delete("/applications/" + appId))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

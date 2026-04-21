@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,13 +47,13 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> createUser(@Valid @RequestBody RegisterRequest registerRequest) {
         User user = authService.register(registerRequest);
-        return buildAuthResponse(user);
+        return buildAuthResponse(user, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> userLogin(@Valid @RequestBody LoginRequest loginRequest) {
         User user = authService.login(loginRequest);
-        return buildAuthResponse(user);
+        return buildAuthResponse(user, HttpStatus.OK);
     }
 
     @PostMapping("/logout")
@@ -91,12 +92,12 @@ public class AuthController {
                 .body(response);
     }
 
-    private ResponseEntity<AuthResponse> buildAuthResponse(User user) {
+    private ResponseEntity<AuthResponse> buildAuthResponse(User user, HttpStatus status) {
         String accessToken = jwtService.generateToken(user.getUsername());
         String refreshToken = refreshTokenService.createRefreshTokenForNewSession(user);
 
         AuthResponse response = new AuthResponse(user.getUsername());
-        return ResponseEntity.ok()
+        return ResponseEntity.status(status)
                 .header(HttpHeaders.SET_COOKIE, buildAccessCookie(accessToken).toString())
                 .header(HttpHeaders.SET_COOKIE, buildRefreshCookie(refreshToken).toString())
                 .body(response);

@@ -141,7 +141,7 @@ public class AuthControllerTest {
         MvcResult result = mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").doesNotExist())
                 .andExpect(jsonPath("$.username").value("newuser"))
                 .andReturn();

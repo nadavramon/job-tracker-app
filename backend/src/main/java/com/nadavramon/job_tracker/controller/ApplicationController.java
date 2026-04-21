@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -50,6 +51,7 @@ public class ApplicationController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ApplicationResponse createApplication(@Valid @RequestBody ApplicationRequest request) {
         return applicationService.createApplicationByUser(request);
     }
@@ -61,6 +63,7 @@ public class ApplicationController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteApplication(@PathVariable UUID id) {
         applicationService.deleteApplicationByUser(id);
     }

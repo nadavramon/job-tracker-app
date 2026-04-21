@@ -4,6 +4,7 @@ import com.nadavramon.job_tracker.dto.UpdateProfileRequest;
 import com.nadavramon.job_tracker.dto.UserProfileResponse;
 import com.nadavramon.job_tracker.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +28,7 @@ public class UserController {
     }
 
     @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAccount() {
         userService.deleteCurrentUser();
     }

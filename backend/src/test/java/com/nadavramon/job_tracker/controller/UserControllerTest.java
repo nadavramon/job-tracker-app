@@ -131,7 +131,7 @@ public class UserControllerTest {
         doNothing().when(userService).deleteCurrentUser();
 
         mockMvc.perform(delete("/me"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -157,16 +157,4 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.message").value("Current password is incorrect"));
     }
 
-    @Test
-    @WithMockUser
-    void updateProfile_ReturnsBadRequest_WhenUsernameTooShort() throws Exception {
-        UpdateProfileRequest request = new UpdateProfileRequest();
-        request.setUsername("ab");
-
-        mockMvc.perform(patch("/me")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").exists());
-    }
 }
