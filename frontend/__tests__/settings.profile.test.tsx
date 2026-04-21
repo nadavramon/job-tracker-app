@@ -26,6 +26,7 @@ const fakeProfile: UserProfileResponse = {
     username: 'johndoe',
     email: 'john@example.com',
     themePreference: 'SYSTEM',
+    hasApiKey: false,
 };
 
 beforeEach(() => {
