@@ -1,5 +1,6 @@
 package com.nadavramon.job_tracker.service;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,14 @@ public class EncryptionService {
 
     @Value("${encryption.secret}")
     private String encryptionSecret;
+
+    @PostConstruct
+    public void validateSecret() {
+        if (encryptionSecret == null || encryptionSecret.isBlank()) {
+            throw new IllegalStateException(
+                    "Encryption secret must not be empty. Set the encryption.secret property.");
+        }
+    }
 
     /**
      * Encrypts plaintext using AES-256-GCM.

@@ -26,6 +26,7 @@ const fakeProfile: UserProfileResponse = {
     username: 'johndoe',
     email: 'john@example.com',
     themePreference: 'SYSTEM',
+    hasApiKey: false,
 };
 
 beforeEach(() => {
@@ -35,14 +36,14 @@ beforeEach(() => {
 
 async function renderAndWait() {
     render(<ProfileSection />);
-    await waitFor(() => expect(screen.getByLabelText(/username/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByLabelText(/email/i)).toBeInTheDocument());
 }
 
 describe('ProfileSection', () => {
     it('shows a loading skeleton while fetching profile', () => {
         mockGetProfile.mockReturnValue(new Promise(() => {})); // never resolves
         render(<ProfileSection />);
-        expect(screen.queryByLabelText(/username/i)).not.toBeInTheDocument();
+        expect(screen.queryByLabelText(/email/i)).not.toBeInTheDocument();
     });
 
     it('shows an error banner when profile load fails', async () => {
@@ -53,9 +54,8 @@ describe('ProfileSection', () => {
         });
     });
 
-    it('pre-fills username and email from loaded profile', async () => {
+    it('pre-fills email from loaded profile', async () => {
         await renderAndWait();
-        expect(screen.getByLabelText(/username/i)).toHaveValue('johndoe');
         expect(screen.getByLabelText(/email/i)).toHaveValue('john@example.com');
     });
 
@@ -78,26 +78,6 @@ describe('ProfileSection', () => {
         fireEvent.click(screen.getByRole('button', { name: /change password/i }));
         fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
         expect(screen.queryByLabelText(/current password/i, { selector: 'input' })).not.toBeInTheDocument();
-    });
-
-    it('shows validation error for username shorter than 3 chars', async () => {
-        await renderAndWait();
-        fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'ab' } });
-        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
-        await waitFor(() => {
-            expect(screen.getByText(/username must be 3–14 characters/i)).toBeInTheDocument();
-        });
-        expect(mockUpdateProfile).not.toHaveBeenCalled();
-    });
-
-    it('shows validation error for username longer than 14 chars', async () => {
-        await renderAndWait();
-        fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'a'.repeat(15) } });
-        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
-        await waitFor(() => {
-            expect(screen.getByText(/username must be 3–14 characters/i)).toBeInTheDocument();
-        });
-        expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
 
     it('shows validation error when current password is empty', async () => {
@@ -147,13 +127,13 @@ describe('ProfileSection', () => {
         expect(mockUpdateProfile).not.toHaveBeenCalled();
     });
 
-    it('sends only changed fields — username only', async () => {
-        mockUpdateProfile.mockResolvedValueOnce({ ...fakeProfile, username: 'newname' });
+    it('sends only changed fields — email only', async () => {
+        mockUpdateProfile.mockResolvedValueOnce({ ...fakeProfile, email: 'new@example.com' });
         await renderAndWait();
-        fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'newname' } });
+        fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'new@example.com' } });
         fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
         await waitFor(() => {
-            expect(mockUpdateProfile).toHaveBeenCalledWith({ username: 'newname' });
+            expect(mockUpdateProfile).toHaveBeenCalledWith({ email: 'new@example.com' });
             expect(mockToast.success).toHaveBeenCalledWith('Profile updated');
         });
     });
@@ -188,7 +168,7 @@ describe('ProfileSection', () => {
     it('shows error toast on API failure', async () => {
         mockUpdateProfile.mockRejectedValueOnce(new Error('Server error'));
         await renderAndWait();
-        fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'changed' } });
+        fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'changed@example.com' } });
         fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
         await waitFor(() => {
             expect(mockToast.error).toHaveBeenCalled();

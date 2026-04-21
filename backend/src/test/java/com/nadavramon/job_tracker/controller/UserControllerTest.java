@@ -131,29 +131,13 @@ public class UserControllerTest {
         doNothing().when(userService).deleteCurrentUser();
 
         mockMvc.perform(delete("/me"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
     void deleteAccount_Returns401_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(delete("/me"))
                 .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @WithMockUser
-    void updateProfile_ReturnsConflict_WhenUsernameAlreadyTaken() throws Exception {
-        UpdateProfileRequest request = new UpdateProfileRequest();
-        request.setUsername("takenuser");
-
-        when(userService.updateUserProfile(any(UpdateProfileRequest.class)))
-                .thenThrow(new DuplicateResourceException("Username already taken"));
-
-        mockMvc.perform(patch("/me")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("Username already taken"));
     }
 
     @Test
@@ -173,16 +157,4 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.message").value("Current password is incorrect"));
     }
 
-    @Test
-    @WithMockUser
-    void updateProfile_ReturnsBadRequest_WhenUsernameTooShort() throws Exception {
-        UpdateProfileRequest request = new UpdateProfileRequest();
-        request.setUsername("ab");
-
-        mockMvc.perform(patch("/me")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").exists());
-    }
 }

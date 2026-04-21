@@ -5,11 +5,9 @@ import com.nadavramon.job_tracker.dto.UserProfileResponse;
 import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.exception.DuplicateResourceException;
 import com.nadavramon.job_tracker.exception.InvalidCredentialsException;
-import com.nadavramon.job_tracker.exception.ResourceNotFoundException;
 import com.nadavramon.job_tracker.repository.ApplicationRepository;
 import com.nadavramon.job_tracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +18,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ApplicationRepository applicationRepository;
+    private final CurrentUserService currentUserService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
     private final EncryptionService encryptionService;
 
     public UserService(UserRepository userRepository, ApplicationRepository applicationRepository,
-                       RefreshTokenService refreshTokenService, PasswordEncoder passwordEncoder,
-                       EncryptionService encryptionService) {
+                       CurrentUserService currentUserService, RefreshTokenService refreshTokenService,
+                       PasswordEncoder passwordEncoder, EncryptionService encryptionService) {
         this.userRepository = userRepository;
         this.applicationRepository = applicationRepository;
+        this.currentUserService = currentUserService;
         this.refreshTokenService = refreshTokenService;
         this.passwordEncoder = passwordEncoder;
         this.encryptionService = encryptionService;
@@ -45,12 +45,6 @@ public class UserService {
             if (userRepository.existsByEmail(request.getEmail()))
                 throw new DuplicateResourceException("Email already taken");
             user.setEmail(request.getEmail());
-        }
-
-        if (request.getUsername() != null && !request.getUsername().equals(user.getUsername())) {
-            if (userRepository.existsByUsername(request.getUsername()))
-                throw new DuplicateResourceException("Username already taken");
-            user.setUsername(request.getUsername());
         }
 
         if (request.getPassword() != null) {
@@ -90,14 +84,16 @@ public class UserService {
         LocalDateTime now = LocalDateTime.now();
         refreshTokenService.revokeAllUserTokens(user);
         applicationRepository.softDeleteAllByUser(user, now);
+
+        String suffix = "_deleted_" + System.currentTimeMillis();
+        user.setEmail(user.getEmail() + suffix);
+        user.setUsername(user.getUsername() + suffix);
         user.setDeletedAt(now);
         userRepository.save(user);
     }
 
     private User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return currentUserService.getCurrentUser();
     }
 
     private UserProfileResponse toResponse(User user) {

@@ -13,7 +13,7 @@ import com.nadavramon.job_tracker.dto.CredentialsResponse;
 import com.nadavramon.job_tracker.dto.MonthlyCount;
 import com.nadavramon.job_tracker.enums.JobType;
 import com.nadavramon.job_tracker.enums.Status;
-import com.nadavramon.job_tracker.exception.AccessDeniedException;
+import com.nadavramon.job_tracker.exception.ResourceOwnershipException;
 import com.nadavramon.job_tracker.exception.ResourceNotFoundException;
 import com.nadavramon.job_tracker.service.ApplicationService;
 import com.nadavramon.job_tracker.service.JwtService;
@@ -133,7 +133,7 @@ public class ApplicationControllerTest {
     void getApplicationById_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
         UUID appId = UUID.randomUUID();
         when(applicationService.getApplicationByUser(appId))
-                .thenThrow(new AccessDeniedException("Access denied"));
+                .thenThrow(new ResourceOwnershipException("Access denied"));
 
         mockMvc.perform(get("/applications/" + appId))
                 .andExpect(status().isForbidden())
@@ -162,7 +162,7 @@ public class ApplicationControllerTest {
         mockMvc.perform(post("/applications")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.companyName").value("Google"));
     }
 
@@ -173,7 +173,7 @@ public class ApplicationControllerTest {
         doNothing().when(applicationService).deleteApplicationByUser(appId);
 
         mockMvc.perform(delete("/applications/" + appId))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -192,7 +192,7 @@ public class ApplicationControllerTest {
     @WithMockUser
     void deleteApplication_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
         UUID appId = UUID.randomUUID();
-        doThrow(new AccessDeniedException("Access denied"))
+        doThrow(new ResourceOwnershipException("Access denied"))
                 .when(applicationService).deleteApplicationByUser(appId);
 
         mockMvc.perform(delete("/applications/" + appId))
@@ -300,7 +300,7 @@ public class ApplicationControllerTest {
     void updateApplication_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
         UUID appId = UUID.randomUUID();
         when(applicationService.updateApplicationByUser(eq(appId), any(ApplicationUpdateRequest.class)))
-                .thenThrow(new AccessDeniedException("Access denied"));
+                .thenThrow(new ResourceOwnershipException("Access denied"));
 
         mockMvc.perform(patch("/applications/" + appId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -359,7 +359,7 @@ public class ApplicationControllerTest {
     void getApplicationCredentials_ReturnsForbidden_WhenAccessingOtherUserData() throws Exception {
         UUID appId = UUID.randomUUID();
         when(applicationService.getApplicationCredentials(appId))
-                .thenThrow(new AccessDeniedException("Access denied"));
+                .thenThrow(new ResourceOwnershipException("Access denied"));
 
         mockMvc.perform(get("/applications/" + appId + "/credentials"))
                 .andExpect(status().isForbidden())

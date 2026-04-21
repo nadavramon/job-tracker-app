@@ -19,7 +19,7 @@ public class RefreshToken {
     @Column(nullable = false)
     private UUID familyId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -33,6 +33,9 @@ public class RefreshToken {
     private Instant createdAt;
 
     private UUID replacedById;
+
+    @Version
+    private int version;
 
     public UUID getId() {
         return id;
