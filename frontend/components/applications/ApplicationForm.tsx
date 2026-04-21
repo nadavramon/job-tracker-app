@@ -104,6 +104,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Input
                     label="Company Name"
+                    required
                     value={values.companyName}
                     onChange={e => set('companyName', e.target.value)}
                     error={errors.companyName}
@@ -111,6 +112,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                 />
                 <Input
                     label="Job Role"
+                    required
                     value={values.jobRole}
                     onChange={e => set('jobRole', e.target.value)}
                     error={errors.jobRole}
@@ -118,6 +120,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                 />
                 <Input
                     label="Location"
+                    required
                     value={values.location}
                     onChange={e => set('location', e.target.value)}
                     error={errors.location}
@@ -125,6 +128,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                 />
                 <DatePicker
                     label="Applied Date"
+                    required
                     value={values.appliedDate}
                     onChange={e => set('appliedDate', e.target.value)}
                     error={errors.appliedDate}
