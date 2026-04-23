@@ -47,10 +47,7 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard-scope relative min-h-full">
-      <div
-        className="-mx-4 -mt-8 px-4 pt-8 pb-8"
-        style={{ background: 'var(--dash-bg)' }}
-      >
+      <div className="-mx-4 -mt-8 px-4 pt-8 pb-8 bg-[var(--dash-bg)]">
         {/* Mesh gradient — top-left */}
         <div
           className="pointer-events-none absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full"
@@ -74,7 +71,7 @@ export default function DashboardPage() {
           </div>
 
           {error && (
-            <div className="rounded-xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] px-4 py-3 text-sm text-red-400">
+            <div className="rounded-xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] px-4 py-3 text-sm text-[var(--destructive)]">
               {error}
             </div>
           )}
