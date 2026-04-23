@@ -48,7 +48,7 @@ beforeEach(() => {
 
 describe('SettingsPage — Appearance', () => {
     it('redirects to /login when not authenticated', () => {
-        mockIsAuthenticated.mockReturnValueOnce(false);
+        mockIsAuthenticated.mockReturnValue(false);
         render(<SettingsPage />);
         expect(mockPush).toHaveBeenCalledWith('/login');
     });

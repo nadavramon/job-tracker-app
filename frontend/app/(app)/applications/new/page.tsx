@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAuthenticated } from '@/lib/auth';
 import { createApplication } from '@/lib/applicationService';
+import useAuthGuard from '@/hooks/useAuthGuard';
 import { useToast } from '@/context/ToastContext';
 import { getErrorMessage } from '@/lib/errorMessages';
 import ApplicationForm, { ApplicationFormValues } from '@/components/applications/ApplicationForm';
@@ -14,15 +14,10 @@ import { Application } from '@/types';
 export default function NewApplicationPage() {
     const router = useRouter();
     const { toast } = useToast();
+    const ready = useAuthGuard();
     const [extractionKey, setExtractionKey] = useState(0);
     const [prefill, setPrefill] = useState<Application | undefined>(undefined);
     const [extracting, setExtracting] = useState(false);
-
-    useEffect(() => {
-        if (!isAuthenticated()) {
-            router.push('/login');
-        }
-    }, [router]);
 
     const handleExtracted = useCallback((data: ExtractJobPostingOutput) => {
         setPrefill({
@@ -66,6 +61,8 @@ export default function NewApplicationPage() {
     const handleCancel = useCallback(() => {
         router.push('/dashboard');
     }, [router]);
+
+    if (!ready) return null;
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-8 animate-[fade-in_0.3s_ease-out]">
