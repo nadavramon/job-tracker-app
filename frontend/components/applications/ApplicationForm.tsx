@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Application, JobType, Status } from '@/types';
+import { STATUS_OPTIONS, JOB_TYPE_OPTIONS } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
 import Input from '@/components/ui/Input';
@@ -28,22 +29,6 @@ interface Props {
     collapsibleCredentials?: boolean;
     extracting?: boolean;
 }
-
-const STATUS_OPTIONS = [
-    { value: 'APPLIED',      label: 'Applied' },
-    { value: 'SCREENING',    label: 'Screening' },
-    { value: 'INTERVIEWING', label: 'Interviewing' },
-    { value: 'OFFER',        label: 'Offer' },
-    { value: 'REJECTED',     label: 'Rejected' },
-    { value: 'WITHDRAWN',    label: 'Withdrawn' },
-];
-
-const JOB_TYPE_OPTIONS = [
-    { value: 'FULL_TIME',   label: 'Full-time' },
-    { value: 'PART_TIME',   label: 'Part-time' },
-    { value: 'CONTRACT',    label: 'Contract' },
-    { value: 'INTERNSHIP',  label: 'Internship' },
-];
 
 function todayIso(): string {
     const d = new Date();
@@ -119,6 +104,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Input
                     label="Company Name"
+                    required
                     value={values.companyName}
                     onChange={e => set('companyName', e.target.value)}
                     error={errors.companyName}
@@ -126,6 +112,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                 />
                 <Input
                     label="Job Role"
+                    required
                     value={values.jobRole}
                     onChange={e => set('jobRole', e.target.value)}
                     error={errors.jobRole}
@@ -133,6 +120,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                 />
                 <Input
                     label="Location"
+                    required
                     value={values.location}
                     onChange={e => set('location', e.target.value)}
                     error={errors.location}
@@ -140,6 +128,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                 />
                 <DatePicker
                     label="Applied Date"
+                    required
                     value={values.appliedDate}
                     onChange={e => set('appliedDate', e.target.value)}
                     error={errors.appliedDate}

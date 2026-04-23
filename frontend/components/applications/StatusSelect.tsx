@@ -3,18 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { updateApplication } from '@/lib/applicationService';
 import { Status } from '@/types';
+import { STATUS_OPTIONS } from '@/lib/constants';
 import { StatusBadge } from '@/components/ui/Badge';
 import Spinner from '@/components/ui/Spinner';
 import { useToast } from '@/context/ToastContext';
-
-const STATUS_OPTIONS: { value: Status; label: string }[] = [
-    { value: 'APPLIED',      label: 'Applied' },
-    { value: 'SCREENING',    label: 'Screening' },
-    { value: 'INTERVIEWING', label: 'Interviewing' },
-    { value: 'OFFER',        label: 'Offer' },
-    { value: 'REJECTED',     label: 'Rejected' },
-    { value: 'WITHDRAWN',    label: 'Withdrawn' },
-];
 
 const STATUS_DOT_CLASS: Record<Status, string> = {
     APPLIED:      'bg-[var(--status-applied)]',

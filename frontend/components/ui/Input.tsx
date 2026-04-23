@@ -24,6 +24,7 @@ export default function Input({
     const [showPassword, setShowPassword] = useState(false);
     const generatedId = useId();
     const inputId = id ?? (label ? label.toLowerCase().replace(/\s+/g, '-') : generatedId);
+    const errorId = `${inputId}-error`;
     const resolvedType = type === 'password' ? (showPassword ? 'text' : 'password') : type;
 
     return (
@@ -40,6 +41,8 @@ export default function Input({
                 <input
                     id={inputId}
                     type={resolvedType}
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={error ? errorId : undefined}
                     className={[
                         'w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors shadow-sm',
                         variant === 'glass'
@@ -64,7 +67,7 @@ export default function Input({
                 )}
             </div>
             {error && (
-                <p className="text-xs text-[var(--destructive)]">{error}</p>
+                <p id={errorId} className="text-xs text-[var(--destructive)]">{error}</p>
             )}
         </div>
     );

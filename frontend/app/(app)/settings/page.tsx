@@ -1,11 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Sun, Moon, Monitor } from 'lucide-react';
-import { isAuthenticated, getUsername } from '@/lib/auth';
+import { getUsername } from '@/lib/auth';
 import { useTheme } from '@/context/ThemeContext';
-import { useMounted } from '@/hooks/useMounted';
+import useAuthGuard from '@/hooks/useAuthGuard';
 import { getProfile } from '@/lib/userService';
 import ProfileSection from '@/components/settings/ProfileSection';
 import ApiKeySection from '@/components/settings/ApiKeySection';
@@ -25,19 +24,16 @@ const THEME_OPTIONS: ThemeOption[] = [
 ];
 
 export default function SettingsPage() {
-    const router = useRouter();
     const { theme, setTheme } = useTheme();
-    const mounted = useMounted();
-    const username = mounted ? (getUsername() ?? '') : '';
+    const ready = useAuthGuard();
+    const username = ready ? (getUsername() ?? '') : '';
     const [hasApiKey, setHasApiKey] = useState(false);
 
     useEffect(() => {
-        if (!isAuthenticated()) {
-            router.push('/login');
-            return;
+        if (ready) {
+            getProfile().then((p) => setHasApiKey(p.hasApiKey)).catch(() => {});
         }
-        getProfile().then((p) => setHasApiKey(p.hasApiKey)).catch(() => {});
-    }, [router]);
+    }, [ready]);
 
     const handleApiKeyUpdated = useCallback((configured: boolean) => {
         setHasApiKey(configured);
@@ -68,7 +64,7 @@ export default function SettingsPage() {
                                     key={value}
                                     className={[
                                         'flex items-center gap-4 rounded-lg border px-4 py-3 cursor-pointer transition-colors',
-                                        mounted && theme === value
+                                        ready && theme === value
                                             ? 'border-[var(--primary)] bg-[var(--primary)]/5'
                                             : 'border-[var(--border)] hover:bg-[var(--muted)]',
                                     ].join(' ')}
@@ -77,7 +73,7 @@ export default function SettingsPage() {
                                         type="radio"
                                         name="theme"
                                         value={value}
-                                        checked={mounted && theme === value}
+                                        checked={ready && theme === value}
                                         onChange={() => setTheme(value)}
                                         className="accent-[var(--primary)]"
                                     />

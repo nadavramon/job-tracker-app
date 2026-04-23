@@ -26,6 +26,7 @@ export default function Select({
 }: SelectProps) {
     const generatedId = useId();
     const selectId = id ?? (label ? label.toLowerCase().replace(/\s+/g, '-') : generatedId);
+    const errorId = `${selectId}-error`;
 
     return (
         <div className="flex flex-col gap-1">
@@ -40,6 +41,8 @@ export default function Select({
             <div className="relative">
                 <select
                     id={selectId}
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={error ? errorId : undefined}
                     className={[
                         'w-full rounded-md border px-3 py-2 pr-9 text-sm outline-none transition-colors appearance-none shadow-sm',
                         'bg-[var(--background)] text-[var(--foreground)]',
@@ -65,7 +68,7 @@ export default function Select({
                 <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)] pointer-events-none" />
             </div>
             {error && (
-                <p className="text-xs text-[var(--destructive)]">{error}</p>
+                <p id={errorId} className="text-xs text-[var(--destructive)]">{error}</p>
             )}
         </div>
     );

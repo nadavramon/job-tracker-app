@@ -16,6 +16,7 @@ export default function DatePicker({
 }: DatePickerProps) {
     const generatedId = useId();
     const inputId = id ?? (label ? label.toLowerCase().replace(/\s+/g, '-') : generatedId);
+    const errorId = `${inputId}-error`;
 
     return (
         <div className="flex flex-col gap-1">
@@ -30,6 +31,8 @@ export default function DatePicker({
             <input
                 id={inputId}
                 type="date"
+                aria-invalid={error ? true : undefined}
+                aria-describedby={error ? errorId : undefined}
                 className={[
                     'w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors shadow-sm',
                     'bg-[var(--background)] text-[var(--foreground)]',
@@ -43,7 +46,7 @@ export default function DatePicker({
                 {...props}
             />
             {error && (
-                <p className="text-xs text-[var(--destructive)]">{error}</p>
+                <p id={errorId} className="text-xs text-[var(--destructive)]">{error}</p>
             )}
         </div>
     );

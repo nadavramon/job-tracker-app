@@ -1,10 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { getStats } from '@/lib/applicationService';
-import { isAuthenticated } from '@/lib/auth';
 import { StatsResponse } from '@/types';
+import useAuthGuard from '@/hooks/useAuthGuard';
 import Spinner from '@/components/ui/Spinner';
 import StatsBar from '@/components/dashboard/StatsBar';
 import ApplicationsChart from '@/components/dashboard/ApplicationsChart';
@@ -12,7 +11,7 @@ import StatusChart from '@/components/dashboard/StatusChart';
 import ApplicationsTable from '@/components/applications/ApplicationsTable';
 
 export default function DashboardPage() {
-  const router = useRouter();
+  const ready = useAuthGuard();
   const [stats, setStats] = useState<StatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -29,15 +28,10 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/login');
-      return;
-    }
+    if (ready) fetchStats();
+  }, [ready, fetchStats]);
 
-    fetchStats();
-  }, [router, fetchStats]);
-
-  if (loading) {
+  if (!ready || loading) {
     return (
       <div className="flex items-center justify-center py-16">
         <Spinner size="lg" />
@@ -47,10 +41,7 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard-scope relative min-h-full">
-      <div
-        className="-mx-4 -mt-8 px-4 pt-8 pb-8"
-        style={{ background: 'var(--dash-bg)' }}
-      >
+      <div className="-mx-4 -mt-8 px-4 pt-8 pb-8 bg-[var(--dash-bg)]">
         {/* Mesh gradient — top-left */}
         <div
           className="pointer-events-none absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full"
@@ -74,7 +65,7 @@ export default function DashboardPage() {
           </div>
 
           {error && (
-            <div className="rounded-xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] px-4 py-3 text-sm text-red-400">
+            <div className="rounded-xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] px-4 py-3 text-sm text-[var(--destructive)]">
               {error}
             </div>
           )}
