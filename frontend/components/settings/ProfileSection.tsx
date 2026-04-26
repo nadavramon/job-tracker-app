@@ -137,27 +137,27 @@ export default function ProfileSection() {
 
     if (loading) {
         return (
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-4">
-                <div className="h-4 w-16 rounded bg-[var(--muted)] animate-pulse" />
-                <div className="h-10 rounded bg-[var(--muted)] animate-pulse" />
-                <div className="h-10 rounded bg-[var(--muted)] animate-pulse" />
+            <div className="rounded-xl border border-(--border) bg-(--card) p-6 space-y-4">
+                <div className="h-4 w-16 rounded bg-(--muted) animate-pulse" />
+                <div className="h-10 rounded bg-(--muted) animate-pulse" />
+                <div className="h-10 rounded bg-(--muted) animate-pulse" />
             </div>
         );
     }
 
     if (loadError) {
         return (
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
-                <p className="text-sm text-[var(--destructive)]">{loadError}</p>
+            <div className="rounded-xl border border-(--border) bg-(--card) p-6">
+                <p className="text-sm text-(--destructive)">{loadError}</p>
             </div>
         );
     }
 
     return (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-4">
+        <div className="rounded-xl border border-(--border) bg-(--card) p-6 space-y-4">
             <div>
-                <h2 id="profile-heading" className="text-base font-semibold text-[var(--foreground)]">Profile</h2>
-                <p className="text-sm text-[var(--muted-foreground)] mt-1">
+                <h2 id="profile-heading" className="text-base font-semibold text-(--foreground)">Profile</h2>
+                <p className="text-sm text-(--muted-foreground) mt-1">
                     Update your email address and password.
                 </p>
             </div>
@@ -175,22 +175,22 @@ export default function ProfileSection() {
                     <button
                         type="button"
                         onClick={togglePasswordFields}
-                        className="inline-flex items-center gap-1.5 text-sm text-[var(--primary)] hover:underline"
+                        className="inline-flex items-center gap-1.5 text-sm text-(--primary) hover:underline"
                     >
                         <Lock className="h-3.5 w-3.5" aria-hidden="true" />
                         Change password
                     </button>
                 ) : (
-                    <div className="space-y-3 rounded-lg border border-[var(--border)] p-4">
+                    <div className="space-y-3 rounded-lg border border-(--border) p-4">
                         <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-[var(--foreground)] flex items-center gap-1.5">
+                            <p className="text-sm font-medium text-(--foreground) flex items-center gap-1.5">
                                 <Lock className="h-3.5 w-3.5" aria-hidden="true" />
                                 Change Password
                             </p>
                             <button
                                 type="button"
                                 onClick={togglePasswordFields}
-                                className="inline-flex items-center gap-1 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                                className="inline-flex items-center gap-1 text-xs text-(--muted-foreground) hover:text-(--foreground) transition-colors"
                             >
                                 <X className="h-3 w-3" aria-hidden="true" />
                                 Cancel

@@ -38,23 +38,23 @@ export default function CredentialCell({ applicationId, hasCredentials }: Props)
     }, [visible, applicationId, toast]);
 
     if (!hasCredentials) {
-        return <span className="text-[var(--muted-foreground)]" aria-label="No credentials">—</span>;
+        return <span className="text-(--muted-foreground)" aria-label="No credentials">—</span>;
     }
 
     return (
         <div className="flex items-center gap-2">
-            <KeyRound className="h-3.5 w-3.5 shrink-0 text-[var(--muted-foreground)]" aria-hidden="true" />
+            <KeyRound className="h-3.5 w-3.5 shrink-0 text-(--muted-foreground)" aria-hidden="true" />
             {visible && credentials ? (
                 <div className="font-mono text-xs space-y-0.5">
                     {credentials.username !== null && (
                         <div>
-                            <span className="text-[var(--muted-foreground)]">user: </span>
+                            <span className="text-(--muted-foreground)">user: </span>
                             <span>{credentials.username}</span>
                         </div>
                     )}
                     {credentials.password !== null && (
                         <div>
-                            <span className="text-[var(--muted-foreground)]">pass: </span>
+                            <span className="text-(--muted-foreground)">pass: </span>
                             <span>{credentials.password}</span>
                         </div>
                     )}
@@ -62,11 +62,11 @@ export default function CredentialCell({ applicationId, hasCredentials }: Props)
             ) : (
                 <div className="font-mono text-xs space-y-0.5">
                     <div>
-                        <span className="text-[var(--muted-foreground)]">user: </span>
+                        <span className="text-(--muted-foreground)">user: </span>
                         <span>••••••••</span>
                     </div>
                     <div>
-                        <span className="text-[var(--muted-foreground)]">pass: </span>
+                        <span className="text-(--muted-foreground)">pass: </span>
                         <span>••••••••</span>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ export default function CredentialCell({ applicationId, hasCredentials }: Props)
                 onClick={handleToggle}
                 disabled={loading}
                 aria-label={visible ? 'Hide credentials' : 'Show credentials'}
-                className="shrink-0 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50"
+                className="shrink-0 text-(--muted-foreground) hover:text-(--foreground) transition-colors disabled:opacity-50"
             >
                 {loading ? <Spinner size="sm" /> : visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>

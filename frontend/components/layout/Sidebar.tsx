@@ -37,7 +37,7 @@ export default function Sidebar() {
         <aside
             className={[
                 'hidden md:flex flex-col shrink-0 h-screen sticky top-0',
-                'bg-[var(--card)] border-r border-[var(--border)] shadow-sm',
+                'bg-(--card) border-r border-(--border) shadow-sm',
                 'transition-[width] duration-200 ease-in-out',
                 collapsed ? 'w-16' : 'w-60',
             ].join(' ')}
@@ -45,18 +45,18 @@ export default function Sidebar() {
         >
             {/* Logo / brand row */}
             <div className={[
-                'flex items-center h-14 border-b border-[var(--border)] px-3 shrink-0',
+                'flex items-center h-14 border-b border-(--border) px-3 shrink-0',
                 collapsed ? 'justify-center' : 'justify-between',
             ].join(' ')}>
                 {!collapsed && (
-                    <span className="font-semibold text-sm text-[var(--foreground)] truncate">
+                    <span className="font-semibold text-sm text-(--foreground) truncate">
                         Job Tracker
                     </span>
                 )}
                 <button
                     onClick={toggle}
                     aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                    className="rounded-md p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                    className="rounded-md p-1.5 text-(--muted-foreground) hover:bg-(--muted) hover:text-(--foreground) transition-colors"
                 >
                     {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
                 </button>
@@ -77,19 +77,19 @@ export default function Sidebar() {
             </nav>
 
             {/* User section */}
-            <div className="shrink-0 border-t border-[var(--border)] px-2 py-3 flex flex-col gap-2">
+            <div className="shrink-0 border-t border-(--border) px-2 py-3 flex flex-col gap-2">
                 <div className={[
                     'flex items-center gap-3',
                     collapsed ? 'justify-center' : '',
                 ].join(' ')}>
                     <span
-                        className="shrink-0 text-[var(--muted-foreground)]"
+                        className="shrink-0 text-(--muted-foreground)"
                         aria-hidden="true"
                     >
                         <IconUser className="h-5 w-5" />
                     </span>
                     {!collapsed && username && (
-                        <span className="text-sm text-[var(--muted-foreground)] truncate">{username}</span>
+                        <span className="text-sm text-(--muted-foreground) truncate">{username}</span>
                     )}
                 </div>
                 <button
@@ -98,8 +98,8 @@ export default function Sidebar() {
                     aria-label="Log out"
                     className={[
                         'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                        'text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+                        'text-(--muted-foreground) hover:bg-(--muted) hover:text-(--foreground)',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)',
                         collapsed ? 'justify-center px-2' : '',
                     ].join(' ')}
                 >

@@ -41,16 +41,16 @@ export default function StatusChart({ statusBreakdown }: StatusChartProps) {
 
     if (chartData.length === 0) {
         return (
-            <div className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 flex items-center justify-center h-64">
-                <p className="text-sm text-[var(--dash-subtext)]">No applications yet</p>
+            <div className="rounded-2xl border border-(--dash-card-border) bg-(--dash-card) p-6 flex items-center justify-center h-64">
+                <p className="text-sm text-(--dash-subtext)">No applications yet</p>
             </div>
         );
     }
 
     return (
-        <div className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6">
-            <h3 className="text-lg font-bold text-[var(--dash-heading)]">Status Breakdown</h3>
-            <p className="mt-0.5 text-xs text-[var(--dash-subtext)] mb-4">Current application statuses</p>
+        <div className="rounded-2xl border border-(--dash-card-border) bg-(--dash-card) p-6">
+            <h3 className="text-lg font-bold text-(--dash-heading)">Status Breakdown</h3>
+            <p className="mt-0.5 text-xs text-(--dash-subtext) mb-4">Current application statuses</p>
             <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                     <Pie
@@ -81,7 +81,7 @@ export default function StatusChart({ statusBreakdown }: StatusChartProps) {
                         y="47%"
                         textAnchor="middle"
                         dominantBaseline="middle"
-                        className="fill-[var(--dash-heading)]"
+                        className="fill-(--dash-heading)"
                         style={{ fontSize: 24, fontWeight: 700 }}
                     >
                         {total}
@@ -91,7 +91,7 @@ export default function StatusChart({ statusBreakdown }: StatusChartProps) {
                         y="58%"
                         textAnchor="middle"
                         dominantBaseline="middle"
-                        className="fill-[var(--dash-subtext)]"
+                        className="fill-(--dash-subtext)"
                         style={{ fontSize: 11 }}
                     >
                         Active
@@ -106,7 +106,7 @@ export default function StatusChart({ statusBreakdown }: StatusChartProps) {
                             className="inline-block h-2 w-2 rounded-full"
                             style={{ backgroundColor: entry.color }}
                         />
-                        <span className="text-xs text-[var(--dash-subtext)]">{entry.name}</span>
+                        <span className="text-xs text-(--dash-subtext)">{entry.name}</span>
                     </div>
                 ))}
             </div>

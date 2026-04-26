@@ -17,7 +17,7 @@ export default function ApplicationsPage() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">Applications</h1>
+            <h1 className="text-2xl font-bold text-foreground">Applications</h1>
             <ApplicationsTable />
         </div>
     );

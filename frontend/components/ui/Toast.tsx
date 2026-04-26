@@ -16,10 +16,10 @@ interface ToastProps {
 }
 
 const TYPE_CLASSES: Record<ToastType, string> = {
-    success: 'bg-[var(--success)] text-[var(--success-foreground)]',
-    error: 'bg-[var(--destructive)] text-[var(--destructive-foreground)]',
-    info: 'bg-[var(--info)] text-[var(--info-foreground)]',
-    warning: 'bg-[var(--warning)] text-[var(--warning-foreground)]',
+    success: 'bg-(--success) text-(--success-foreground)',
+    error: 'bg-(--destructive) text-(--destructive-foreground)',
+    info: 'bg-(--info) text-(--info-foreground)',
+    warning: 'bg-(--warning) text-(--warning-foreground)',
 };
 
 const TYPE_ICONS: Record<ToastType, React.ReactNode> = {

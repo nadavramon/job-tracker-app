@@ -74,22 +74,22 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
                 tabIndex={-1}
                 className={[
                     'relative w-full rounded-xl shadow-xl outline-none',
-                    'bg-[var(--card)] text-[var(--card-foreground)]',
-                    'border border-[var(--border)]',
+                    'bg-(--card) text-(--card-foreground)',
+                    'border border-(--border)',
                     'animate-[scale-in_0.2s_ease-out]',
                     maxWidth,
                 ].join(' ')}
             >
                 {/* Header */}
                 {title && (
-                    <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
+                    <div className="flex items-center justify-between border-b border-(--border) px-5 py-4">
                         <h2 id={titleId} className="text-base font-semibold">
                             {title}
                         </h2>
                         <button
                             onClick={onClose}
                             aria-label="Close"
-                            className="rounded-md p-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+                            className="rounded-md p-1 text-(--muted-foreground) hover:text-(--foreground) hover:bg-(--muted) transition-colors"
                         >
                             <X className="h-4 w-4" />
                         </button>

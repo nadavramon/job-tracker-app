@@ -23,7 +23,7 @@ export default function DatePicker({
             {label && (
                 <label
                     htmlFor={inputId}
-                    className="text-sm font-medium text-[var(--foreground)]"
+                    className="text-sm font-medium text-(--foreground)"
                 >
                     {label}
                 </label>
@@ -35,18 +35,18 @@ export default function DatePicker({
                 aria-describedby={error ? errorId : undefined}
                 className={[
                     'w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors shadow-sm',
-                    'bg-[var(--background)] text-[var(--foreground)]',
-                    'border-[var(--border)]',
-                    'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/50',
+                    'bg-(--background) text-(--foreground)',
+                    'border-(--border)',
+                    'focus:border-(--primary) focus:ring-2 focus:ring-(--ring)/50',
                     'disabled:opacity-50 disabled:cursor-not-allowed',
                     '[color-scheme:light] dark:[color-scheme:dark]',
-                    error ? 'border-[var(--destructive)]' : '',
+                    error ? 'border-(--destructive)' : '',
                     className,
                 ].join(' ')}
                 {...props}
             />
             {error && (
-                <p id={errorId} className="text-xs text-[var(--destructive)]">{error}</p>
+                <p id={errorId} className="text-xs text-(--destructive)">{error}</p>
             )}
         </div>
     );

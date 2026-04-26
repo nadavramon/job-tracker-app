@@ -45,7 +45,7 @@ export default function SearchInput({
     return (
         <div className={`relative ${className}`}>
             {/* Search icon */}
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)] pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-(--muted-foreground) pointer-events-none" />
 
             <input
                 type="search"
@@ -54,9 +54,9 @@ export default function SearchInput({
                 placeholder={placeholder}
                 className={[
                     'w-full rounded-md border px-3 py-2 pl-9 text-sm outline-none transition-colors shadow-sm',
-                    'bg-[var(--background)] text-[var(--foreground)]',
-                    'border-[var(--border)] placeholder:text-[var(--muted-foreground)]',
-                    'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/50',
+                    'bg-(--background) text-(--foreground)',
+                    'border-(--border) placeholder:text-(--muted-foreground)',
+                    'focus:border-(--primary) focus:ring-2 focus:ring-(--ring)/50',
                     local ? 'pr-8' : '',
                 ].join(' ')}
             />
@@ -67,7 +67,7 @@ export default function SearchInput({
                     type="button"
                     onClick={handleClear}
                     aria-label="Clear search"
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-(--muted-foreground) hover:text-(--foreground) transition-colors"
                 >
                     <X className="h-3.5 w-3.5" />
                 </button>

@@ -29,7 +29,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }, []);
 
     return (
-        <div className="flex h-screen overflow-hidden bg-[var(--background)]">
+        <div className="flex h-screen overflow-hidden bg-(--background)">
             {/* Desktop Sidebar */}
             <Sidebar />
 

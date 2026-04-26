@@ -29,16 +29,16 @@ export default function ApplicationsChart({ data }: ApplicationsChartProps) {
 
     if (data.length === 0) {
         return (
-            <div className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 flex items-center justify-center h-64">
-                <p className="text-sm text-[var(--dash-subtext)]">No monthly data yet</p>
+            <div className="rounded-2xl border border-(--dash-card-border) bg-(--dash-card) p-6 flex items-center justify-center h-64">
+                <p className="text-sm text-(--dash-subtext)">No monthly data yet</p>
             </div>
         );
     }
 
     return (
-        <div className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6">
-            <h3 className="text-lg font-bold text-[var(--dash-heading)]">Applications by Month</h3>
-            <p className="mt-0.5 text-xs text-[var(--dash-subtext)] mb-4">Monthly application activity</p>
+        <div className="rounded-2xl border border-(--dash-card-border) bg-(--dash-card) p-6">
+            <h3 className="text-lg font-bold text-(--dash-heading)">Applications by Month</h3>
+            <p className="mt-0.5 text-xs text-(--dash-subtext) mb-4">Monthly application activity</p>
             <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />

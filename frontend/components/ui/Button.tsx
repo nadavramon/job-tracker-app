@@ -14,12 +14,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
     primary:
-        'bg-[var(--primary)] text-[var(--primary-foreground)] hover:brightness-110 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-[var(--ring)]/50',
+        'bg-(--primary) text-(--primary-foreground) hover:brightness-110 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-(--ring)/50',
     secondary:
-        'bg-[var(--muted)] text-[var(--foreground)] hover:brightness-95 dark:hover:brightness-125 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-[var(--ring)]/50',
+        'bg-(--muted) text-(--foreground) hover:brightness-95 dark:hover:brightness-125 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-(--ring)/50',
     destructive:
-        'bg-[var(--destructive)] text-[var(--destructive-foreground)] hover:brightness-110 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-[var(--destructive)]/50',
-    glass: 'bg-gradient-to-br from-[var(--auth-gradient-from)] to-[var(--auth-gradient-to)] text-white font-semibold shadow-lg hover:shadow-[0_0_20px_var(--auth-glow)] focus-visible:ring-2 focus-visible:ring-[var(--auth-gradient-to)]/50 transition-shadow',
+        'bg-(--destructive) text-(--destructive-foreground) hover:brightness-110 shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-(--destructive)/50',
+    glass: 'bg-gradient-to-br from-(--auth-gradient-from) to-(--auth-gradient-to) text-white font-semibold shadow-lg hover:shadow-[0_0_20px_var(--auth-glow)] focus-visible:ring-2 focus-visible:ring-(--auth-gradient-to)/50 transition-shadow',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {

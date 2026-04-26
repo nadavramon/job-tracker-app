@@ -14,8 +14,8 @@ import ApplicationsToolbar from '@/components/applications/ApplicationsToolbar';
 import ApplicationsFooter from '@/components/applications/ApplicationsFooter';
 
 const thCls =
-    'px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]';
-const tdCls = 'px-4 py-3 text-sm text-[var(--foreground)] whitespace-nowrap';
+    'px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-(--muted-foreground)';
+const tdCls = 'px-4 py-3 text-sm text-(--foreground) whitespace-nowrap';
 
 interface ApplicationsTableProps {
     onDataChange?: () => void;
@@ -53,8 +53,8 @@ export default function ApplicationsTable({ onDataChange, title }: ApplicationsT
         <div className="space-y-4">
             {title && (
                 <div>
-                    <h2 className="text-lg font-bold text-[var(--foreground)]">{title}</h2>
-                    <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">Manage and track your applications</p>
+                    <h2 className="text-lg font-bold text-(--foreground)">{title}</h2>
+                    <p className="mt-0.5 text-xs text-(--muted-foreground)">Manage and track your applications</p>
                 </div>
             )}
             <ApplicationsToolbar
@@ -73,11 +73,11 @@ export default function ApplicationsTable({ onDataChange, title }: ApplicationsT
             )}
 
             {!loading && error && (
-                <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
-                    <p className="text-sm text-[var(--muted-foreground)] mb-3">{error}</p>
+                <div className="rounded-xl border border-(--border) bg-(--card) p-8 text-center">
+                    <p className="text-sm text-(--muted-foreground) mb-3">{error}</p>
                     <button
                         onClick={retry}
-                        className="text-sm font-medium text-[var(--primary)] hover:underline"
+                        className="text-sm font-medium text-(--primary) hover:underline"
                     >
                         Retry
                     </button>
@@ -85,18 +85,18 @@ export default function ApplicationsTable({ onDataChange, title }: ApplicationsT
             )}
 
             {!loading && !error && (!data || data.page.totalElements === 0) && (
-                <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
-                    <p className="text-[var(--muted-foreground)]">No applications yet.</p>
+                <div className="rounded-xl border border-(--border) bg-(--card) p-8 text-center">
+                    <p className="text-(--muted-foreground)">No applications yet.</p>
                 </div>
             )}
 
             {!loading && !error && data && data.page.totalElements > 0 && (
                 <>
                     {/* Desktop table */}
-                    <div className="hidden md:block rounded-2xl md:rounded-b-none border border-[var(--border)] bg-[var(--card)] overflow-hidden shadow-sm animate-[fade-in_0.3s_ease-out]">
+                    <div className="hidden md:block rounded-2xl md:rounded-b-none border border-(--border) bg-(--card) overflow-hidden shadow-sm animate-[fade-in_0.3s_ease-out]">
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-[var(--border)]">
-                                <thead className="bg-[var(--muted)]/60">
+                            <table className="min-w-full divide-y divide-(--border)">
+                                <thead className="bg-(--muted)/60">
                                     <tr>
                                         <th className={thCls}>Company</th>
                                         <th className={thCls}>Role</th>
@@ -108,11 +108,11 @@ export default function ApplicationsTable({ onDataChange, title }: ApplicationsT
                                         <th className={thCls}>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-[var(--border)]">
+                                <tbody className="divide-y divide-(--border)">
                                     {data.content.map((app) => (
                                         <tr
                                             key={app.id}
-                                            className="hover:bg-[var(--muted)]/30 transition-colors"
+                                            className="hover:bg-(--muted)/30 transition-colors"
                                         >
                                             <td className={`${tdCls} font-medium`}>
                                                 <span className="flex items-center gap-1.5">
@@ -129,10 +129,10 @@ export default function ApplicationsTable({ onDataChange, title }: ApplicationsT
                                                 />
                                             </td>
                                             <td className={tdCls}>{app.appliedDate}</td>
-                                            <td className={`${tdCls} text-[var(--muted-foreground)]`}>
+                                            <td className={`${tdCls} text-(--muted-foreground)`}>
                                                 {app.location}
                                             </td>
-                                            <td className={`${tdCls} text-[var(--muted-foreground)]`}>
+                                            <td className={`${tdCls} text-(--muted-foreground)`}>
                                                 {JOB_TYPE_LABELS[app.jobType]}
                                             </td>
                                             <td className={tdCls}>

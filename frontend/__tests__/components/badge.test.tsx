@@ -11,43 +11,43 @@ describe('Badge', () => {
     it('applies default variant class by default', () => {
         render(<Badge>Default</Badge>);
         const badge = screen.getByText('Default');
-        expect(badge.className).toContain('bg-[var(--status-applied)]');
-        expect(badge.className).toContain('text-[var(--status-applied)]');
+        expect(badge.className).toContain('bg-(--status-applied)');
+        expect(badge.className).toContain('text-(--status-applied)');
     });
 
     it('applies success variant classes', () => {
         render(<Badge variant="success">Success</Badge>);
         const badge = screen.getByText('Success');
-        expect(badge.className).toContain('bg-[var(--status-offer)]');
-        expect(badge.className).toContain('text-[var(--status-offer)]');
+        expect(badge.className).toContain('bg-(--status-offer)');
+        expect(badge.className).toContain('text-(--status-offer)');
     });
 
     it('applies warning variant classes', () => {
         render(<Badge variant="warning">Warning</Badge>);
         const badge = screen.getByText('Warning');
-        expect(badge.className).toContain('bg-[var(--status-interviewing)]');
-        expect(badge.className).toContain('text-[var(--status-interviewing)]');
+        expect(badge.className).toContain('bg-(--status-interviewing)');
+        expect(badge.className).toContain('text-(--status-interviewing)');
     });
 
     it('applies danger variant classes', () => {
         render(<Badge variant="danger">Danger</Badge>);
         const badge = screen.getByText('Danger');
-        expect(badge.className).toContain('bg-[var(--status-rejected)]');
-        expect(badge.className).toContain('text-[var(--status-rejected)]');
+        expect(badge.className).toContain('bg-(--status-rejected)');
+        expect(badge.className).toContain('text-(--status-rejected)');
     });
 
     it('applies info variant classes', () => {
         render(<Badge variant="info">Info</Badge>);
         const badge = screen.getByText('Info');
-        expect(badge.className).toContain('bg-[var(--status-screening)]');
-        expect(badge.className).toContain('text-[var(--status-screening)]');
+        expect(badge.className).toContain('bg-(--status-screening)');
+        expect(badge.className).toContain('text-(--status-screening)');
     });
 
     it('applies muted variant classes', () => {
         render(<Badge variant="muted">Muted</Badge>);
         const badge = screen.getByText('Muted');
-        expect(badge.className).toContain('bg-[var(--muted)]');
-        expect(badge.className).toContain('text-[var(--muted-foreground)]');
+        expect(badge.className).toContain('bg-(--muted)');
+        expect(badge.className).toContain('text-(--muted-foreground)');
     });
 
     it('merges extra className onto the span', () => {
@@ -73,31 +73,31 @@ describe('StatusBadge', () => {
 
     it('APPLIED maps to default variant', () => {
         render(<StatusBadge status="APPLIED" />);
-        expect(screen.getByText('Applied').className).toContain('bg-[var(--status-applied)]');
+        expect(screen.getByText('Applied').className).toContain('bg-(--status-applied)');
     });
 
     it('SCREENING maps to info variant', () => {
         render(<StatusBadge status="SCREENING" />);
-        expect(screen.getByText('Screening').className).toContain('bg-[var(--status-screening)]');
+        expect(screen.getByText('Screening').className).toContain('bg-(--status-screening)');
     });
 
     it('INTERVIEWING maps to warning variant', () => {
         render(<StatusBadge status="INTERVIEWING" />);
-        expect(screen.getByText('Interviewing').className).toContain('bg-[var(--status-interviewing)]');
+        expect(screen.getByText('Interviewing').className).toContain('bg-(--status-interviewing)');
     });
 
     it('OFFER maps to success variant', () => {
         render(<StatusBadge status="OFFER" />);
-        expect(screen.getByText('Offer').className).toContain('bg-[var(--status-offer)]');
+        expect(screen.getByText('Offer').className).toContain('bg-(--status-offer)');
     });
 
     it('REJECTED maps to danger variant', () => {
         render(<StatusBadge status="REJECTED" />);
-        expect(screen.getByText('Rejected').className).toContain('bg-[var(--status-rejected)]');
+        expect(screen.getByText('Rejected').className).toContain('bg-(--status-rejected)');
     });
 
     it('WITHDRAWN maps to muted variant', () => {
         render(<StatusBadge status="WITHDRAWN" />);
-        expect(screen.getByText('Withdrawn').className).toContain('bg-[var(--muted)]');
+        expect(screen.getByText('Withdrawn').className).toContain('bg-(--muted)');
     });
 });
