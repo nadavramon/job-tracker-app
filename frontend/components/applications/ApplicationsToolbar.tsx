@@ -14,9 +14,9 @@ const STATUS_OPTIONS: { value: Status; label: string }[] = [
 ];
 
 const selectCls = [
-    'rounded-md border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)]',
+    'rounded-md border border-(--border) bg-(--background) text-(--foreground)',
     'text-sm px-3 py-2 outline-none transition-colors appearance-none',
-    'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/30',
+    'focus:border-(--primary) focus:ring-2 focus:ring-(--ring)/30',
 ].join(' ');
 
 interface ApplicationsToolbarProps {
@@ -58,7 +58,7 @@ export default function ApplicationsToolbar({
                     ))}
                 </select>
                 <ChevronDown
-                    className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]"
+                    className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-(--muted-foreground)"
                     aria-hidden="true"
                 />
             </div>
@@ -67,9 +67,9 @@ export default function ApplicationsToolbar({
                 onClick={onSortToggle}
                 aria-label={`Sort by applied date ${sortDir === 'desc' ? 'ascending' : 'descending'}`}
                 className={[
-                    'inline-flex items-center gap-1.5 rounded-md border border-[var(--border)]',
-                    'bg-[var(--background)] text-[var(--foreground)] text-sm px-3 py-2',
-                    'hover:bg-[var(--muted)] transition-colors whitespace-nowrap',
+                    'inline-flex items-center gap-1.5 rounded-md border border-(--border)',
+                    'bg-(--background) text-(--foreground) text-sm px-3 py-2',
+                    'hover:bg-(--muted) transition-colors whitespace-nowrap',
                 ].join(' ')}
             >
                 Applied Date

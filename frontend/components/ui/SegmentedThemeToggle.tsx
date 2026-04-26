@@ -28,18 +28,18 @@ export default function SegmentedThemeToggle() {
 
     if (!mounted) {
         return (
-            <div className="h-9 w-56 rounded-full bg-[var(--auth-glass-bg)] border border-[var(--auth-glass-border)]" />
+            <div className="h-9 w-56 rounded-full bg-(--auth-glass-bg) border border-(--auth-glass-border)" />
         );
     }
 
     return (
-        <div className="relative flex items-center rounded-full bg-[var(--auth-glass-bg)] border border-[var(--auth-glass-border)] p-0.5">
+        <div className="relative flex items-center rounded-full bg-(--auth-glass-bg) border border-(--auth-glass-border) p-0.5">
             {/* Sliding indicator */}
             <div
                 className={`
                     absolute top-0.5 bottom-0.5 left-0.5
                     w-[calc(33.333%-2px)] rounded-full
-                    bg-[var(--muted)]
+                    bg-(--muted)
                     transition-transform duration-200 ease-in-out
                     ${INDICATOR_TRANSLATE[theme]}
                 `}
@@ -58,8 +58,8 @@ export default function SegmentedThemeToggle() {
                         transition-colors duration-200
                         w-1/3 justify-center
                         ${theme === value
-                            ? 'text-[var(--foreground)]'
-                            : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+                            ? 'text-(--foreground)'
+                            : 'text-(--muted-foreground) hover:text-(--foreground)'
                         }
                     `}
                 >

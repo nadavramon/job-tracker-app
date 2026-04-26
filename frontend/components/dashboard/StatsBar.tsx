@@ -9,12 +9,12 @@ interface StatusConfig {
 }
 
 const STATUS_CONFIG: Record<Status, StatusConfig> = {
-    APPLIED:      { label: 'Applied',      text: 'text-[var(--status-applied)]',      bg: 'bg-[var(--status-applied)]/15' },
-    SCREENING:    { label: 'Screening',    text: 'text-[var(--status-screening)]',    bg: 'bg-[var(--status-screening)]/15' },
-    INTERVIEWING: { label: 'Interviewing', text: 'text-[var(--status-interviewing)]', bg: 'bg-[var(--status-interviewing)]/15' },
-    OFFER:        { label: 'Offer',        text: 'text-[var(--status-offer)]',        bg: 'bg-[var(--status-offer)]/15' },
-    REJECTED:     { label: 'Rejected',     text: 'text-[var(--status-rejected)]',     bg: 'bg-[var(--status-rejected)]/15' },
-    WITHDRAWN:    { label: 'Withdrawn',    text: 'text-[var(--status-withdrawn)]',    bg: 'bg-[var(--status-withdrawn)]/15' },
+    APPLIED:      { label: 'Applied',      text: 'text-(--status-applied)',      bg: 'bg-(--status-applied)/15' },
+    SCREENING:    { label: 'Screening',    text: 'text-(--status-screening)',    bg: 'bg-(--status-screening)/15' },
+    INTERVIEWING: { label: 'Interviewing', text: 'text-(--status-interviewing)', bg: 'bg-(--status-interviewing)/15' },
+    OFFER:        { label: 'Offer',        text: 'text-(--status-offer)',        bg: 'bg-(--status-offer)/15' },
+    REJECTED:     { label: 'Rejected',     text: 'text-(--status-rejected)',     bg: 'bg-(--status-rejected)/15' },
+    WITHDRAWN:    { label: 'Withdrawn',    text: 'text-(--status-withdrawn)',    bg: 'bg-(--status-withdrawn)/15' },
 };
 
 const STATUS_ORDER: Status[] = ['APPLIED', 'SCREENING', 'INTERVIEWING', 'OFFER', 'REJECTED', 'WITHDRAWN'];
@@ -30,25 +30,25 @@ export default function StatsBar({ stats }: StatsBarProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Total Applications */}
             <div
-                className="relative overflow-hidden rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 animate-[fade-in_0.4s_ease-out]"
+                className="relative overflow-hidden rounded-2xl border border-(--dash-card-border) bg-(--dash-card) p-6 animate-[fade-in_0.4s_ease-out]"
             >
                 <div
-                    className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-[var(--dash-stat-circle)]"
+                    className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-(--dash-stat-circle)"
                     aria-hidden="true"
                 />
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--dash-subtext)]">
+                <p className="text-xs font-medium uppercase tracking-wide text-(--dash-subtext)">
                     Total Applications
                 </p>
-                <p className="mt-2 text-4xl font-bold text-[var(--dash-primary)]">
+                <p className="mt-2 text-4xl font-bold text-(--dash-primary)">
                     {stats.totalApplications}
                 </p>
             </div>
 
             {/* Status Breakdown */}
             <div
-                className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 animate-[fade-in_0.4s_ease-out_0.1s_both]"
+                className="rounded-2xl border border-(--dash-card-border) bg-(--dash-card) p-6 animate-[fade-in_0.4s_ease-out_0.1s_both]"
             >
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--dash-subtext)] mb-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-(--dash-subtext) mb-3">
                     Status Breakdown
                 </p>
                 <div className="grid grid-cols-3 gap-2">
@@ -75,16 +75,16 @@ export default function StatsBar({ stats }: StatsBarProps) {
 
             {/* Response Rate */}
             <div
-                className="relative overflow-hidden rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-6 animate-[fade-in_0.4s_ease-out_0.2s_both]"
+                className="relative overflow-hidden rounded-2xl border border-(--dash-card-border) bg-(--dash-card) p-6 animate-[fade-in_0.4s_ease-out_0.2s_both]"
             >
                 <div
-                    className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-[var(--dash-stat-circle)]"
+                    className="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-(--dash-stat-circle)"
                     aria-hidden="true"
                 />
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--dash-subtext)]">
+                <p className="text-xs font-medium uppercase tracking-wide text-(--dash-subtext)">
                     Response Rate
                 </p>
-                <p className="mt-2 text-4xl font-bold text-[var(--dash-primary)]">
+                <p className="mt-2 text-4xl font-bold text-(--dash-primary)">
                     {responseRatePct}%
                 </p>
                 <div
@@ -93,14 +93,14 @@ export default function StatsBar({ stats }: StatsBarProps) {
                     aria-valuemin={0}
                     aria-valuemax={100}
                     aria-label="Response rate progress"
-                    className="mt-3 h-2 rounded-full bg-[var(--dash-progress-track)] overflow-hidden"
+                    className="mt-3 h-2 rounded-full bg-(--dash-progress-track) overflow-hidden"
                 >
                     <div
-                        className="h-full rounded-full bg-[var(--dash-primary)] transition-all duration-500"
+                        className="h-full rounded-full bg-(--dash-primary) transition-all duration-500"
                         style={{ width: `${responseRatePct}%` }}
                     />
                 </div>
-                <p className="mt-1.5 text-xs text-[var(--dash-subtext)]">
+                <p className="mt-1.5 text-xs text-(--dash-subtext)">
                     of applications received a response
                 </p>
             </div>

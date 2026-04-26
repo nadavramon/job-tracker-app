@@ -33,15 +33,15 @@ export default function Pagination({
     const btnBase =
         'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors h-8 min-w-[2rem] px-2 disabled:opacity-40 disabled:cursor-not-allowed';
     const btnDefault =
-        'border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)]';
+        'border border-(--border) bg-(--background) text-(--foreground) hover:bg-(--muted)';
     const btnActive =
-        'bg-[var(--primary)] text-[var(--primary-foreground)] border border-[var(--primary)]';
+        'bg-(--primary) text-(--primary-foreground) border border-(--primary)';
 
     return (
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-            <p className="text-sm text-[var(--muted-foreground)]">
-                Showing <span className="font-medium text-[var(--foreground)]">{from}–{to}</span> of{' '}
-                <span className="font-medium text-[var(--foreground)]">{totalElements}</span>
+            <p className="text-sm text-(--muted-foreground)">
+                Showing <span className="font-medium text-(--foreground)">{from}–{to}</span> of{' '}
+                <span className="font-medium text-(--foreground)">{totalElements}</span>
             </p>
 
             <div className="flex items-center gap-1">
@@ -56,7 +56,7 @@ export default function Pagination({
 
                 {pages.map((p, i) =>
                     p === '…' ? (
-                        <span key={`ellipsis-${i}`} className="px-1 text-[var(--muted-foreground)]">…</span>
+                        <span key={`ellipsis-${i}`} className="px-1 text-(--muted-foreground)">…</span>
                     ) : (
                         <button
                             key={p}

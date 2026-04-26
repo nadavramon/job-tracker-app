@@ -10,19 +10,19 @@ describe('Button', () => {
     it('applies primary variant classes by default', () => {
         render(<Button variant="primary">Primary</Button>);
         const btn = screen.getByRole('button', { name: 'Primary' });
-        expect(btn.className).toContain('bg-[var(--primary)]');
+        expect(btn.className).toContain('bg-(--primary)');
     });
 
     it('applies secondary variant classes', () => {
         render(<Button variant="secondary">Secondary</Button>);
         const btn = screen.getByRole('button', { name: 'Secondary' });
-        expect(btn.className).toContain('bg-[var(--muted)]');
+        expect(btn.className).toContain('bg-(--muted)');
     });
 
     it('applies destructive variant classes', () => {
         render(<Button variant="destructive">Delete</Button>);
         const btn = screen.getByRole('button', { name: 'Delete' });
-        expect(btn.className).toContain('bg-[var(--destructive)]');
+        expect(btn.className).toContain('bg-(--destructive)');
     });
 
     it('shows Spinner when loading={true} and button is disabled', () => {

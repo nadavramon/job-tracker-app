@@ -39,9 +39,10 @@ cleanup() {
     echo ""
     echo "Stopping servers..."
 
-    # Send SIGTERM to process groups for graceful shutdown
-    kill -- -$BACKEND_PID 2>/dev/null
-    kill -- -$FRONTEND_PID 2>/dev/null
+    # Kill child processes (Maven/npm), then the subshells
+    pkill -P $BACKEND_PID 2>/dev/null
+    pkill -P $FRONTEND_PID 2>/dev/null
+    kill $BACKEND_PID $FRONTEND_PID 2>/dev/null
 
     # Wait briefly for graceful shutdown
     sleep 2

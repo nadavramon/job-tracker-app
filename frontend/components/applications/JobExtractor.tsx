@@ -36,14 +36,14 @@ export default function JobExtractor({ onExtracted, onLoadingChange }: Props) {
     }, [text, onExtracted, onLoadingChange, toast]);
 
     return (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
+        <div className="rounded-xl border border-(--border) bg-(--card) p-6 shadow-sm">
             <div className="mb-3 flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-[var(--primary)]" />
-                <h3 className="text-sm font-medium text-[var(--foreground)]">
+                <Sparkles className="h-5 w-5 text-(--primary)" />
+                <h3 className="text-sm font-medium text-(--foreground)">
                     Smart Fill
                 </h3>
             </div>
-            <p className="mb-3 text-xs text-[var(--muted-foreground)]">
+            <p className="mb-3 text-xs text-(--muted-foreground)">
                 Paste a job posting URL or text to auto-fill the form.
             </p>
             <textarea
@@ -51,7 +51,7 @@ export default function JobExtractor({ onExtracted, onLoadingChange }: Props) {
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Paste a job posting URL or description..."
                 rows={3}
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]/50"
+                className="w-full rounded-lg border border-(--border) bg-(--background) px-3 py-2 text-sm text-(--foreground) placeholder:text-(--muted-foreground) focus:border-(--primary) focus:outline-none focus:ring-2 focus:ring-(--ring)/50"
             />
             <div className="mt-3 flex justify-end">
                 <Button

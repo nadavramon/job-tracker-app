@@ -32,7 +32,7 @@ export default function Input({
             {label && (
                 <label
                     htmlFor={inputId}
-                    className="text-sm font-medium text-[var(--foreground)]"
+                    className="text-sm font-medium text-(--foreground)"
                 >
                     {label}
                 </label>
@@ -46,10 +46,10 @@ export default function Input({
                     className={[
                         'w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors shadow-sm',
                         variant === 'glass'
-                            ? 'bg-[var(--auth-glass-bg)] border-[var(--auth-glass-border)] backdrop-blur-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--auth-gradient-to)] focus:ring-2 focus:ring-[var(--auth-gradient-to)]/30'
-                            : 'bg-[var(--background)] text-[var(--foreground)] border-[var(--border)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/50',
+                            ? 'bg-(--auth-glass-bg) border-(--auth-glass-border) backdrop-blur-sm text-(--foreground) placeholder:text-(--muted-foreground) focus:border-(--auth-gradient-to) focus:ring-2 focus:ring-(--auth-gradient-to)/30'
+                            : 'bg-(--background) text-(--foreground) border-(--border) placeholder:text-(--muted-foreground) focus:border-(--primary) focus:ring-2 focus:ring-(--ring)/50',
                         'disabled:opacity-50 disabled:cursor-not-allowed',
-                        error ? 'border-[var(--destructive)]' : '',
+                        error ? 'border-(--destructive)' : '',
                         type === 'password' ? 'pr-9' : '',
                         className,
                     ].join(' ')}
@@ -60,14 +60,14 @@ export default function Input({
                         type="button"
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
                         onClick={() => setShowPassword((v) => !v)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-(--muted-foreground) hover:text-(--foreground) transition-colors"
                     >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                 )}
             </div>
             {error && (
-                <p id={errorId} className="text-xs text-[var(--destructive)]">{error}</p>
+                <p id={errorId} className="text-xs text-(--destructive)">{error}</p>
             )}
         </div>
     );

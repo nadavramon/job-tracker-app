@@ -66,9 +66,9 @@ export default function NewApplicationPage() {
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-8 animate-[fade-in_0.3s_ease-out]">
-            <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">New Application</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-6">New Application</h1>
             <JobExtractor onExtracted={handleExtracted} onLoadingChange={setExtracting} />
-            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
+            <div className="mt-6 rounded-xl border border-(--border) bg-(--card) p-6 shadow-sm">
                 <ApplicationForm
                     key={extractionKey}
                     defaultValues={prefill}

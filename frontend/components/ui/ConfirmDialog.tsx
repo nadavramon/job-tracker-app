@@ -26,7 +26,7 @@ export default function ConfirmDialog({
 }: ConfirmDialogProps) {
     return (
         <Modal open={open} onClose={onClose} title={title} maxWidth="max-w-sm">
-            <p className="text-sm text-[var(--muted-foreground)] mb-5 break-words">{message}</p>
+            <p className="text-sm text-(--muted-foreground) mb-5 break-words">{message}</p>
             <div className="flex justify-end gap-2">
                 <Button variant="secondary" size="sm" onClick={onClose} disabled={loading}>
                     {cancelLabel}

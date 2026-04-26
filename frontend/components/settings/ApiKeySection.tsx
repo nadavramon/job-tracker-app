@@ -53,26 +53,26 @@ export default function ApiKeySection({ hasApiKey, onUpdated }: Props) {
     }, []);
 
     return (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-4">
+        <div className="rounded-xl border border-(--border) bg-(--card) p-6 space-y-4">
             <div>
-                <h2 id="ai-heading" className="text-base font-semibold text-[var(--foreground)] flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[var(--primary)]" />
+                <h2 id="ai-heading" className="text-base font-semibold text-(--foreground) flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-(--primary)" />
                     AI Configuration
                 </h2>
-                <p className="text-sm text-[var(--muted-foreground)] mt-1">
+                <p className="text-sm text-(--muted-foreground) mt-1">
                     Add your Anthropic API key to enable Smart Fill.
                 </p>
             </div>
 
             <div className="flex items-center gap-2 text-sm">
-                <span className="text-[var(--muted-foreground)]">Status:</span>
+                <span className="text-(--muted-foreground)">Status:</span>
                 {hasApiKey ? (
-                    <span className="inline-flex items-center gap-1 text-[var(--success)]">
+                    <span className="inline-flex items-center gap-1 text-(--success)">
                         <Check className="h-3.5 w-3.5" />
                         Configured
                     </span>
                 ) : (
-                    <span className="text-[var(--muted-foreground)]">Not configured</span>
+                    <span className="text-(--muted-foreground)">Not configured</span>
                 )}
             </div>
 
@@ -107,7 +107,7 @@ export default function ApiKeySection({ hasApiKey, onUpdated }: Props) {
                 </Button>
             </div>
 
-            <p className="text-xs text-[var(--muted-foreground)]">
+            <p className="text-xs text-(--muted-foreground)">
                 Your key is encrypted at rest and never displayed after saving.
                 Get a key from the Anthropic Console.
             </p>

@@ -37,14 +37,14 @@ describe('StatusHint', () => {
         render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(0)} />);
         const dot = screen.getByRole('img', { name: /0 days ago — recently submitted/i });
         expect(dot).toBeInTheDocument();
-        expect(dot).toHaveClass('bg-[var(--success)]');
+        expect(dot).toHaveClass('bg-(--success)');
     });
 
     it('renders green dot when APPLIED 13 days ago', () => {
         render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(13)} />);
         const dot = screen.getByRole('img', { name: /13 days ago — recently submitted/i });
         expect(dot).toBeInTheDocument();
-        expect(dot).toHaveClass('bg-[var(--success)]');
+        expect(dot).toHaveClass('bg-(--success)');
     });
 
     it('green dot has correct tooltip text', () => {
@@ -59,14 +59,14 @@ describe('StatusHint', () => {
         render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(14)} />);
         const dot = screen.getByRole('img', { name: /14 days ago — consider following up/i });
         expect(dot).toBeInTheDocument();
-        expect(dot).toHaveClass('bg-[var(--warning)]');
+        expect(dot).toHaveClass('bg-(--warning)');
     });
 
     it('renders amber dot when APPLIED 29 days ago', () => {
         render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(29)} />);
         const dot = screen.getByRole('img', { name: /29 days ago — consider following up/i });
         expect(dot).toBeInTheDocument();
-        expect(dot).toHaveClass('bg-[var(--warning)]');
+        expect(dot).toHaveClass('bg-(--warning)');
     });
 
     it('amber dot has correct tooltip text', () => {
@@ -81,14 +81,14 @@ describe('StatusHint', () => {
         render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(30)} />);
         const dot = screen.getByRole('img', { name: /30 days ago — may be ghosted/i });
         expect(dot).toBeInTheDocument();
-        expect(dot).toHaveClass('bg-[var(--status-rejected)]');
+        expect(dot).toHaveClass('bg-(--status-rejected)');
     });
 
     it('renders red dot when APPLIED 60 days ago', () => {
         render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(60)} />);
         const dot = screen.getByRole('img', { name: /60 days ago — may be ghosted/i });
         expect(dot).toBeInTheDocument();
-        expect(dot).toHaveClass('bg-[var(--status-rejected)]');
+        expect(dot).toHaveClass('bg-(--status-rejected)');
     });
 
     it('red dot has correct tooltip text', () => {
@@ -101,7 +101,7 @@ describe('StatusHint', () => {
         render(<StatusHint status="APPLIED" appliedDate={dateMinusDays(30)} />);
         const dots = screen.getAllByRole('img');
         expect(dots).toHaveLength(1);
-        expect(dots[0]).toHaveClass('bg-[var(--status-rejected)]');
-        expect(dots[0]).not.toHaveClass('bg-[var(--warning)]');
+        expect(dots[0]).toHaveClass('bg-(--status-rejected)');
+        expect(dots[0]).not.toHaveClass('bg-(--warning)');
     });
 });

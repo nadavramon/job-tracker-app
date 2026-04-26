@@ -33,7 +33,7 @@ export default function Select({
             {label && (
                 <label
                     htmlFor={selectId}
-                    className="text-sm font-medium text-[var(--foreground)]"
+                    className="text-sm font-medium text-(--foreground)"
                 >
                     {label}
                 </label>
@@ -45,11 +45,11 @@ export default function Select({
                     aria-describedby={error ? errorId : undefined}
                     className={[
                         'w-full rounded-md border px-3 py-2 pr-9 text-sm outline-none transition-colors appearance-none shadow-sm',
-                        'bg-[var(--background)] text-[var(--foreground)]',
-                        'border-[var(--border)]',
-                        'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/50',
+                        'bg-(--background) text-(--foreground)',
+                        'border-(--border)',
+                        'focus:border-(--primary) focus:ring-2 focus:ring-(--ring)/50',
                         'disabled:opacity-50 disabled:cursor-not-allowed',
-                        error ? 'border-[var(--destructive)]' : '',
+                        error ? 'border-(--destructive)' : '',
                         className,
                     ].join(' ')}
                     {...props}
@@ -65,10 +65,10 @@ export default function Select({
                         </option>
                     ))}
                 </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)] pointer-events-none" />
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-(--muted-foreground) pointer-events-none" />
             </div>
             {error && (
-                <p id={errorId} className="text-xs text-[var(--destructive)]">{error}</p>
+                <p id={errorId} className="text-xs text-(--destructive)">{error}</p>
             )}
         </div>
     );

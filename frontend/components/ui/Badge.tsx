@@ -7,12 +7,12 @@ import { STATUS_LABELS } from '@/lib/constants';
 export type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
 
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
-    default:  'bg-[var(--status-applied)]/15 text-[var(--status-applied)] border border-[var(--status-applied)]/25',
-    success:  'bg-[var(--status-offer)]/15 text-[var(--status-offer)] border border-[var(--status-offer)]/25',
-    warning:  'bg-[var(--status-interviewing)]/15 text-[var(--status-interviewing)] border border-[var(--status-interviewing)]/25',
-    danger:   'bg-[var(--status-rejected)]/15 text-[var(--status-rejected)] border border-[var(--status-rejected)]/25',
-    info:     'bg-[var(--status-screening)]/15 text-[var(--status-screening)] border border-[var(--status-screening)]/25',
-    muted:    'bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]',
+    default:  'bg-(--status-applied)/15 text-(--status-applied) border border-(--status-applied)/25',
+    success:  'bg-(--status-offer)/15 text-(--status-offer) border border-(--status-offer)/25',
+    warning:  'bg-(--status-interviewing)/15 text-(--status-interviewing) border border-(--status-interviewing)/25',
+    danger:   'bg-(--status-rejected)/15 text-(--status-rejected) border border-(--status-rejected)/25',
+    info:     'bg-(--status-screening)/15 text-(--status-screening) border border-(--status-screening)/25',
+    muted:    'bg-(--muted) text-(--muted-foreground) border border-(--border)',
 };
 
 // Map application statuses to badge variants

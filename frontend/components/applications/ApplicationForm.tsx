@@ -94,9 +94,9 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
     return (
         <form onSubmit={handleSubmit} noValidate className="relative space-y-4">
             {extracting && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-[var(--card)]/80 backdrop-blur-[1px]">
-                    <div className="flex items-center gap-3 text-sm text-[var(--muted-foreground)]">
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--primary)] border-t-transparent" />
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-(--card)/80 backdrop-blur-[1px]">
+                    <div className="flex items-center gap-3 text-sm text-(--muted-foreground)">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-(--primary) border-t-transparent" />
                         Extracting job details...
                     </div>
                 </div>
@@ -176,12 +176,12 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
             )}
 
             {collapsibleCredentials && (
-                <div className="rounded-lg border border-[var(--border)] overflow-hidden">
+                <div className="rounded-lg border border-(--border) overflow-hidden">
                     <button
                         type="button"
                         onClick={toggleCredentials}
                         aria-expanded={credentialsOpen}
-                        className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+                        className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-(--foreground) hover:bg-(--muted) transition-colors"
                     >
                         <span>Portal Credentials</span>
                         <ChevronDown
@@ -190,7 +190,7 @@ export default function ApplicationForm({ defaultValues, onSubmit, onCancel, sub
                         />
                     </button>
                     {credentialsOpen && (
-                        <div className="border-t border-[var(--border)] px-4 py-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="border-t border-(--border) px-4 py-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <Input
                                 label="Portal Username"
                                 value={values.username}

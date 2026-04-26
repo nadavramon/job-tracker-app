@@ -22,9 +22,9 @@ export default function ApplicationsFooter({
     onPageChange,
 }: ApplicationsFooterProps) {
     return (
-        <div className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 md:mt-0 md:rounded-none md:rounded-b-xl md:border-t-0">
+        <div className="mt-3 rounded-xl border border-(--border) bg-(--card) px-4 py-3 md:mt-0 md:rounded-none md:rounded-b-xl md:border-t-0">
             <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
+                <div className="flex items-center gap-2 text-sm text-(--muted-foreground)">
                     <label htmlFor="page-size-select">Rows per page:</label>
                     <select
                         id="page-size-select"
@@ -32,9 +32,9 @@ export default function ApplicationsFooter({
                         onChange={onPageSizeChange}
                         aria-label="Rows per page"
                         className={[
-                            'rounded-md border border-[var(--border)] bg-[var(--background)]',
-                            'text-[var(--foreground)] text-sm px-2 py-1 outline-none',
-                            'focus:border-[var(--primary)]',
+                            'rounded-md border border-(--border) bg-(--background)',
+                            'text-(--foreground) text-sm px-2 py-1 outline-none',
+                            'focus:border-(--primary)',
                         ].join(' ')}
                     >
                         <option value={10}>10</option>

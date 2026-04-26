@@ -66,7 +66,7 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
                 aria-label="Row actions"
                 aria-expanded={open}
                 aria-haspopup="menu"
-                className="rounded p-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+                className="rounded p-1 text-(--muted-foreground) hover:text-(--foreground) hover:bg-(--muted) transition-colors"
             >
                 <MoreVertical className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -75,14 +75,14 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
                 <div
                     role="menu"
                     className={[
-                        'absolute right-0 z-20 mt-1 w-40 rounded-md border border-[var(--border)]',
-                        'bg-[var(--card)] shadow-md',
+                        'absolute right-0 z-20 mt-1 w-40 rounded-md border border-(--border)',
+                        'bg-(--card) shadow-md',
                     ].join(' ')}
                 >
                     <button
                         role="menuitem"
                         onClick={handleEdit}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-sm text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-sm text-(--foreground) hover:bg-(--muted) transition-colors"
                     >
                         <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
                         Edit
@@ -95,8 +95,8 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
                         className={[
                             'w-full flex items-center gap-2 px-3 py-2 text-left text-sm transition-colors',
                             isSafeUrl
-                                ? 'text-[var(--foreground)] hover:bg-[var(--muted)]'
-                                : 'text-[var(--muted-foreground)] cursor-not-allowed',
+                                ? 'text-(--foreground) hover:bg-(--muted)'
+                                : 'text-(--muted-foreground) cursor-not-allowed',
                         ].join(' ')}
                     >
                         <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
@@ -106,7 +106,7 @@ export default function RowActionMenu({ websiteLink, onEdit, onDelete }: Props) 
                     <button
                         role="menuitem"
                         onClick={handleDelete}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-sm text-red-500 hover:bg-[var(--muted)] transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-left text-sm text-red-500 hover:bg-(--muted) transition-colors"
                     >
                         <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         Delete

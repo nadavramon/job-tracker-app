@@ -41,18 +41,18 @@ export default function SettingsPage() {
 
     return (
         <div className="max-w-2xl mx-auto px-4 py-8 space-y-8 animate-[fade-in_0.3s_ease-out]">
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">Settings</h1>
+            <h1 className="text-2xl font-bold text-(--foreground)">Settings</h1>
 
             <section aria-labelledby="profile-heading">
                 <ProfileSection />
             </section>
 
             <section aria-labelledby="appearance-heading">
-                <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-4">
-                    <h2 id="appearance-heading" className="text-base font-semibold text-[var(--foreground)]">
+                <div className="rounded-xl border border-(--border) bg-(--card) p-6 space-y-4">
+                    <h2 id="appearance-heading" className="text-base font-semibold text-(--foreground)">
                         Appearance
                     </h2>
-                    <p className="text-sm text-[var(--muted-foreground)]">
+                    <p className="text-sm text-(--muted-foreground)">
                         Choose how the interface looks. Changes apply immediately.
                     </p>
 
@@ -65,8 +65,8 @@ export default function SettingsPage() {
                                     className={[
                                         'flex items-center gap-4 rounded-lg border px-4 py-3 cursor-pointer transition-colors',
                                         ready && theme === value
-                                            ? 'border-[var(--primary)] bg-[var(--primary)]/5'
-                                            : 'border-[var(--border)] hover:bg-[var(--muted)]',
+                                            ? 'border-(--primary) bg-(--primary)/5'
+                                            : 'border-(--border) hover:bg-(--muted)',
                                     ].join(' ')}
                                 >
                                     <input
@@ -75,12 +75,12 @@ export default function SettingsPage() {
                                         value={value}
                                         checked={ready && theme === value}
                                         onChange={() => setTheme(value)}
-                                        className="accent-[var(--primary)]"
+                                        className="accent-(--primary)"
                                     />
-                                    <Icon className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+                                    <Icon className="h-4 w-4 text-(--muted-foreground)" aria-hidden="true" />
                                     <div>
-                                        <p className="text-sm font-medium text-[var(--foreground)]">{label}</p>
-                                        <p className="text-xs text-[var(--muted-foreground)]">{description}</p>
+                                        <p className="text-sm font-medium text-(--foreground)">{label}</p>
+                                        <p className="text-xs text-(--muted-foreground)">{description}</p>
                                     </div>
                                 </label>
                             ))}

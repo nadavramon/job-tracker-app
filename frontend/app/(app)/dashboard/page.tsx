@@ -41,7 +41,7 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard-scope relative min-h-full">
-      <div className="-mx-4 -mt-8 px-4 pt-8 pb-8 bg-[var(--dash-bg)]">
+      <div className="-mx-4 -mt-8 px-4 pt-8 pb-8 bg-(--dash-bg)">
         {/* Mesh gradient — top-left */}
         <div
           className="pointer-events-none absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full"
@@ -58,14 +58,14 @@ export default function DashboardPage() {
         <div className="relative max-w-7xl mx-auto space-y-8">
           {/* Page header */}
           <div className="animate-[fade-in_0.4s_ease-out]">
-            <h1 className="text-2xl font-bold text-[var(--dash-heading)]">Dashboard</h1>
-            <p className="mt-1 text-sm text-[var(--dash-subtext)]">
+            <h1 className="text-2xl font-bold text-(--dash-heading)">Dashboard</h1>
+            <p className="mt-1 text-sm text-(--dash-subtext)">
               Track your job application progress
             </p>
           </div>
 
           {error && (
-            <div className="rounded-xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] px-4 py-3 text-sm text-[var(--destructive)]">
+            <div className="rounded-xl border border-(--dash-card-border) bg-(--dash-card) px-4 py-3 text-sm text-(--destructive)">
               {error}
             </div>
           )}

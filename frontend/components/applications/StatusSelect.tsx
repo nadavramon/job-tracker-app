@@ -9,12 +9,12 @@ import Spinner from '@/components/ui/Spinner';
 import { useToast } from '@/context/ToastContext';
 
 const STATUS_DOT_CLASS: Record<Status, string> = {
-    APPLIED:      'bg-[var(--status-applied)]',
-    SCREENING:    'bg-[var(--status-screening)]',
-    INTERVIEWING: 'bg-[var(--status-interviewing)]',
-    OFFER:        'bg-[var(--status-offer)]',
-    REJECTED:     'bg-[var(--status-rejected)]',
-    WITHDRAWN:    'bg-[var(--status-withdrawn)]',
+    APPLIED:      'bg-(--status-applied)',
+    SCREENING:    'bg-(--status-screening)',
+    INTERVIEWING: 'bg-(--status-interviewing)',
+    OFFER:        'bg-(--status-offer)',
+    REJECTED:     'bg-(--status-rejected)',
+    WITHDRAWN:    'bg-(--status-withdrawn)',
 };
 
 interface StatusSelectProps {
@@ -98,9 +98,9 @@ export default function StatusSelect({ applicationId, status, onStatusChange }: 
                     onKeyDown={handleKeyDown}
                     aria-label="Change status"
                     className={[
-                        'rounded-md border border-[var(--border)] bg-[var(--background)]',
-                        'text-[var(--foreground)] text-xs px-2 py-1 outline-none',
-                        'focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)]/30',
+                        'rounded-md border border-(--border) bg-(--background)',
+                        'text-(--foreground) text-xs px-2 py-1 outline-none',
+                        'focus:border-(--primary) focus:ring-2 focus:ring-(--ring)/30',
                     ].join(' ')}
                 >
                     {STATUS_OPTIONS.map(({ value, label }) => (
@@ -115,7 +115,7 @@ export default function StatusSelect({ applicationId, status, onStatusChange }: 
         <button
             onClick={handleBadgeClick}
             aria-label={`Status: ${currentStatus}. Click to edit`}
-            className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+            className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring)"
         >
             <StatusBadge status={currentStatus} />
         </button>
