@@ -44,7 +44,10 @@ public class RefreshTokenService {
         return refreshToken.getToken();
     }
 
-    @Transactional
+    // noRollbackFor: on theft detection we revoke the family and then throw; without this, the throw
+    // rolls back the revocation. Safe ONLY because the theft branch performs no other write before the
+    // throw. If you add a pre-throw write, revisit this.
+    @Transactional(noRollbackFor = TokenTheftException.class)
     public RotationResult rotateRefreshToken(String tokenValue) {
         try {
             return doRotate(tokenValue);

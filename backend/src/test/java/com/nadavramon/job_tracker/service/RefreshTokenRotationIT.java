@@ -3,6 +3,7 @@ package com.nadavramon.job_tracker.service;
 import com.nadavramon.job_tracker.entity.RefreshToken;
 import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.enums.ThemePreference;
+import com.nadavramon.job_tracker.exception.TokenTheftException;
 import com.nadavramon.job_tracker.repository.RefreshTokenRepository;
 import com.nadavramon.job_tracker.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Testcontainers
@@ -46,6 +47,23 @@ class RefreshTokenRotationIT {
     @Test
     void contextLoadsAgainstRealPostgres() {
         assertNotNull(refreshTokenService);
+    }
+
+    @Test
+    void theftDetection_revokesEntireFamily_andPersistsDespiteException() {
+        User user = persistUser();
+        UUID familyId = UUID.randomUUID();
+        // 'stolen' token was already rotated once, so it is revoked; a live descendant exists in the same family.
+        persistToken(user, familyId, "stolen-token", true);
+        persistToken(user, familyId, "live-descendant", false);
+
+        assertThrows(TokenTheftException.class,
+                () -> refreshTokenService.rotateRefreshToken("stolen-token"));
+
+        // Fresh read in a new transaction: the family revocation must have COMMITTED.
+        RefreshToken descendant = refreshTokenRepository.findByToken("live-descendant").orElseThrow();
+        assertTrue(descendant.isRevoked(),
+                "family revocation must persist despite the TokenTheftException rollback");
     }
 
     User persistUser() {
