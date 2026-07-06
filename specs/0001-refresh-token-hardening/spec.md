@@ -1,6 +1,6 @@
 ---
 feature: refresh-token-hardening
-status: verified
+status: done
 created: 2026-07-06
 ---
 
