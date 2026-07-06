@@ -1,6 +1,7 @@
 package com.nadavramon.job_tracker.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class RefreshToken {
     private UUID replacedById;
 
     @Version
+    @ColumnDefault("0")
     private int version;
 
     public UUID getId() {
