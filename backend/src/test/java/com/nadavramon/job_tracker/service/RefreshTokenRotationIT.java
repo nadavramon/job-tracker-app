@@ -3,6 +3,7 @@ package com.nadavramon.job_tracker.service;
 import com.nadavramon.job_tracker.entity.RefreshToken;
 import com.nadavramon.job_tracker.entity.User;
 import com.nadavramon.job_tracker.enums.ThemePreference;
+import com.nadavramon.job_tracker.exception.InvalidCredentialsException;
 import com.nadavramon.job_tracker.exception.TokenTheftException;
 import com.nadavramon.job_tracker.repository.RefreshTokenRepository;
 import com.nadavramon.job_tracker.repository.UserRepository;
@@ -17,7 +18,14 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,6 +72,40 @@ class RefreshTokenRotationIT {
         RefreshToken descendant = refreshTokenRepository.findByToken("live-descendant").orElseThrow();
         assertTrue(descendant.isRevoked(),
                 "family revocation must persist despite the TokenTheftException rollback");
+    }
+
+    @Test
+    void concurrentRotation_oneSucceeds_otherGets401_never500() throws Exception {
+        User user = persistUser();
+        persistToken(user, UUID.randomUUID(), "shared-token", false);
+
+        CyclicBarrier barrier = new CyclicBarrier(2);
+        ExecutorService pool = Executors.newFixedThreadPool(2);
+        Callable<Object> task = () -> {
+            barrier.await();
+            try {
+                return refreshTokenService.rotateRefreshToken("shared-token");
+            } catch (Exception e) {
+                return e;
+            }
+        };
+        Future<Object> f1 = pool.submit(task);
+        Future<Object> f2 = pool.submit(task);
+        List<Object> outcomes = List.of(f1.get(10, TimeUnit.SECONDS), f2.get(10, TimeUnit.SECONDS));
+        pool.shutdownNow();
+
+        long successes = outcomes.stream()
+                .filter(o -> o instanceof RefreshTokenService.RotationResult).count();
+        assertEquals(1, successes, "exactly one concurrent rotation should succeed");
+
+        Object failure = outcomes.stream().filter(o -> o instanceof Exception).findFirst().orElseThrow();
+        assertTrue(failure instanceof InvalidCredentialsException || failure instanceof TokenTheftException,
+                "the losing rotation must map to a 401-class exception, not a 500; got: " + failure.getClass());
+
+        // No-leak invariant: the loser's transaction rolled back, so only the winner's new token was
+        // added (original now-revoked + 1 new = 2). @BeforeEach guarantees a clean slate.
+        assertEquals(2, refreshTokenRepository.count(),
+                "the losing rotation must not persist a new token");
     }
 
     User persistUser() {

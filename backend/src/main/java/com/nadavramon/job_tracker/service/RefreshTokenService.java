@@ -8,10 +8,9 @@ import com.nadavramon.job_tracker.repository.RefreshTokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.persistence.OptimisticLockException;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -51,7 +50,7 @@ public class RefreshTokenService {
     public RotationResult rotateRefreshToken(String tokenValue) {
         try {
             return doRotate(tokenValue);
-        } catch (OptimisticLockException e) {
+        } catch (ObjectOptimisticLockingFailureException e) {
             throw new InvalidCredentialsException("Token already used");
         }
     }
@@ -84,7 +83,10 @@ public class RefreshTokenService {
         refreshTokenRepository.save(newToken);
 
         existingToken.setReplacedById(newToken.getId());
-        refreshTokenRepository.save(existingToken);
+        // saveAndFlush (not save): forces the optimistic UPDATE ... WHERE version=? to execute inside
+        // rotateRefreshToken's try, so a concurrent conflict is caught here (→ 401) instead of surfacing
+        // at commit outside the try (→ 500).
+        refreshTokenRepository.saveAndFlush(existingToken);
 
         return new RotationResult(newToken.getToken(), existingToken.getUser());
     }
