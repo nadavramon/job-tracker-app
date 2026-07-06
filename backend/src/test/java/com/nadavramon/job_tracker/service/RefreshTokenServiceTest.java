@@ -80,7 +80,8 @@ public class RefreshTokenServiceTest {
         assertTrue(existingToken.isRevoked());
         assertNotNull(existingToken.getReplacedById());
 
-        verify(refreshTokenRepository, times(2)).save(any(RefreshToken.class));
+        verify(refreshTokenRepository).save(any(RefreshToken.class));           // new token
+        verify(refreshTokenRepository).saveAndFlush(any(RefreshToken.class));   // old token, flushed for the optimistic version check
     }
 
     @Test
